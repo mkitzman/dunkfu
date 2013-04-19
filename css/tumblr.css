@@ -1,0 +1,162 @@
+.tumblr .header ul {
+    margin-right: 155px;
+}
+#content { 
+	left: 30px; 
+	padding: 0 0 50px 0; 
+	position: relative; 
+	top: 0; 
+	width: 800px; 
+}
+#content h1 { 
+	color: #ED1956;
+	font-size: 120%;
+	font-weight: bold;
+	margin-bottom: 10px;
+	text-align:left;
+}
+#content img { 
+	background: #121212; 
+	border: 1px solid #1e1e1e; 
+	max-width: 600px; 
+	padding: 9px; 
+}
+#content ol li { 
+	border-bottom: 1px solid #222; 
+	color: #666; 
+	font-size: 14px; 
+	line-height: 22px; 
+	margin: 0 0 30px 0; 
+	padding: 0 0 10px 0; 
+	text-align: center;
+}
+#content p { 
+	font-weight: normal; 
+	margin: 0 0 15px 0; 
+}
+#content a { 
+	color: #999; 
+}
+#content a:hover { 
+	color: #fff; 
+}
+#content p.meta { 
+	clear: both; 
+	color: #7F7F7F;
+	font-size: 12px; 
+	font-style: italic; 
+}
+div#content ol li.photo p.meta a { 
+	color: #00C0FF;
+	color: #333; 
+	display: inline;
+	font-size: 93%;
+	height: 20px;
+	margin-top: 0;
+	text-decoration: none; 
+}
+#content p.meta a:hover { 
+    text-decoration: underline; 
+}
+div#content ol li.photo p.meta em {
+	font-size: 93%;
+	text-transform: lowercase;
+}
+#content a.button { 
+    color: #fff; 
+    float: left; 
+    text-decoration: none; 
+}
+#content a.button:hover { 
+    color: #666; 
+    text-decoration: none; 
+}
+#content h3 { 
+    color: #fff; 
+    font-size: 20px; 
+    line-height: 30px; 
+    margin: 0 0 5px 0; 
+}
+#content a.button.right { 
+    float: right; 
+    padding: 0; 
+}
+#content strong { 
+    color: #999; 
+}
+#content .regular h3 a { 
+    color: #fff;
+    text-decoration: none; 
+}
+#content ol li ol, 
+#content ol li ul { 
+    padding: 0 0 15px 40px 
+} 
+#content ol li ol li, 
+#content ol li ul li { 
+    border: none; 
+    margin: 0; 
+    padding: 0; 
+} 
+#content ol li.photo h4 p {
+    font-size: 120%;
+}
+#content ol li.photo p.source {
+	color: #999;
+	font-size: 93%;
+}
+#content ol li.photo p.source a {
+	display: inline;
+}
+#content ol li.photo p {
+	color: #ED1956;
+}
+#content ol li.photo a {
+	color: #999;
+	display: block;
+}
+div#content ol li.photo p {
+	margin: 0;
+}
+div#content ol li.photo .tags li {
+	display: inline-block;
+	list-style-type: none;
+}
+div#content ol li.photo .tags li a {
+	color: #333;
+	font-size: 85%;
+	font-style: italic;
+}
+div#content ol li.photo .tags li a:hover {
+	color: #7F7F7F;
+	text-decoration: underline;
+}
+div#content ol li.photo .tags li a:after {
+	content: ',';
+}
+/* NOTES */
+#content ol li#notes { 
+    border: none; 
+    margin-top: -32px; 
+}
+#content ol li#notes ol { 
+    padding: 0; 
+}
+#content ol li#notes ol li { 
+    border-bottom: 1px solid #222; 
+    font-size: 12px; 
+    list-style-type: none;  
+    margin: 0; 
+    padding: 10px 0 10px 0; 
+}
+#content ol li#notes ol li blockquote { 
+    border-left: 3px solid #111; 
+    margin: 9px 0 0 20px; 
+    padding: 0 0 0 10px; 
+}
+#content ol li#notes img { 
+    border: none; 
+    margin: 3px 6px -6px 0; 
+    padding: 2px; 
+    position: relative; 
+}

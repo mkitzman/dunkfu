@@ -1,0 +1,55 @@
+# This turns on mod_rewrite and redirects any paths that don't physically exist
+# to /index.php. You can then access that path info (to determine what to do) in
+# PHP using $_SERVER['REQUEST_URI'] and $_SERVER['REDIRECT_URL']. This is an easy
+# way to avoid having hundreds of rewrite rules slowing down Apache and making things
+# more complicated than they should be.
+
+# Note: If you're having trouble making Apache pickup your .htaccess file,
+# make sure AllowOverride is set to "All" instead of "None".
+
+RewriteEngine On
+RewriteBase /
+ErrorDocument 404 http://dunkfu.com
+#ErrorDocument 404 http://dunkfu.com/odom/404.php?url=$1
+
+#coming soon - SITE LOCKDOWN
+#RewriteRule ^$  /home/dunkfu/public_html/dunkfu/comingsoon.php [L]
+#RewriteRule ^index.php$  /home/dunkfu/public_html/dunkfu/comingsoon.php [L]
+#RewriteRule ^odom/  /home/dunkfu/public_html/dunkfu/comingsoon.php [L]
+
+#Normal Rules
+RewriteRule ^team/([A-Za-z0-9_]+)$          /home/dunkfu/public_html/dunkfu/index.php?team=$1 [L]
+#RewriteRule ^twitter/player/team/([A-Za-z0-9_]+)$  /home/dunkfu/public_html/dunkfu/index.php?cat=player&team=$1 [L]
+#RewriteRule ^twitter/player$                       /home/dunkfu/public_html/dunkfu/index.php?cat=player [L]
+RewriteRule ^blog/team/([A-Za-z0-9_]+)$  /home/dunkfu/public_html/dunkfu/index.php?cat=blog&team=$1 [L]
+RewriteRule ^blog$                       /home/dunkfu/public_html/dunkfu/index.php?cat=blog [L]
+RewriteRule ^player/team/([A-Za-z0-9_]+)$  /home/dunkfu/public_html/dunkfu/index.php?cat=player&team=$1 [L]
+RewriteRule ^player$                       /home/dunkfu/public_html/dunkfu/index.php?cat=player [L]
+RewriteRule ^twitter/team/([A-Za-z0-9_]+)$  /home/dunkfu/public_html/dunkfu/index.php?cat=twitter&team=$1 [L]
+RewriteRule ^twitter$                       /home/dunkfu/public_html/dunkfu/index.php?cat=twitter [L]
+RewriteRule ^About$                         /home/dunkfu/public_html/dunkfu/about.php [L]
+RewriteRule ^about$                         /home/dunkfu/public_html/dunkfu/about.php [L]
+RewriteRule ^Contact$                       /home/dunkfu/public_html/dunkfu/contact.php [L]
+RewriteRule ^contact$                       /home/dunkfu/public_html/dunkfu/contact.php [L]
+RewriteRule ^404$                           /home/dunkfu/public_html/dunkfu/404.php [L]
+
+#BETA
+#RewriteRule ^odom/team/([A-Za-z0-9_]+)$            /home/dunkfu/public_html/dunkfu/odom/index.php?team=$1 [L]
+#RewriteRule ^odom/twitter/player/team/([A-Za-z0-9_]+)$  /home/dunkfu/public_html/dunkfu/odom/index.php?cat=player&team=$1 [L]
+#RewriteRule ^odom/twitter/player$                       /home/dunkfu/public_html/dunkfu/odom/index.php?cat=player [L]
+#RewriteRule ^odom/twitter/team/([A-Za-z0-9_]+)$    /home/dunkfu/public_html/dunkfu/odom/index.php?cat=twitter&team=$1 [L]
+#RewriteRule ^odom/twitter$                         /home/dunkfu/public_html/dunkfu/odom/index.php?cat=twitter [L]
+#RewriteRule ^odom/about$                           /home/dunkfu/public_html/dunkfu/odom/about.php [L]
+#RewriteRule ^odom/About$                           /home/dunkfu/public_html/dunkfu/odom/about.php [L]
+#RewriteRule ^odom/contact$                         /home/dunkfu/public_html/dunkfu/odom/contact.php [L]
+#RewriteRule ^odom/Contact$                         /home/dunkfu/public_html/dunkfu/odom/contact.php [L]
+#RewriteRule ^odom/404/url$                         /home/dunkfu/public_html/dunkfu/odom/404.php?url=$1 [L]
+
+#coming soon
+#RewriteRule ^$  /home/dunkfu/public_html/dunkfu/comingsoon.php [L]
+#RewriteRule ^index.php$  /home/dunkfu/public_html/dunkfu/comingsoon.php [L]
+
+#404
+#RewriteCond %{REQUEST_FILENAME} !-f  
+#RewriteCond %{REQUEST_FILENAME} !-d  
+#RewriteRule ^/?(.*)$ /home/dunkfu/public_html/dunkfu/odom/404.php?url=$1
