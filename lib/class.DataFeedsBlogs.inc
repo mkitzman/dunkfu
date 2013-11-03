@@ -14,11 +14,11 @@ class DataFeedsBlogs {
             'website_url' => 'http://sports.yahoo.com/nba/blog/ball_dont_lie',
             'feed_url'    => 'http://sports.yahoo.com/nba/blog/ball_dont_lie/rss.xml',
         ),
-        'the_basketball_jones' => array(
-            'title'       => 'The Basketball Jones',
-            'website_url' => 'http://blogs.thescore.com/tbj',
-            'feed_url'    => 'http://blogs.thescore.com/tbj/feed',
-        ), 
+        // 'the_basketball_jones' => array(
+        //     'title'       => 'The Basketball Jones',
+        //     'website_url' => 'http://blogs.thescore.com/tbj',
+        //     'feed_url'    => 'http://blogs.thescore.com/tbj/feed',
+        // ), 
         'basketbawful' => array(
             'title'       => 'Basketbawful',
             'website_url' => 'http://basketbawful.blogspot.com',
@@ -29,11 +29,11 @@ class DataFeedsBlogs {
         //     'website_url' => 'http://ken-berger.blogs.cbssports.com/mcc/blogs/view/11838893',
         //     'feed_url'    => 'http://feeds.cbssports.com/cbssports/mcc/blogs/syndicate/rss/11838893',
         // ),        
-        'both_teams_played_hard' => array(
-            'title'       => 'Both Teams Played Hard',
-            'website_url' => 'http://www.bothteamsplayedhard.net',
-            'feed_url'    => 'http://www.bothteamsplayedhard.net/feed',
-        ),
+        // 'both_teams_played_hard' => array(
+        //     'title'       => 'Both Teams Played Hard',
+        //     'website_url' => 'http://www.bothteamsplayedhard.net',
+        //     'feed_url'    => 'http://www.bothteamsplayedhard.net/feed',
+        // ),
         // 'chasing23' => array(
         //     'title'       => 'Chasing 23',
         //     'website_url' => 'http://chasing23.com',
@@ -56,11 +56,11 @@ class DataFeedsBlogs {
             'website_url' => 'http://www.fannation.com/truth_and_rumors/nba',
             'feed_url'    => 'http://www.fannation.com/truth_and_rumors/rss/nba.xml',
         ),       
-        'freedarko' => array(
-            'title'       => 'FreeDarko',
-            'website_url' => 'http://freedarko.blogspot.com',
-            'feed_url'    => 'http://feeds.feedburner.com/Freedarkocom',
-        ),       
+        // 'freedarko' => array(
+        //     'title'       => 'FreeDarko',
+        //     'website_url' => 'http://freedarko.blogspot.com',
+        //     'feed_url'    => 'http://feeds.feedburner.com/Freedarkocom',
+        // ),       
         // 'full_court_nba' => array(
         //     'title'       => 'Full Court NBA',
         //     'website_url' => 'http://fullcourtnba.blogspot.com',
@@ -83,22 +83,22 @@ class DataFeedsBlogs {
             'feed_url'    => 'http://feeds.feedburner.com/hp4sharebros?format=xml',
             'true_hoop'   => true,
         ),
-        'hoopism' => array(
-            'title'       => 'Hoopism',
-            'website_url' => 'http://hoopism.com',
-            'feed_url'    => 'http://hoopism.com/?feed=rss2',
+        'thehoopdoctors' => array(
+            'title'       => 'Hoop Doctors',
+            'website_url' => 'http://thehoopdoctors.com',
+            'feed_url'    => 'http://thehoopdoctors.com/online2/feed/',
         ),        
         'hoopsaddict' => array(
             'title'       => 'Hoops Addict',
             'website_url' => 'http://www.hoopsaddict.com',
             'feed_url'    => 'http://www.hoopsaddict.com/feed',
         ),     
-        'hoopspeak' => array(
-            'title'       => 'Hoop Speak',
-            'website_url' => 'http://hoopspeak.com',
-            'feed_url'    => 'http://hoopspeak.com/feed',
-            'true_hoop'   => true,
-        ),        
+        // 'hoopspeak' => array(
+        //     'title'       => 'Hoop Speak',
+        //     'website_url' => 'http://hoopspeak.com',
+        //     'feed_url'    => 'http://hoopspeak.com/feed',
+        //     'true_hoop'   => true,
+        // ),        
         'hoopsmanifesto' => array(
             'title'       => 'Hoops Manifesto',
             'website_url' => 'http://www.hoopsmanifesto.com',
@@ -126,11 +126,11 @@ class DataFeedsBlogs {
         // ),  
        
         
-        'le_basketbawl' => array(
-            'title'       => 'le basketbawl',
-            'website_url' => 'http://www.lebasketbawl.com',
-            'feed_url'    => 'http://feeds.feedburner.com/Le_Basketbawl?format=xml',
-        ),  
+        // 'le_basketbawl' => array(
+        //     'title'       => 'le basketbawl',
+        //     'website_url' => 'http://www.lebasketbawl.com',
+        //     'feed_url'    => 'http://feeds.feedburner.com/Le_Basketbawl?format=xml',
+        // ),  
         // 'love_in_the_time_of_lebron' => array(
         //     'title'       => 'Love in the Time of Lebron',
         //     'website_url' => 'http://loveinthetimeoflebron.blogspot.com',
@@ -162,17 +162,11 @@ class DataFeedsBlogs {
             'website_url' => 'http://nbaoffseason.com',
             'feed_url'    => 'http://nbaoffseason.com/rss',
         ),  
-        'nba_playbook' => array(
-            'title'       => 'NBA Playbook',
-            'website_url' => 'http://nbaplaybook.com',
-            'feed_url'    => 'http://nbaplaybook.com/feed',
-            'true_hoop'   => true,
-        ), 
-        'ny_times_howard_beck' => array(
-            'title'       => 'NY York Times, Howard Beck',
-            'website_url' => 'http://topics.nytimes.com/top/reference/timestopics/people/b/howard_beck/index.html?inline=nyt-per',
-            'feed_url'    => 'http://topics.nytimes.com/top/reference/timestopics/people/b/howard_beck/index.html?inline=nyt-per&rss=1',
-        ),
+        // 'ny_times_howard_beck' => array(
+        //     'title'       => 'NY York Times, Howard Beck',
+        //     'website_url' => 'http://topics.nytimes.com/top/reference/timestopics/people/b/howard_beck/index.html?inline=nyt-per',
+        //     'feed_url'    => 'http://topics.nytimes.com/top/reference/timestopics/people/b/howard_beck/index.html?inline=nyt-per&rss=1',
+        // ),
         // 'no_look_pass' => array(
         //                 'title'       => 'No Look Pass',
         //                 'website_url' => 'http://www.thenolookpass.com',
@@ -193,22 +187,17 @@ class DataFeedsBlogs {
             'website_url' => 'http://sheridanhoops.com',
             'feed_url'    => 'http://feeds.feedburner.com/SheridanHoops?format=xml',
         ),   
-        'the_hoop_scene' => array(
-            'title'       => 'The Hoop Scene',
-            'website_url' => 'http://thehoopscene.com',
-            'feed_url'    => 'http://feeds.feedburner.com/TheHoopScene?format=xml',
-        ),   
+        // 'the_hoop_scene' => array(
+        //     'title'       => 'The Hoop Scene',
+        //     'website_url' => 'http://thehoopscene.com',
+        //     'feed_url'    => 'http://feeds.feedburner.com/TheHoopScene?format=xml',
+        // ),   
         'the_painted_area' => array(
             'title'       => 'The Painted Area',
             'website_url' => 'http://thepaintedarea.blogspot.com',
             'feed_url'    => 'http://thepaintedarea.blogspot.com/feeds/posts/default',
             'true_hoop'   => true,
         ),     
-        // 'the_point_forward' => array(
-        //     'title'       => 'The Point Forward',
-        //     'website_url' => 'http://http://nba-point-forward.si.com',
-        //     'feed_url'    => 'http://nba-point-forward.si.com/feed',
-        // ),  
         // 'plissken_at_the_buzzer' => array(
         //     'title'       => 'Plissken at the Buzzer',
         //     'website_url' => 'http://westcoastbasketball.blogspot.com',
@@ -234,11 +223,16 @@ class DataFeedsBlogs {
             'website_url' => 'http://ascreamingcomesacrossthecourt.blogspot.com',
             'feed_url'    => 'http://ascreamingcomesacrossthecourt.blogspot.com/feeds/posts/default',
         ),
-        'shoot_hoops' => array(
-            'title'       => 'Shoot Hoops',
-            'website_url' => 'http://www.shoot-hoops.com',
-            'feed_url'    => 'http://feeds.feedburner.com/ShootHoops?format=xml',
-        ),     
+        'point_forward' => array(
+            'title'       => 'SI Point Forward',
+            'website_url' => 'http://nba.si.com/',
+            'feed_url'    => 'http://nba.si.com/feed/',
+        ),  
+        // 'shoot_hoops' => array(
+        //     'title'       => 'Shoot Hoops',
+        //     'website_url' => 'http://www.shoot-hoops.com',
+        //     'feed_url'    => 'http://feeds.feedburner.com/ShootHoops?format=xml',
+        // ),     
         // 'sham_sports' => array(
         //     'title'       => 'Sham Sports',
         //     'website_url' => 'http://blog.shamsports.com',
@@ -253,7 +247,14 @@ class DataFeedsBlogs {
             'title'       => 'A Stern Warning',
             'website_url' => 'http://www.asternwarning.com/articles/nba',
             'feed_url'    => 'http://feeds.feedburner.com/ASternWarning-NBA-NBL?format=xml',
-        ),        
+        ),       
+        'stein_line_live' => array(
+            'title'       => 'Stein Line Live',
+            'website_url' => 'http://espn.go.com/blog/marc-stein',
+            'feed_url'    => 'http://espn.go.com/blog/feed?blog=marc-stein',
+        ), 
+         
+
         'true_hoop' => array(
             'title'       => 'True Hoop',
             'website_url' => 'http://myespn.go.com/nba/truehoop',

@@ -11,11 +11,11 @@ class DataFeedsBlogsByTeam {
     
     private $feeds = array(
         'atlanta_hawks' => array(
-            'hawks_blog' => array(
-                'title'       => 'Hawks Blog, AJC.com',
-                'website_url' => 'http://blogs.ajc.com/hawks',
-                'feed_url'    => 'http://blogs.ajc.com/hawks/feed',
-            ),
+            // 'hawks_blog' => array(
+            //     'title'       => 'Hawks Blog, AJC.com',
+            //     'website_url' => 'http://blogs.ajc.com/hawks',
+            //     'feed_url'    => 'http://blogs.ajc.com/hawks/feed',
+            // ),
             // 'hawks_highlights' => array(
             //     'title'       => 'Hawks Highlights',
             //     'website_url' => 'http://hawkshighlights.com',
@@ -190,11 +190,11 @@ class DataFeedsBlogsByTeam {
             ),              
        ),
         'cleveland_cavaliers' => array(
-            'and_one' => array(
-                'title'       => 'And One',
-                'website_url' => 'http://blog.cleveland.com/andone',
-                'feed_url'    => 'http://blog.cleveland.com/andone/atom.xml',
-            ),
+            // 'and_one' => array(
+            //     'title'       => 'And One',
+            //     'website_url' => 'http://blog.cleveland.com/andone',
+            //     'feed_url'    => 'http://blog.cleveland.com/andone/atom.xml',
+            // ),
             // 'cavs_news' => array(
             //     'title'       => 'Cavs News',
             //     'website_url' => 'http://www.cavsnews.com',
@@ -236,11 +236,11 @@ class DataFeedsBlogsByTeam {
                 'website_url' => 'http://mavsblog.dallasnews.com',
                 'feed_url'    => 'http://mavsblog.dallasnews.com/index.xml',
             ),
-            'mavericks_locker' => array(
-                'title'       => 'Mavericks Locker',
-                'website_url' => 'http://www.maverickslocker.com',
-                'feed_url'    => 'http://www.maverickslocker.com/feed',
-            ),
+            // 'mavericks_locker' => array(
+            //     'title'       => 'Mavericks Locker',
+            //     'website_url' => 'http://www.maverickslocker.com',
+            //     'feed_url'    => 'http://www.maverickslocker.com/feed',
+            // ),
             'mavs_moneyball' => array(
                 'title'       => 'Mavs Moneyball',
                 'website_url' => 'http://www.mavsmoneyball.com',
@@ -281,11 +281,11 @@ class DataFeedsBlogsByTeam {
                 'feed_url'    => 'http://nuggdoctor.com/feed/rss.html',
                 'bloguin'     => true,
             ),
-            'nuggets_locker' => array(
-                'title'       => 'Nuggets locker',
-                'website_url' => 'http://www.nuggetslocker.com',
-                'feed_url'    => 'http://www.nuggetslocker.com/feed',
-            ),
+            // 'nuggets_locker' => array(
+            //     'title'       => 'Nuggets locker',
+            //     'website_url' => 'http://www.nuggetslocker.com',
+            //     'feed_url'    => 'http://www.nuggetslocker.com/feed',
+            // ),
             // Only 2 Posts in RSS feed
             // 'nugg_love' => array(
             //     'title'       => 'Nugg Love',
@@ -427,11 +427,11 @@ class DataFeedsBlogsByTeam {
                 'top_blog'    => true,
                 'sb_nation'   => true,
             ),
-            'pacers_insider' => array(
-                'title'       => 'Pacers Insider',
-                'website_url' => 'http://blogs.indystar.com/pacersinsider',
-                'feed_url'    => 'http://www.indystar.com/apps/pbcs.dll/section?Category=SPORTS04&template=rss',
-            ),
+            // 'pacers_insider' => array(
+            //     'title'       => 'Pacers Insider',
+            //     'website_url' => 'http://blogs.indystar.com/pacersinsider',
+            //     'feed_url'    => 'http://www.indystar.com/apps/pbcs.dll/section?Category=SPORTS04&template=rss',
+            // ),
             'pacers_pulse' => array(
                 'title'       => 'Pacers Pulse',
                 'website_url' => 'http://pacerspulse.com',
@@ -448,11 +448,11 @@ class DataFeedsBlogsByTeam {
                 'top_blog'    => true,
                 'true_hoop'   => true,
             ),
-            'clippers_locker' => array(
-                'title'       => 'Clippers Locker',
-                'website_url' => 'http://www.clipperslocker.com',
-                'feed_url'    => 'http://www.clipperslocker.com/feed',
-            ),
+            // 'clippers_locker' => array(
+            //     'title'       => 'Clippers Locker',
+            //     'website_url' => 'http://www.clipperslocker.com',
+            //     'feed_url'    => 'http://www.clipperslocker.com/feed',
+            // ),
             'clips_nation' => array(
                 'title'       => 'Clips Nation',
                 'website_url' => 'http://www.clipsnation.com',
@@ -494,11 +494,11 @@ class DataFeedsBlogsByTeam {
                 'feed_url'    => 'http://espn.go.com/blog/feed?blog=los-angeleslakers',
                 //'has_error'  => true,
             ),
-            'inside_the_lakers' => array(
-                'title'       => 'Inside the Lakers',
-                'website_url' => 'http://www.insidesocal.com/lakers',
-                'feed_url'    => 'http://www.insidesocal.com/lakers/atom.xml',
-            ),  
+            // 'inside_the_lakers' => array(
+            //     'title'       => 'Inside the Lakers',
+            //     'website_url' => 'http://www.insidesocal.com/lakers',
+            //     'feed_url'    => 'http://www.insidesocal.com/lakers/atom.xml',
+            // ),  
             // 'la_balltalk' => array(
             //     'title'       => 'LA Ball Talk',
             //     'website_url' => 'http://www.laballtalk.com',
@@ -551,12 +551,12 @@ class DataFeedsBlogsByTeam {
                 'feed_url'    => 'http://feeds.feedburner.com/sportsblogs/silverscreenandroll?format=xml',
                 'sb_nation'   => true,
             ),
-            'with_malice' => array(
-                'title'       => 'With Malice',
-                'website_url' => 'http://with-malice.com',
-                'feed_url'    => 'http://with-malice.com/feed/rss.html',
-                'bloguin'     => true,
-            ),
+            // 'with_malice' => array(
+            //     'title'       => 'With Malice',
+            //     'website_url' => 'http://with-malice.com',
+            //     'feed_url'    => 'http://with-malice.com/feed/rss.html',
+            //     'bloguin'     => true,
+            // ),
         ),
         'memphis_grizzlies' => array(
             '3_shades_of_blue' => array(
@@ -575,10 +575,10 @@ class DataFeedsBlogsByTeam {
             //     'website_url' => 'http://davidlovesthegrizzlies.blogspot.com',
             //     'feed_url'    => 'http://feeds.feedburner.com/DavidsMemphisGrizzliesBlog?format=xml',
             // ),
-            'straight_outta_vancouver' => array(
-                'title'       => 'Straight outta Vancouver',
-                'website_url' => 'http://www.straightouttavancouver.com',
-                'feed_url'    => 'http://feeds.feedburner.com/sportsblogs/straightouttavancouver?format=xml',
+            'grizzly_bear_blues' => array(
+                'title'       => 'Grizzly Bear Blues',
+                'website_url' => 'http://www.grizzlybearblues.com',
+                'feed_url'    => 'http://feeds.feedburner.com/sportsblogs/grizzlybearblues?format=xml',
                 'sb_nation'   => true,
             ),
             'the_memphis_edge' => array(
@@ -593,11 +593,11 @@ class DataFeedsBlogsByTeam {
             //     'website_url' => 'http://allucanheat.com',
             //     'feed_url'    => 'http://allucanheat.com/feed',
             // ), 
-            'heat_locker' => array(
-                'title'       => 'Heat Locker',
-                'website_url' => 'http://www.heatlocker.com',
-                'feed_url'    => 'http://www.heatlocker.com/feed',
-            ), 
+            // 'heat_locker' => array(
+            //     'title'       => 'Heat Locker',
+            //     'website_url' => 'http://www.heatlocker.com',
+            //     'feed_url'    => 'http://www.heatlocker.com/feed',
+            // ), 
             'hot_hot_hoops' => array(
                 'title'       => 'Hot Hot Hoops',
                 'website_url' => 'http://www.hothothoops.com',
@@ -771,7 +771,7 @@ class DataFeedsBlogsByTeam {
                 'feed_url'    => 'http://www.nydailynews.com/blogs/nets/rss.xml',
             ),         
         ),
-        'new_orleans_hornets' => array(
+        'new_orleans_pelicans' => array(
             'at_the_hive' => array(
                 'title'       => 'At The Hive',
                 'website_url' => 'http://www.atthehive.com',
@@ -789,27 +789,17 @@ class DataFeedsBlogsByTeam {
             //     'website_url' => 'http://neworleanshornetsblog.blogspot.com',
             //     'feed_url'    => 'http://neworleanshornetsblog.blogspot.com/feeds/posts/default',
             // ),
-            'hornets_24-7' => array(
-                'title'       => 'Hornets 24-7',
-                'website_url' => 'http://hornets247.com',
-                'feed_url'    => 'http://feeds.feedburner.com/hornets247-blog?format=xml',
+            'bourbon_street_shots' => array(
+                'title'       => 'Bourbon Street Shots',
+                'website_url' => 'http://www.bourbonstreetshots.com/',
+                'feed_url'    => 'http://www.bourbonstreetshots.com/feed',
                 'true_hoop'   => true,
-            ),
-            'hornets_locker' => array(
-                'title'       => 'Hornets Locker',
-                'website_url' => 'http://www.hornetslocker.com',
-                'feed_url'    => 'http://www.hornetslocker.com/feed',
-            ),          
-            'new_orleans_hornets_central' => array(
-                'title'       => 'New Orleans Hornets Central',
-                'website_url' => 'http://www.nola.com/hornets',
-                'feed_url'    => 'http://blog.nola.com/hornets_impact/atom.xml',
-            ),        
-            'swarm_and_sting' => array(
-                'title'       => 'Swarm & Sting',
-                'website_url' => 'http://swarmandsting.com',
-                'feed_url'    => 'http://swarmandsting.com/feed',
-            ),            
+            ),                
+            // 'swarm_and_sting' => array(
+            //     'title'       => 'Swarm & Sting',
+            //     'website_url' => 'http://swarmandsting.com',
+            //     'feed_url'    => 'http://swarmandsting.com/feed',
+            // ),            
         ),
         'new_york_knicks' => array(
             'knickerblogger_net' => array(
@@ -822,22 +812,22 @@ class DataFeedsBlogsByTeam {
             //     'website_url' => 'http://blog.nj.com/knicks',
             //     'feed_url'    => 'http://blog.nj.com/knicks/atom.xml',
             // ),         
-            'knicks_defense' => array(
-                'title'       => 'Knicks Defense',
-                'website_url' => 'http://www.knicksdefense.com',
-                'feed_url'    => 'http://feeds.feedburner.com/knicksdefense?format=xml',
-            ),
+            // 'knicks_defense' => array(
+            //     'title'       => 'Knicks Defense',
+            //     'website_url' => 'http://www.knicksdefense.com',
+            //     'feed_url'    => 'http://feeds.feedburner.com/knicksdefense?format=xml',
+            // ),
             'knicks_fanblog' => array(
                 'title'       => 'Knicks FanBlog',
                 'website_url' => 'http://www.knicksfan.net',
                 'feed_url'    => 'http://www.knicksfan.net/?feed=rss2',
             ),
-           'knicks_fanatics_blog' => array(
-                'title'       => 'Knicks Fanatics Blog',
-                'website_url' => 'http://knicksfanaticsblog.com',
-                'feed_url'    => 'http://www.knicksfanaticsblog.com/feed/rss.html',
-                'bloguin'     => true,
-            ),
+           // 'knicks_fanatics_blog' => array(
+           //      'title'       => 'Knicks Fanatics Blog',
+           //      'website_url' => 'http://knicksfanaticsblog.com',
+           //      'feed_url'    => 'http://www.knicksfanaticsblog.com/feed/rss.html',
+           //      'bloguin'     => true,
+           //  ),
             'knicks_knation' => array(
                 'title'       => 'Knicks Knation, Frank Isola',
                 'website_url' => 'http://www.nydailynews.com/blogs/knicks',
@@ -883,7 +873,7 @@ class DataFeedsBlogsByTeam {
             'thunder_rumblings' => array(
                 'title'       => 'Thunder Rumblings',
                 'website_url' => 'http://blog.newsok.com/thunderrumblings',
-                'feed_url'    => 'http://blog.newsok.com/thunderrumblings/feed',
+                'feed_url'    => 'http://newsok.com/rss/darnell%20mayberry',
             ),                  
             
             'welcome_to_loud_city' => array(
@@ -981,11 +971,11 @@ class DataFeedsBlogsByTeam {
                 'website_url' => 'http://www.azcentral.com/members/Blog/PaulCoro',
                 'feed_url'    => 'http://www.azcentral.com/members/Blog~/PaulCoro',
             ),             
-            'fanster_deep_purple' => array(
-                'title'       => 'Fanster\'s Deep Purple',
-                'website_url' => 'http://phoenix.fanster.com/blog/suns',
-                'feed_url'    => 'http://feeds.feedburner.com/fanster-suns?format=xml',
-            ),      
+            // 'fanster_deep_purple' => array(
+            //     'title'       => 'Fanster\'s Deep Purple',
+            //     'website_url' => 'http://phoenix.fanster.com/blog/suns',
+            //     'feed_url'    => 'http://feeds.feedburner.com/fanster-suns?format=xml',
+            // ),      
             'sun_n_gun' => array(
                 'title'       => 'Sun-N-Gun',
                 'website_url' => 'http://sunngun.com',
@@ -1001,12 +991,12 @@ class DataFeedsBlogsByTeam {
                 'website_url' => 'http://blog.suns.com',
                 'feed_url'    => 'http://blog.suns.com/feed',
             ),             
-            'sunsstufft' => array(
-                'title'       => 'Suns Stuff\'t',
-                'website_url' => 'http://www.sunsstufft.com/',
-                'feed_url'    => 'http://www.sunsstufft.com/feed/rss.html',
-                'bloguin'     => true,
-            ),
+            // 'sunsstufft' => array(
+            //     'title'       => 'Suns Stuff\'t',
+            //     'website_url' => 'http://www.sunsstufft.com/',
+            //     'feed_url'    => 'http://www.sunsstufft.com/feed/rss.html',
+            //     'bloguin'     => true,
+            // ),
             'suns_zoo' => array(
                 'title'       => 'Suns Zoo',
                 'website_url' => 'http://www.sunszoo.com',
@@ -1055,7 +1045,7 @@ class DataFeedsBlogsByTeam {
             'the_portland_roundball_society' => array(
                 'title'       => 'The Portland Roundball Society',
                 'website_url' => 'http://www.portlandroundballsociety.com',
-                'feed_url'    => 'http://www.portlandroundballsociety.com/home/rss.xml',
+                'feed_url'    => 'http://www.portlandroundballsociety.com/feed/',
                 'true_hoop'   => true,
             ),          
        ),
@@ -1108,7 +1098,7 @@ class DataFeedsBlogsByTeam {
            '48_minutes_of_hell' => array(
                 'title'       => '48 Minutes Of Hell',
                 'website_url' => 'http://www.48minutesofhell.com',
-                'feed_url'    => 'http://www.48minutesofhell.com/feed',
+                'feed_url'    => 'feed://www.48minutesofhell.com/feed',
                 'true_hoop'   => true,
             ),           
             'pounding_the_rock' => array(
@@ -1190,11 +1180,11 @@ class DataFeedsBlogsByTeam {
                 'feed_url'    => 'http://www.theutahjazzblog.com/rss',
                 'bloguin'     => true,
             ),   
-            'true_blue_jazz' => array(
-                'title'       => 'True Blue Jazz',
-                'website_url' => 'http://www.truebluejazz.com',
-                'feed_url'    => 'http://www.truebluejazz.com/feed/rss.html',
-            ),     
+            // 'true_blue_jazz' => array(
+            //     'title'       => 'True Blue Jazz',
+            //     'website_url' => 'http://www.truebluejazz.com',
+            //     'feed_url'    => 'http://www.truebluejazz.com/feed/rss.html',
+            // ),     
             'utah_jazz_360' => array(
                 'title'       => 'Utah Jazz 360, Official',
                 'website_url' => 'http://www.utahjazz360.com/',
@@ -1222,22 +1212,22 @@ class DataFeedsBlogsByTeam {
                 'top_blog'    => true,
                 'true_hoop'   => true,
             ),     
-            'washington_wizards_blog' => array(
-                'title'       => 'Washington Wizards Blog',
-                'website_url' => 'http://www.washingtonwizardsblog.com',
-                'feed_url'    => 'http://www.washingtonwizardsblog.com/feed',
-            ),
+            // 'washington_wizards_blog' => array(
+            //     'title'       => 'Washington Wizards Blog',
+            //     'website_url' => 'http://www.washingtonwizardsblog.com',
+            //     'feed_url'    => 'http://www.washingtonwizardsblog.com/feed',
+            // ),
             'wizards_insider' => array(
                 'title'       => 'Wizards Insider, The Washington Post',
                 'website_url' => 'http://www.washingtonpost.com/blogs/wizards-insider',
                 'feed_url'    => 'http://feeds.washingtonpost.com/rss/rss_wizards-insider',
             ),
-            'wizardsextreme' => array(
-                'title'       => 'Wizards Extreme',
-                'website_url' => 'http://www.wizardsextreme.com',
-                'feed_url'    => 'http://www.wizardsextreme.com/feed/rss.html',
-                'bloguin'   => true,
-            ),      
+            // 'wizardsextreme' => array(
+            //     'title'       => 'Wizards Extreme',
+            //     'website_url' => 'http://www.wizardsextreme.com',
+            //     'feed_url'    => 'http://www.wizardsextreme.com/feed/rss.html',
+            //     'bloguin'   => true,
+            // ),      
             'wiz_of_awes' => array(
                 'title'       => 'Wiz of Awes',
                 'website_url' => 'http://wizofawes.com',
