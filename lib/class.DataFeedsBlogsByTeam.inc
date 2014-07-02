@@ -100,7 +100,7 @@ class DataFeedsBlogsByTeam {
             //     'feed_url'    => 'http://shamrockheadband.blogspot.com/feeds/posts/default',
             // ),                                                
         ),
-        'charlotte_bobcats' => array(
+        'charlotte_hornets' => array(
             // 'bobcatsden' => array(
             //     'title'       => 'Bobcats Den',
             //     'website_url' => 'http://bobcatsden.com',
@@ -118,11 +118,11 @@ class DataFeedsBlogsByTeam {
             //     'website_url' => 'http://bobcatsplanet.com/wp/',
             //     'feed_url'    => 'http://bobcatsplanet.com/wp/feed',
             // ),
-            'bobcatzone' => array(
-                'title'       => 'Bobcat Zone',
-                'website_url' => 'http://bobcatzone.blogspot.com',
-                'feed_url'    => 'http://bobcatzone.blogspot.com/feeds/posts/default',
-            ),
+            // 'bobcatzone' => array(
+            //     'title'       => 'Bobcat Zone',
+            //     'website_url' => 'http://bobcatzone.blogspot.com',
+            //     'feed_url'    => 'http://bobcatzone.blogspot.com/feeds/posts/default',
+            // ),
             'queen_city_hoops' => array(
                 'title'       => 'Queen City Hoops',
                 'website_url' => 'http://queencityhoops.com/blog/',

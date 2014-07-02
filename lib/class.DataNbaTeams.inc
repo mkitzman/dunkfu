@@ -35,15 +35,15 @@ class DataNbaTeams {
                 'website'      => 'http://nba.com/nets',
                 'abbreviation' => 'bro',           
         ), 
-	    'charlotte_bobcats' => array(
-	            'name'         => 'Charlotte Bobcats',
-	            'nickname'     => 'Bobcats',
+	    'charlotte_hornets' => array(
+	            'name'         => 'Charlotte Hornets',
+	            'nickname'     => 'Hornets',
 	            'city'         => 'Charlotte',
 	            'state'        => 'North Carolina',
 	            'league'       => 'NBA',
 	            'conference'   => 'Eastern',
 	            'division'     => 'Southeast',
-	            'website'      => 'http://nba.com/bobcats',
+	            'website'      => 'http://nba.com/hornets',
 	            'abbreviation' => 'cha',           
 	    ),
 	    'chicago_bulls' => array(
@@ -339,7 +339,7 @@ class DataNbaTeams {
  	    //URL Value     => TEAM ARRAY KEY
 	    'hawks'         => 'atlanta_hawks',
 	    'celtics'       => 'boston_celtics',
-	    'bobcats'       => 'charlotte_bobcats',
+	    'hornets'       => 'charlotte_hornets',
 	    'bulls'         => 'chicago_bulls',
 	    'cavaliers'     => 'cleveland_cavaliers',
 	    'mavericks'     => 'dallas_mavericks',

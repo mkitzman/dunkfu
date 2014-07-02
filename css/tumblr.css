@@ -48,7 +48,6 @@
 }
 div#content ol li.photo p.meta a { 
 	color: #00C0FF;
-	color: #333; 
 	display: inline;
 	font-size: 93%;
 	height: 20px;
@@ -123,12 +122,10 @@ div#content ol li.photo .tags li {
 	list-style-type: none;
 }
 div#content ol li.photo .tags li a {
-	color: #333;
 	font-size: 85%;
 	font-style: italic;
 }
 div#content ol li.photo .tags li a:hover {
-	color: #7F7F7F;
 	text-decoration: underline;
 }
 div#content ol li.photo .tags li a:after {
