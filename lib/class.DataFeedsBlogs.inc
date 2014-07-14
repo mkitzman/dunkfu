@@ -51,11 +51,11 @@ class DataFeedsBlogs {
         //     'feed_url'    => 'http://feeds.cbssports.com/cbssports/mcc/blogs/syndicate/rss/22748484',
         // ),       
              
-        'fannation' => array(
-            'title'       => 'FanNation Truth & Rumors',
-            'website_url' => 'http://www.fannation.com/truth_and_rumors/nba',
-            'feed_url'    => 'http://www.fannation.com/truth_and_rumors/rss/nba.xml',
-        ),       
+        // 'fannation' => array(
+        //     'title'       => 'FanNation Truth & Rumors',
+        //     'website_url' => 'http://www.fannation.com/truth_and_rumors/nba',
+        //     'feed_url'    => 'http://www.fannation.com/truth_and_rumors/rss/nba.xml',
+        // ),       
         // 'freedarko' => array(
         //     'title'       => 'FreeDarko',
         //     'website_url' => 'http://freedarko.blogspot.com',
