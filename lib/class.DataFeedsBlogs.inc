@@ -83,11 +83,11 @@ class DataFeedsBlogs {
             'feed_url'    => 'http://feeds.feedburner.com/hp4sharebros?format=xml',
             'true_hoop'   => true,
         ),
-        'thehoopdoctors' => array(
-            'title'       => 'Hoop Doctors',
-            'website_url' => 'http://thehoopdoctors.com',
-            'feed_url'    => 'http://thehoopdoctors.com/online2/feed/',
-        ),        
+        // 'thehoopdoctors' => array(
+        //     'title'       => 'Hoop Doctors',
+        //     'website_url' => 'http://thehoopdoctors.com',
+        //     'feed_url'    => 'http://thehoopdoctors.com/online2/feed/',
+        // ),        
         'hoopsaddict' => array(
             'title'       => 'Hoops Addict',
             'website_url' => 'http://www.hoopsaddict.com',
@@ -172,11 +172,11 @@ class DataFeedsBlogs {
         //                 'website_url' => 'http://www.thenolookpass.com',
         //                 'feed_url'    => 'http://www.thenolookpass.com/feed/',
         //         ), 
-        'off_the_dribble' => array(
-            'title'       => 'Off the Dribble',
-            'website_url' => 'http://offthedribble.blogs.nytimes.com',
-            'feed_url'    => 'http://offthedribble.blogs.nytimes.com/?feed=rss2',
-        ),             
+        // 'off_the_dribble' => array(
+        //     'title'       => 'Off the Dribble',
+        //     'website_url' => 'http://offthedribble.blogs.nytimes.com',
+        //     'feed_url'    => 'http://offthedribble.blogs.nytimes.com/?feed=rss2',
+        // ),             
         'pro_hoops_central' => array(
             'title'       => 'Pro Hoops Central',
             'website_url' => 'http://prohoopscentral.com',

@@ -64,11 +64,11 @@ class DataFeedsBlogsByTeam {
             //     'website_url' => 'http://celticsstufflive.com',
             //     'feed_url'    => 'http://www.blogtalkradio.com/celtics_stuff_live.rss',
             // ),
-            'celtics_town' => array(
-                'title'       => 'Celtics Town',
-                'website_url' => 'http://celticstown.com',
-                'feed_url'    => 'http://www.celticstown.com/feed',
-            ),
+            // 'celtics_town' => array(
+            //     'title'       => 'Celtics Town',
+            //     'website_url' => 'http://celticstown.com',
+            //     'feed_url'    => 'http://www.celticstown.com/feed',
+            // ),
             // 'green_bandwagon' => array(
             //     'title'       => 'Green Bandwagon',
             //     'website_url' => 'http://www.greenbandwagon.com',
@@ -524,11 +524,11 @@ class DataFeedsBlogsByTeam {
             //     'website_url' => 'http://lakeshowlife.com',
             //     'feed_url'    => 'http://feeds.feedburner.com/fansided?format=xml',
             // ),
-            'la_lakers_daily_news' => array(
-                'title'       => 'LA Lakers Daily News',
-                'website_url' => 'http://www.lalakersdailynews.com',
-                'feed_url'    => 'http://feeds.feedburner.com/LaLakersNews?format=xml',
-            ),
+            // 'la_lakers_daily_news' => array(
+            //     'title'       => 'LA Lakers Daily News',
+            //     'website_url' => 'http://www.lalakersdailynews.com',
+            //     'feed_url'    => 'http://feeds.feedburner.com/LaLakersNews?format=xml',
+            // ),
             'la_times' => array(
                 'title'       => 'LA Times',
                 'website_url' => 'http://lakersblog.latimes.com',
@@ -894,12 +894,13 @@ class DataFeedsBlogsByTeam {
                 'website_url' => 'http://www.magicbasketball.net',
                 'feed_url'    => 'http://www.magicbasketball.net/feed/',
                 'true_hoop'   => true,
-            ),              
-           'magic_basket_blog' => array(
-                'title'       => 'Magic Basket Blog, Orlando Sentinel',
-                'website_url' => 'http://www.orlandosentinel.com/sports/blogs/magic-basketblog',
-                'feed_url'    => 'http://www.orlandosentinel.com/sports/blogs/magic-basketblog/rss2.0.xml',
-            ),      
+            ),    
+        //HAD ERRORS          
+           // 'magic_basket_blog' => array(
+           //      'title'       => 'Magic Basket Blog, Orlando Sentinel',
+           //      'website_url' => 'http://www.orlandosentinel.com/sports/blogs/magic-basketblog',
+           //      'feed_url'    => 'http://www.orlandosentinel.com/sports/blogs/magic-basketblog/rss2.0.xml',
+           //  ),      
 
            'orlando_magic_daily' => array(
                 'title'       => 'Orlando Magic Daily',
