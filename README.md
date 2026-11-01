@@ -1,4 +1,3 @@
-NBA Blog Aggregator for the NBA die hards
+# dunkfu
 
-<img width="1461" alt="Screenshot 2024-10-28 at 6 37 56 PM" src="https://github.com/user-attachments/assets/57775e7f-9f45-461e-9e5f-cefe7ef8ac00">
-
+New site in progress. The original PHP site is preserved on the `legacy` branch and the `v1-php` tag.
