@@ -47,32 +47,32 @@ const comingSoon = () => page('dunkfu', `
   <div class="eyebrow">Coming soon</div>
   <p>A new dunkfu is on the way: last night's scores, box scores and standings.</p>`)
 
-const login = error => page('dunkfu · preview', `
+const login = (error, unset) => page('dunkfu · preview', `
   <div class="mark">dunk<span>fu</span></div>
   <div class="eyebrow">Preview</div>
   <form method="post" action="/login">
     <input type="password" name="password" placeholder="Password" aria-label="Password" autofocus required>
     <button type="submit">Enter</button>
   </form>
-  ${error ? '<p class="err">Wrong password.</p>' : ''}`, error ? 401 : 200)
+  ${unset ? '<p class="err">Preview login isn\'t set up yet (PREVIEW_PASSWORD is missing in this deploy).</p>' : error ? '<p class="err">Wrong password.</p>' : ''}`, error ? 401 : 200)
 
 export default async (req, context) => {
   const url = new URL(req.url)
-  const password = Netlify.env.get('PREVIEW_PASSWORD')
+  const password = Netlify.env.get('PREVIEW_PASSWORD')?.trim()
   const expected = password ? await token(password) : null // no password set = nobody gets in
 
   if (url.pathname === '/login') {
     if (req.method === 'POST') {
       const form = await req.formData()
-      if (expected && (await token(String(form.get('password') || ''))) === expected) {
+      if (expected && (await token(String(form.get('password') || '').trim())) === expected) {
         return new Response(null, {
           status: 303,
           headers: { location: '/', 'set-cookie': `${COOKIE}=${expected}; Path=/; Max-Age=${MAX_AGE}; HttpOnly; Secure; SameSite=Lax` },
         })
       }
-      return login(true)
+      return login(true, !expected)
     }
-    return login(false)
+    return login(false, !expected)
   }
 
   if (url.pathname === '/logout') {
