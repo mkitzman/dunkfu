@@ -1,0 +1,272 @@
+[
+  {
+    "abbr": "PHI",
+    "city": "Philadelphia",
+    "nickname": "76ers",
+    "conference": "E",
+    "division": "Atlantic",
+    "seedColor": "#006BB6",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "DET",
+    "city": "Detroit",
+    "nickname": "Pistons",
+    "conference": "E",
+    "division": "Central",
+    "seedColor": "#C8102E",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "BOS",
+    "city": "Boston",
+    "nickname": "Celtics",
+    "conference": "E",
+    "division": "Atlantic",
+    "seedColor": "#007A33",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "CLE",
+    "city": "Cleveland",
+    "nickname": "Cavaliers",
+    "conference": "E",
+    "division": "Central",
+    "seedColor": "#860038",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "TOR",
+    "city": "Toronto",
+    "nickname": "Raptors",
+    "conference": "E",
+    "division": "Atlantic",
+    "seedColor": "#CE1141",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "WAS",
+    "city": "Washington",
+    "nickname": "Wizards",
+    "conference": "E",
+    "division": "Southeast",
+    "seedColor": "#E31837",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "NYK",
+    "city": "New York",
+    "nickname": "Knicks",
+    "conference": "E",
+    "division": "Atlantic",
+    "seedColor": "#F58426",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "MIA",
+    "city": "Miami",
+    "nickname": "Heat",
+    "conference": "E",
+    "division": "Southeast",
+    "seedColor": "#98002E",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "ATL",
+    "city": "Atlanta",
+    "nickname": "Hawks",
+    "conference": "E",
+    "division": "Southeast",
+    "seedColor": "#E03A3E",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "CHA",
+    "city": "Charlotte",
+    "nickname": "Hornets",
+    "conference": "E",
+    "division": "Southeast",
+    "seedColor": "#1D8CAB",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "ORL",
+    "city": "Orlando",
+    "nickname": "Magic",
+    "conference": "E",
+    "division": "Southeast",
+    "seedColor": "#0077C0",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "CHI",
+    "city": "Chicago",
+    "nickname": "Bulls",
+    "conference": "E",
+    "division": "Central",
+    "seedColor": "#CE1141",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "MIL",
+    "city": "Milwaukee",
+    "nickname": "Bucks",
+    "conference": "E",
+    "division": "Central",
+    "seedColor": "#1A6B3A",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "IND",
+    "city": "Indiana",
+    "nickname": "Pacers",
+    "conference": "E",
+    "division": "Central",
+    "seedColor": "#E0A52A",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "BKN",
+    "city": "Brooklyn",
+    "nickname": "Nets",
+    "conference": "E",
+    "division": "Atlantic",
+    "seedColor": "#4a4a4a",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "OKC",
+    "city": "Oklahoma City",
+    "nickname": "Thunder",
+    "conference": "W",
+    "division": "Northwest",
+    "seedColor": "#007AC1",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "SAS",
+    "city": "San Antonio",
+    "nickname": "Spurs",
+    "conference": "W",
+    "division": "Southwest",
+    "seedColor": "#7F8C99",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "POR",
+    "city": "Portland",
+    "nickname": "Trail Blazers",
+    "conference": "W",
+    "division": "Northwest",
+    "seedColor": "#E03A3E",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "DEN",
+    "city": "Denver",
+    "nickname": "Nuggets",
+    "conference": "W",
+    "division": "Northwest",
+    "seedColor": "#E0B020",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "LAL",
+    "city": "Los Angeles",
+    "nickname": "Lakers",
+    "conference": "W",
+    "division": "Pacific",
+    "seedColor": "#7B4FA8",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "GSW",
+    "city": "Golden State",
+    "nickname": "Warriors",
+    "conference": "W",
+    "division": "Pacific",
+    "seedColor": "#1D428A",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "HOU",
+    "city": "Houston",
+    "nickname": "Rockets",
+    "conference": "W",
+    "division": "Southwest",
+    "seedColor": "#CE1141",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "PHX",
+    "city": "Phoenix",
+    "nickname": "Suns",
+    "conference": "W",
+    "division": "Pacific",
+    "seedColor": "#E56020",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "MIN",
+    "city": "Minnesota",
+    "nickname": "Timberwolves",
+    "conference": "W",
+    "division": "Northwest",
+    "seedColor": "#236192",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "LAC",
+    "city": "Los Angeles",
+    "nickname": "Clippers",
+    "conference": "W",
+    "division": "Pacific",
+    "seedColor": "#C8102E",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "MEM",
+    "city": "Memphis",
+    "nickname": "Grizzlies",
+    "conference": "W",
+    "division": "Southwest",
+    "seedColor": "#5D76A9",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "DAL",
+    "city": "Dallas",
+    "nickname": "Mavericks",
+    "conference": "W",
+    "division": "Southwest",
+    "seedColor": "#0A5FA0",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "SAC",
+    "city": "Sacramento",
+    "nickname": "Kings",
+    "conference": "W",
+    "division": "Pacific",
+    "seedColor": "#5A2D81",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "UTA",
+    "city": "Utah",
+    "nickname": "Jazz",
+    "conference": "W",
+    "division": "Northwest",
+    "seedColor": "#F9A01B",
+    "note": "verify primary/secondary at nbacolors.com"
+  },
+  {
+    "abbr": "NOP",
+    "city": "New Orleans",
+    "nickname": "Pelicans",
+    "conference": "W",
+    "division": "Southwest",
+    "seedColor": "#B4975A",
+    "note": "verify primary/secondary at nbacolors.com"
+  }
+]
