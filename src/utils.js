@@ -1,0 +1,42 @@
+// Dates are game dates (YYYY-MM-DD) in America/New_York.
+
+const NY = 'America/New_York'
+
+export function todayNY() {
+  if (import.meta.env.VITE_TODAY) return import.meta.env.VITE_TODAY
+  return new Intl.DateTimeFormat('en-CA', { timeZone: NY, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date())
+}
+
+export function addDays(iso, n) {
+  const d = new Date(iso + 'T12:00:00Z')
+  d.setUTCDate(d.getUTCDate() + n)
+  return d.toISOString().slice(0, 10)
+}
+
+export function isIsoDate(s) {
+  return /^\d{4}-\d{2}-\d{2}$/.test(s) && !Number.isNaN(Date.parse(s + 'T12:00:00Z'))
+}
+
+const fmt = (iso, opts) => new Date(iso + 'T12:00:00Z').toLocaleDateString('en-US', { timeZone: 'UTC', ...opts })
+
+export const dateLong = iso => fmt(iso, { weekday: 'short', month: 'short', day: 'numeric' }) // Sat, Oct 31
+export const dateShort = iso => fmt(iso, { month: 'short', day: 'numeric' }) // Oct 31
+export const weekday = iso => fmt(iso, { weekday: 'long' })
+
+export function shortName(name) {
+  const parts = name.split(' ')
+  return parts.length > 1 ? `${parts[0][0]}. ${parts.slice(1).join(' ')}` : name
+}
+
+export const signed = (v, digits = 0) => (v > 0 ? '+' : '') + (digits ? v.toFixed(digits) : String(v))
+
+export const pct = (m, a) => (a ? Math.round((100 * m) / a) + '%' : '—')
+
+// Eyebrow label for a game date relative to today.
+export function dayTag(d, today) {
+  if (d === addDays(today, -1)) return 'Last night'
+  if (d === today) return 'Tonight'
+  if (d === addDays(today, 1)) return 'Tomorrow'
+  if (d < today && d > addDays(today, -7)) return `${weekday(d)} night`
+  return fmt(d, { month: 'short', day: 'numeric', year: 'numeric' })
+}

@@ -1,0 +1,21 @@
+{
+  "name": "dunkfu",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "fetch-data": "node --env-file=.env scripts/fetch-data.js"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^11.1.7",
+    "vue": "^3.5.44",
+    "vue-router": "^5.4.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.10",
+    "vite": "^8.3.5"
+  }
+}

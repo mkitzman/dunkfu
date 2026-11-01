@@ -1,0 +1,44 @@
+import { team } from '../data/teams.js'
+
+const pctOf = t => t.w / (t.w + t.l || 1)
+export const sortStandings = (a, b) => pctOf(b) - pctOf(a) || b.w - a.w || b.diff - a.diff
+
+// Decorate raw standings rows with team info and derived fields.
+export function prepare(rows) {
+  return rows.map(r => ({
+    ...r,
+    ...team(r.abbr),
+    pct: pctOf(r),
+    diff: Math.round((r.ppg - r.opp) * 10) / 10,
+    move: r.seed7dAgo == null ? 0 : r.seed7dAgo - r.seed,
+  }))
+}
+
+// Rank rows within a group and compute games behind the group leader.
+export function rankGroup(list) {
+  const sorted = list.slice().sort(sortStandings)
+  const lead = sorted[0]
+  return sorted.map((t, i) => ({ ...t, rank: i + 1, gb: (lead.w - t.w + (t.l - lead.l)) / 2 }))
+}
+
+const DIVISIONS = [['W', 'Pacific'], ['W', 'Northwest'], ['W', 'Southwest'], ['E', 'Atlantic'], ['E', 'Central'], ['E', 'Southeast']]
+const CONF_NAME = { E: 'Eastern', W: 'Western' }
+
+export function groupStandings(rows, view) {
+  if (view === 'league') {
+    return [{ key: 'league', title: 'League', sub: 'All 30 teams · conference seed in grey', rows: rankGroup(rows), tag: t => `${t.conference}${t.seed}` }]
+  }
+  if (view === 'division') {
+    return DIVISIONS.map(([c, d]) => ({
+      key: d, title: d,
+      sub: `${CONF_NAME[c]} Conference · seed marks show conference position`,
+      rows: rankGroup(rows.filter(t => t.division === d)),
+      tag: t => `${t.conference} · ${t.seed}`,
+    }))
+  }
+  return ['W', 'E'].map(c => ({
+    key: c, title: `${CONF_NAME[c]} Conference`, sub: 'Seeded by record',
+    rows: rankGroup(rows.filter(t => t.conference === c)).map(t => ({ ...t, rank: t.seed })).sort((a, b) => a.seed - b.seed),
+    cuts: true,
+  }))
+}
