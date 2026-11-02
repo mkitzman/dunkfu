@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import TeamMark from './TeamMark.vue'
-import { shortName, signed, pct } from '../utils.js'
+import { shortName, signed, pct, STAT_NAMES } from '../utils.js'
 
 const props = defineProps({
   team: { type: Object, required: true }, // { abbr, name, color }
@@ -33,11 +33,11 @@ const pcts = computed(() => ['', '', pct(sum('fgm'), sum('fga')), pct(sum('tpm')
       <table class="stats edge">
         <template v-for="(s, si) in sections" :key="s.label">
           <thead v-if="si === 0">
-            <tr><th scope="col">{{ s.label }}</th><th v-for="c in COLS" :key="c" scope="col">{{ c }}</th></tr>
+            <tr><th scope="col">{{ s.label }}</th><th v-for="c in COLS" :key="c" scope="col" :title="STAT_NAMES[c]">{{ c }}</th></tr>
           </thead>
           <tbody>
             <tr v-if="si > 0" class="sec">
-              <th scope="colgroup">{{ s.label }}</th><th v-for="c in COLS" :key="c" aria-hidden="true">{{ c }}</th>
+              <th scope="colgroup">{{ s.label }}</th><th v-for="c in COLS" :key="c" aria-hidden="true" :title="STAT_NAMES[c]">{{ c }}</th>
             </tr>
             <tr v-for="p in s.rows" :key="p.name">
               <td class="name" :title="p.name">{{ shortName(p.name) }} <span class="num">#{{ p.num }}</span></td>

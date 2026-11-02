@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useSort } from '../composables/useSort.js'
 import { team } from '../data/teams.js'
-import { shortName, signed } from '../utils.js'
+import { shortName, signed, STAT_NAMES } from '../utils.js'
 
 const props = defineProps({
   players: { type: Array, required: true },
@@ -43,6 +43,7 @@ const ariaSort = key => (sort.value.key === key ? (sort.value.dir < 0 ? 'descend
             class="sortable"
             :class="{ sorted: sort.key === c.key }"
             :aria-sort="ariaSort(c.key)"
+            :title="STAT_NAMES[c.label]"
           >
             <button type="button" @click="setSort(c.key)">{{ c.label }}{{ sort.key === c.key ? (sort.dir < 0 ? ' ▾' : ' ▴') : '' }}</button>
           </th>

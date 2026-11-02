@@ -40,3 +40,17 @@ export function dayTag(d, today) {
   if (d < today && d > addDays(today, -7)) return `${weekday(d)} night`
   return fmt(d, { month: 'short', day: 'numeric', year: 'numeric' })
 }
+
+// Full names for stat column abbreviations (header tooltips).
+export const STAT_NAMES = {
+  MIN: 'Minutes', PTS: 'Points', REB: 'Rebounds', AST: 'Assists', STL: 'Steals', BLK: 'Blocks',
+  TOV: 'Turnovers', TO: 'Turnovers',
+  FG: 'Field goals made-attempted', '3P': '3-pointers made-attempted', '3PT': '3-pointers made-attempted', FT: 'Free throws made-attempted',
+  'FG%': 'Field goal percentage', '3P%': '3-point percentage', 'FT%': 'Free throw percentage',
+  '+/-': 'Plus/minus (point differential while on the court)',
+  '7D': 'Change in conference seed over the last 7 days',
+  W: 'Wins', L: 'Losses', PCT: 'Winning percentage', GB: 'Games behind the leader',
+  HOME: 'Home record', AWAY: 'Road record', CONF: 'Conference record',
+  PPG: 'Points per game', OPP: 'Opponent points per game', DIFF: 'Average point differential',
+  STRK: 'Current streak', L10: 'Record in the last 10 games',
+}

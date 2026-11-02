@@ -6,7 +6,7 @@ import SeedMark from '../components/SeedMark.vue'
 import TeamMark from '../components/TeamMark.vue'
 import { getStandings } from '../api/index.js'
 import { prepare, groupStandings } from '../composables/useStandings.js'
-import { todayNY, addDays, dateLong } from '../utils.js'
+import { todayNY, addDays, dateLong, STAT_NAMES } from '../utils.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -68,8 +68,8 @@ const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
             <thead>
               <tr>
                 <th scope="col">TEAM</th>
-                <th scope="col" class="c">7D</th>
-                <th v-for="c in COLS" :key="c" scope="col">{{ c }}</th>
+                <th scope="col" class="c" :title="STAT_NAMES['7D']">7D</th>
+                <th v-for="c in COLS" :key="c" scope="col" :title="STAT_NAMES[c]">{{ c }}</th>
               </tr>
             </thead>
             <tbody>
