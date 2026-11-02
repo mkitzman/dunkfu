@@ -213,7 +213,7 @@ const leaders = computed(() => {
   position: relative;
   overflow: hidden;
   margin-top: 22px;
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: var(--base);
   color: var(--fg);
 }
@@ -348,14 +348,14 @@ const leaders = computed(() => {
   grid-template-columns: 1fr 1fr;
 
   & > * { overflow: hidden; }
-  & > :first-child { border-radius: 8px 0 0 8px; }
-  & > :last-child { border-radius: 0 8px 8px 0; }
+  & > :first-child { border-radius: var(--radius) 0 0 var(--radius); }
+  & > :last-child { border-radius: 0 var(--radius) var(--radius) 0; }
   & > * + * { margin-left: -1px; }
 }
 @container (max-width: 1040px) {
   .pair { grid-template-columns: 1fr; }
-  .pair > :first-child { border-radius: 8px 8px 0 0; }
-  .pair > :last-child { border-radius: 0 0 8px 8px; }
+  .pair > :first-child { border-radius: var(--radius) var(--radius) 0 0; }
+  .pair > :last-child { border-radius: 0 0 var(--radius) var(--radius); }
   .pair > * + * { margin-left: 0; margin-top: -1px; }
 }
 
