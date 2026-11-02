@@ -40,5 +40,3 @@ export function dayTag(d, today) {
   if (d < today && d > addDays(today, -7)) return `${weekday(d)} night`
   return fmt(d, { month: 'short', day: 'numeric', year: 'numeric' })
 }
-
-export const dateFull = iso => fmt(iso, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) // Sun, Nov 1, 2026

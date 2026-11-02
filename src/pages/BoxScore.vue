@@ -1,18 +1,20 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import TeamMark from '../components/TeamMark.vue'
 import LeaderCard from '../components/LeaderCard.vue'
 import TeamBoxTable from '../components/TeamBoxTable.vue'
 import Awards from '../components/Awards.vue'
-import GameStrip from '../components/GameStrip.vue'
+import DateNav from '../components/DateNav.vue'
 import { getGame, getGames, getAwards } from '../api/index.js'
 import { team } from '../data/teams.js'
 import ARENAS from '../data/arenas.json'
 import ARENA_MAPS from '../data/arenaMaps.js'
-import { dateFull, shortName } from '../utils.js'
+import { todayNY, dateLong, dateShort, dayTag, weekday, shortName } from '../utils.js'
 
 const route = useRoute()
+const router = useRouter()
+const today = todayNY()
 
 const game = ref(null)
 const dayGames = ref([])
@@ -31,6 +33,21 @@ watch(() => route.params.id, async id => {
   gameAwards.value = a?.games?.[id] ?? null
   loading.value = false
 }, { immediate: true })
+
+// Arrows step through that night's games, in tip-off order.
+const index = computed(() => dayGames.value.findIndex(g => g.id === game.value?.id))
+const goGame = n => {
+  const g = dayGames.value[index.value + n]
+  if (g) router.push(`/game/${g.id}`)
+}
+const navTag = computed(() => {
+  const t = dayTag(game.value.date, today)
+  return /night|tonight|tomorrow/i.test(t) ? t : `${weekday(game.value.date)} night`
+})
+const navSummary = computed(() => {
+  const n = dayGames.value.length
+  return index.value >= 0 && n > 1 ? `Game ${index.value + 1} of ${n}` : ''
+})
 
 const sides = computed(() => {
   const g = game.value
@@ -107,10 +124,19 @@ const leaders = computed(() => {
     <p v-if="!loading && !game" class="missing card">Game not found. <RouterLink to="/" class="eyebrow">Back to scores</RouterLink></p>
 
     <template v-else-if="game">
-      <div class="top">
-        <RouterLink :to="`/${game.date}`" class="date">{{ dateFull(game.date) }}</RouterLink>
-        <GameStrip v-if="dayGames.length > 1" :games="dayGames" :current-id="game.id" />
-      </div>
+      <DateNav
+        class="nav"
+        unit="game"
+        :tag="navTag"
+        :tag-to="`/${game.date}`"
+        :title="dateLong(game.date)"
+        :short="dateShort(game.date)"
+        :summary="navSummary"
+        :can-prev="index > 0"
+        :can-next="index >= 0 && index < dayGames.length - 1"
+        @prev="goGame(-1)"
+        @next="goGame(1)"
+      />
 
       <section
         class="board"
@@ -179,16 +205,8 @@ const leaders = computed(() => {
 </template>
 
 <style scoped>
-.page { padding-top: 28px; padding-bottom: 48px; }
-
-.top { display: grid; gap: 12px; }
-.date {
-  justify-self: center;
-  font: 600 14px var(--sans);
-  color: var(--ac);
-
-  &:hover { text-decoration: underline; }
-}
+.page { padding-bottom: 48px; }
+.nav { padding-left: 0; padding-right: 0; padding-bottom: 0; }
 
 /* Scoreboard: navy card with the arena map showing through on the right. */
 .board {
@@ -198,7 +216,7 @@ const leaders = computed(() => {
   --tie: rgba(255, 255, 255, .12);
   position: relative;
   overflow: hidden;
-  margin-top: 26px;
+  margin-top: 22px;
   border-radius: 12px;
   background: var(--base);
   color: var(--fg);
@@ -355,8 +373,7 @@ const leaders = computed(() => {
 }
 
 @media (max-width: 720px) {
-  .page { padding-top: 18px; }
-  .board { margin-top: 18px; }
+  .board { margin-top: 16px; }
   .map, .pin { display: none; }
   .shade { background: none; }
   .content {

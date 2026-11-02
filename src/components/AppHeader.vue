@@ -67,8 +67,8 @@ watch(() => route.fullPath, () => { open.value = false })
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 28px;
-  max-width: calc(var(--max) + 56px);
+  padding: 16px var(--gutter);
+  max-width: var(--max);
   margin: 0 auto;
 }
 .wordmark {
@@ -90,7 +90,7 @@ watch(() => route.fullPath, () => { open.value = false })
 .menu-btn, .mobile-nav { display: none; }
 
 @media (max-width: 720px) {
-  .bar { padding: 14px 18px; }
+  .bar { padding-top: 14px; padding-bottom: 14px; }
   .wordmark { font-size: 20px; }
   .nav { display: none; }
   .menu-btn {
