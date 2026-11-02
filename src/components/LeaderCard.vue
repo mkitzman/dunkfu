@@ -1,4 +1,5 @@
 <script setup>
+import { chipStyle } from '../data/teams.js'
 defineProps({
   label: { type: String, required: true },
   leaders: { type: Array, required: true }, // [{ key, name, short, num, abbr, color, value, sub }]
@@ -7,13 +8,13 @@ defineProps({
 
 <template>
   <div class="leader-card">
-    <h3>{{ label }}</h3>
+    <h2>{{ label }}</h2>
     <ol>
       <li v-for="(p, i) in leaders" :key="p.key" :class="{ first: i === 0 }">
         <span class="rank">{{ i + 1 }}</span>
         <div class="who">
           <div class="name">
-            <span class="full">{{ p.name }}</span><span class="abbrv">{{ p.short }}</span><span class="team-chip" :style="{ '--team': p.color }">{{ p.abbr }}</span><span class="num">#{{ p.num }}</span>
+            <span class="full">{{ p.name }}</span><span class="abbrv">{{ p.short }}</span><span class="team-chip" :style="chipStyle(p.color)">{{ p.abbr }}</span><span class="num">#{{ p.num }}</span>
           </div>
           <div class="sub">{{ p.sub }}</div>
           <div class="track"><div :style="{ width: `${leaders[0].value ? (100 * p.value) / leaders[0].value : 0}%`, background: p.color }"></div></div>
@@ -31,7 +32,7 @@ defineProps({
   border-radius: var(--radius);
   padding: 16px 18px 10px;
 }
-h3 {
+h2 {
   font: 500 11px var(--mono);
   letter-spacing: .12em;
   text-transform: uppercase;
@@ -51,12 +52,11 @@ li {
 .who { min-width: 0; }
 .name {
   font: 400 14px var(--sans);
-  opacity: .8;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.first .name { font-weight: 600; opacity: 1; }
+.first .name { font-weight: 600; }
 .num { font: 400 11px var(--mono); color: var(--mu); }
 .abbrv { display: none; }
 .sub { font: 400 11px var(--mono); color: var(--mu); margin-top: 2px; }
@@ -79,7 +79,7 @@ li {
 
 @media (max-width: 720px) {
   .leader-card { padding: 12px 14px 6px; }
-  h3 { font-size: 10px; margin-bottom: 8px; }
+  h2 { font-size: 10px; margin-bottom: 8px; }
   li { gap: 10px; padding: 7px 0; }
   .rank { font-size: 12px; width: 14px; }
   .name { font-size: 13px; }

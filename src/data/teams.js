@@ -10,9 +10,38 @@ export function team(abbr) {
   return byAbbr[abbr]
 }
 
-// Text color for a team-color block (README contrast rule).
+// Text color for a team-color block: white or near-black, whichever reads
+// better; pure black when neither reaches 4.5:1 (mid reds like #E03A3E).
 export function onColor(hex) {
-  const n = parseInt(hex.slice(1), 16)
-  const r = n >> 16, g = (n >> 8) & 255, b = n & 255
-  return 0.299 * r + 0.587 * g + 0.114 * b > 160 ? '#15171a' : '#fff'
+  const best = contrast(hex, '#ffffff') >= contrast(hex, '#15171a') ? '#ffffff' : '#15171a'
+  return contrast(hex, best) >= 4.5 ? best : '#000000'
+}
+
+// WCAG contrast helpers for team colors used as text (team chips).
+const rgb = hex => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16))
+const lum = hex => {
+  const [r, g, b] = rgb(hex).map(v => {
+    v /= 255
+    return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4
+  })
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b
+}
+const contrast = (a, b) => {
+  const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m)
+  return (x + 0.05) / (y + 0.05)
+}
+const mix = (a, b, t) => '#' + rgb(a).map((v, i) => Math.round(v * (1 - t) + rgb(b)[i] * t).toString(16).padStart(2, '0')).join('')
+
+// Nudge a color toward black (or white) until it reads at 4.5:1 on bg.
+function readable(hex, bg, toward) {
+  for (let t = 0; t <= 1; t += 0.05) {
+    const c = mix(hex, toward, t)
+    if (contrast(c, bg) >= 4.5) return c
+  }
+  return toward
+}
+
+// CSS variables for a .team-chip: light and dark theme versions on --sf.
+export function chipStyle(hex) {
+  return { '--team': readable(hex, '#ffffff', '#000000'), '--team-dark': readable(hex, '#1a1d21', '#ffffff') }
 }

@@ -7,6 +7,7 @@ import TeamBoxTable from '../components/TeamBoxTable.vue'
 import Awards from '../components/Awards.vue'
 import PageNav from '../components/PageNav.vue'
 import { getGame, getGames, getAwards } from '../api/index.js'
+import { announce } from '../composables/useAnnounce.js'
 import { team } from '../data/teams.js'
 import ARENAS from '../data/arenas.json'
 import ARENA_MAPS from '../data/arenaMaps.js'
@@ -21,7 +22,7 @@ const gameAwards = ref(null)
 const loading = ref(true)
 
 let req = 0
-watch(() => route.params.id, async id => {
+watch(() => route.params.id, async (id, old) => {
   const n = ++req
   loading.value = true
   const g = await getGame(id)
@@ -31,6 +32,10 @@ watch(() => route.params.id, async id => {
   dayGames.value = day.filter(x => x.status === 'final')
   gameAwards.value = a?.games?.[id] ?? null
   loading.value = false
+  if (old && g) {
+    const [x, y] = sides.value
+    announce(`${x.name} ${x.score}, ${y.name} ${y.score}, final. ${summary.value}`)
+  }
 }, { immediate: true })
 
 // Arrows step through that night's games, in tip-off order.

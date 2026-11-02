@@ -6,6 +6,7 @@ import GameCard from '../components/GameCard.vue'
 import PlayerTable from '../components/PlayerTable.vue'
 import Awards from '../components/Awards.vue'
 import { getGames, getBoxscores, getAverages, getAwards } from '../api/index.js'
+import { announce } from '../composables/useAnnounce.js'
 import { todayNY, addDays, dateLong, dateShort, dayTag } from '../utils.js'
 
 const route = useRoute()
@@ -22,7 +23,7 @@ const awards = ref(null)
 const loading = ref(true)
 
 let req = 0
-watch(date, async d => {
+watch(date, async (d, old) => {
   const id = ++req
   loading.value = true
   const prevD = addDays(d, -1), nextD = addDays(d, 1)
@@ -36,6 +37,7 @@ watch(date, async d => {
   players.value = p
   awards.value = a
   loading.value = false
+  if (old) announce(`${dateLong(d)}. ${summary.value}`)
 }, { immediate: true })
 
 const tag = computed(() => dayTag(date.value, today))

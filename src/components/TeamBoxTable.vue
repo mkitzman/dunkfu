@@ -27,7 +27,7 @@ const pcts = computed(() => ['', '', pct(sum('fgm'), sum('fga')), pct(sum('tpm')
   <div class="tbox" :style="{ '--team': team.color }">
     <div class="head">
       <TeamMark :abbr="team.abbr" :size="28" :radius="6" :font-size="10" />
-      <h3>{{ team.name }}</h3>
+      <h2>{{ team.name }}</h2>
     </div>
     <div class="table-wrap">
       <table class="stats edge">
@@ -45,7 +45,7 @@ const pcts = computed(() => ['', '', pct(sum('fgm'), sum('fga')), pct(sum('tpm')
             </tr>
             <template v-if="si === sections.length - 1">
               <tr v-for="n in pad" :key="`pad${n}`" class="pad" aria-hidden="true">
-                <td>&nbsp;</td><td colspan="11">DNP</td>
+                <td>&nbsp;</td><td colspan="11"></td>
               </tr>
               <tr class="total">
                 <td>TEAM</td><td v-for="(v, i) in totals" :key="i">{{ v }}</td>
@@ -75,7 +75,7 @@ const pcts = computed(() => ['', '', pct(sum('fgm'), sum('fga')), pct(sum('tpm')
   padding: 10px 12px;
   border-bottom: 1px solid var(--ln);
 
-  & h3 { font: 600 14px var(--sans); margin: 0; }
+  & h2 { font: 600 14px var(--sans); margin: 0; }
 }
 
 table.stats {
@@ -102,7 +102,6 @@ table.stats {
     background: linear-gradient(var(--ln2), var(--ln2)), var(--sf);
   }
   & tr.pct td { color: var(--fg); font-weight: 500; border-bottom: 0; }
-  & tr.pad td { color: var(--ln); }
   & tr.pad:hover { background: none; }
   & tr.total:hover, & tr.pct:hover, & tr.sec:hover { background: none; }
   & tr.total:hover td { background: var(--ln2); }
@@ -111,7 +110,7 @@ table.stats {
 @media (max-width: 720px) {
   .tbox { border-left: 0; border-right: 0; border-top-width: 3px; }
   .head { padding: 8px var(--gutter); gap: 8px; --mark-size: 24px; --mark-r: 5px; --mark-fs: 9px; }
-  .head h3 { font-size: 13px; }
+  .head h2 { font-size: 13px; }
   table.stats {
     & th:first-child, & td:first-child { max-width: 140px; padding-left: var(--gutter); }
     & .num { font-size: 10px; }

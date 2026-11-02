@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import { team } from '../data/teams.js'
+import { team, chipStyle } from '../data/teams.js'
 
 const props = defineProps({
   label: { type: String, required: true },
@@ -36,11 +36,11 @@ const big = computed(() => [['PTS', a.value.pts], ['REB', a.value.reb], ['AST', 
     :class="{ linked: link }"
     :title="`Game Score ${award.gs}${award.exp != null ? ` · expected ${award.exp}` : ''}`"
   >
-    <h3>{{ label }}</h3>
+    <h2>{{ label }}</h2>
     <div class="row">
       <div class="who">
         <div class="name">
-          {{ award.name }}<span class="team-chip" :style="{ '--team': color }">{{ award.abbr }}</span><span class="num">#{{ award.num }}</span>
+          {{ award.name }}<span class="team-chip" :style="chipStyle(color)">{{ award.abbr }}</span><span class="num">#{{ award.num }}</span>
         </div>
         <div class="note" :class="kind">{{ note }}</div>
         <div class="line">{{ line }}</div>
@@ -69,7 +69,7 @@ a.linked:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   a.linked:hover { transform: scale(1.02); }
 }
-h3 {
+h2 {
   font: 500 11px var(--mono);
   letter-spacing: .12em;
   text-transform: uppercase;
@@ -105,7 +105,7 @@ h3 {
 
 @media (max-width: 720px) {
   .award { padding: 14px 14px 12px; }
-  h3 { font-size: 10px; margin-bottom: 10px; padding-bottom: 10px; }
+  h2 { font-size: 10px; margin-bottom: 10px; padding-bottom: 10px; }
   .row { gap: 10px; }
   .name { font-size: 14px; }
   .note, .line { font-size: 10.5px; }
