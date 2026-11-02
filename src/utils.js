@@ -34,7 +34,7 @@ export const pct = (m, a) => (a ? Math.round((100 * m) / a) + '%' : '—')
 
 // Eyebrow label for a game date relative to today.
 export function dayTag(d, today) {
-  if (d === addDays(today, -1)) return 'Last night'
+  if (d === addDays(today, -1)) return 'Last night in the NBA'
   if (d === today) return 'Tonight'
   if (d === addDays(today, 1)) return 'Tomorrow'
   if (d < today && d > addDays(today, -7)) return `${weekday(d)} night`
