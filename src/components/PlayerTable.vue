@@ -71,6 +71,7 @@ const ariaSort = key => (sort.value.key === key ? (sort.value.dir < 0 ? 'descend
 
 <style scoped>
 /* Row headers are <th> for accessibility; style them as the sticky first cell. */
+table.stats tbody tr:hover th.player { background: linear-gradient(var(--ln2), var(--ln2)), var(--sf); }
 table.stats tbody th.player {
   display: table-cell;
   text-align: left;
@@ -106,6 +107,7 @@ thead th:first-child { padding: 11px 14px; font-size: 11px; letter-spacing: .08e
 
 @media (max-width: 720px) {
   .player-table { border-left: 0; border-right: 0; border-radius: 0; }
+  table.stats tbody tr:hover th.player { background: linear-gradient(var(--ln2), var(--ln2)), var(--bg); }
   table.stats tbody th.player { background: var(--bg); padding: 7px 10px 7px var(--gutter); max-width: 150px; overflow: hidden; text-overflow: ellipsis; }
   .bar { height: 24px; margin-right: 8px; }
   .who { min-width: 0; max-width: 110px; }

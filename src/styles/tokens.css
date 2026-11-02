@@ -157,6 +157,8 @@ table.stats {
   }
 
   & tbody tr:hover { background: var(--ln2); }
+  /* The sticky first cell is opaque; layer the hover tint over it too. */
+  & tbody tr:hover > :first-child { background: linear-gradient(var(--ln2), var(--ln2)), var(--sf); }
 
   & th.sortable {
     cursor: pointer;
@@ -185,6 +187,7 @@ table.stats {
   /* Edge-to-edge tables on mobile sit on --bg */
   table.stats.edge {
     & td:first-child { background: var(--bg); padding-left: var(--gutter); }
+    & tbody tr:hover > :first-child { background: linear-gradient(var(--ln2), var(--ln2)), var(--bg); }
     & th:first-child { background: var(--bg); padding-left: var(--gutter); }
     & th.sortable button { padding-top: 15px; padding-bottom: 15px; }
   }
