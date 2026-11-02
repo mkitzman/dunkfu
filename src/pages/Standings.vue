@@ -148,7 +148,7 @@ h1 {
   margin-bottom: 10px;
 
   & h2 { font: 600 16px var(--sans); margin: 0; }
-  & span { font: 400 11px var(--mono); color: var(--mu); }
+  & span { font: 400 11px var(--mono); color: var(--mu); margin-left: auto; text-align: right; }
 }
 
 .team { display: flex; align-items: center; gap: 10px; }
