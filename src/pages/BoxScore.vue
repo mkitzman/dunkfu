@@ -51,6 +51,19 @@ const qLabels = computed(() => {
   for (let i = 4; i < nq.value; i++) l.push(i === 4 ? 'OT' : `${i - 3}OT`)
   return l.concat('T')
 })
+// Quarter heat map: shade each quarter by the margin it was won or lost by.
+// Within 2 points stays plain; 15+ gets the full shade.
+function heat(margin) {
+  const title = margin > 0 ? `Won the quarter by ${margin}` : margin < 0 ? `Lost the quarter by ${-margin}` : 'Even quarter'
+  if (Math.abs(margin) <= 2) return { class: 'q', title }
+  const strength = Math.min(Math.abs(margin), 15) / 15
+  return {
+    class: ['q', margin > 0 ? 'q-won' : 'q-lost'],
+    style: { '--heat': `${Math.round(8 + strength * 24)}%` },
+    title,
+  }
+}
+
 const status = computed(() => (nq.value > 5 ? `FINAL/${nq.value - 4}OT` : nq.value > 4 ? 'FINAL/OT' : 'FINAL'))
 
 const hasBox = computed(() => sides.value.length && sides.value.every(s => s.players))
@@ -104,7 +117,7 @@ const leaders = computed(() => {
               v-for="(q, i) in s.quarters"
               :key="i"
               role="cell"
-              :class="{ up: q > sides[1 - si].quarters[i] }"
+              v-bind="heat(q - sides[1 - si].quarters[i])"
             >{{ q }}</span>
             <span role="cell" class="tot" :class="{ up: s.won }">{{ s.score }}</span>
           </div>
@@ -181,18 +194,21 @@ const leaders = computed(() => {
   border-left: 1px solid var(--ln);
   padding-left: 28px;
   display: grid;
-  row-gap: 8px;
+  row-gap: 4px;
   font: 400 14px var(--mono);
   font-variant-numeric: tabular-nums;
 }
 .qr {
   display: grid;
   grid-template-columns: 48px repeat(var(--cols), 44px);
-  align-items: baseline;
+  column-gap: 4px;
+  align-items: center;
 
-  & > span:not(:first-child) { text-align: right; color: var(--mu); }
-  & > .up { color: var(--fg); }
-  & > .tot { font-weight: 600; }
+  & > span:not(:first-child) { text-align: right; color: var(--mu); padding: 4px 8px 4px 0; border-radius: 6px; }
+  & > span.up { color: var(--fg); }
+  & > span.tot { font-weight: 600; }
+  & > span.q-won { color: var(--fg); background: color-mix(in oklch, var(--ac) var(--heat), transparent); }
+  & > span.q-lost { background: color-mix(in oklch, var(--dn) var(--heat), transparent); }
 }
 .st { font: 500 11px var(--mono); letter-spacing: .1em; color: var(--mu); }
 .qr > .ql { font-size: 11px; }

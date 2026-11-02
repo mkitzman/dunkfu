@@ -33,7 +33,9 @@ defineProps({
 .meta { cursor: help; }
 
 @media (max-width: 720px) {
+  .section-head { display: block; }
   .section-head h2 { font-size: 15px; }
+  .section-head .meta { display: block; margin-top: 2px; font-size: 10px; }
   .cards { grid-template-columns: 1fr; gap: 10px; }
 }
 </style>
