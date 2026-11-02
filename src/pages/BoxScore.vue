@@ -127,13 +127,9 @@ const leaders = computed(() => {
       </section>
 
       <template v-if="hasBox">
-        <Awards v-if="gameAwards" :awards="gameAwards" scope="game" class="block" />
+        <Awards v-if="gameAwards" :awards="gameAwards" scope="game" :heading="false" class="block" />
 
-        <section class="block">
-          <div class="section-head">
-            <h2>Game leaders</h2>
-            <span class="meta">Top 3 across both teams</span>
-          </div>
+        <section class="block" aria-label="Game leaders">
           <div class="leaders">
             <LeaderCard v-for="c in leaders" :key="c.label" :label="c.label" :leaders="c.list" />
           </div>

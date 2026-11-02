@@ -4,12 +4,17 @@ import AwardCard from './AwardCard.vue'
 defineProps({
   awards: { type: Object, required: true }, // { performer, dud }
   scope: { type: String, required: true }, // 'night' | 'game'
+  heading: { type: Boolean, default: true },
 })
 </script>
 
 <template>
-  <section v-if="awards.performer || awards.dud" class="awards-section">
-    <div class="section-head">
+  <section
+    v-if="awards.performer || awards.dud"
+    class="awards-section"
+    :aria-label="scope === 'night' ? 'Best and worst of the night' : 'Best and worst of the game'"
+  >
+    <div v-if="heading" class="section-head">
       <h2>{{ scope === 'night' ? 'Best and worst of the night' : 'Best and worst of the game' }}</h2>
       <span class="meta" title="Game Score rolls a full stat line into one number: about 10 is average, 20+ is very good. Expected is the player's season Game Score per minute times tonight's minutes.">
         By Game Score · {{ scope === 'night' ? 'across the league' : 'this game' }}
