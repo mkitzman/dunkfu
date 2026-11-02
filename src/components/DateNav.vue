@@ -4,27 +4,23 @@ defineProps({
   title: { type: String, required: true },
   short: { type: String, required: true },
   summary: { type: String, default: '' },
-  canPrev: { type: Boolean, default: true },
   canNext: { type: Boolean, default: true },
-  tagTo: { type: String, default: null }, // makes the eyebrow a link
-  unit: { type: String, default: 'day' }, // arrow labels: "Previous day" / "Previous game"
 })
 defineEmits(['prev', 'next'])
 </script>
 
 <template>
   <div class="datenav">
-    <button type="button" class="arrow" :aria-label="`Previous ${unit}`" :disabled="!canPrev" @click="$emit('prev')">◀</button>
+    <button type="button" class="arrow" aria-label="Previous day" @click="$emit('prev')">◀</button>
     <div class="label">
-      <RouterLink v-if="tagTo" :to="tagTo" class="eyebrow tag-link">{{ tag }}</RouterLink>
-      <div v-else class="eyebrow">{{ tag }}</div>
+      <div class="eyebrow">{{ tag }}</div>
       <h1 class="date">
         <span class="long">{{ title }}</span>
         <span class="short">{{ short }}</span>
       </h1>
       <div v-if="summary" class="summary">{{ summary }}</div>
     </div>
-    <button type="button" class="arrow" :aria-label="`Next ${unit}`" :disabled="!canNext" @click="$emit('next')">▶</button>
+    <button type="button" class="arrow" aria-label="Next day" :disabled="!canNext" @click="$emit('next')">▶</button>
   </div>
 </template>
 
@@ -52,7 +48,6 @@ defineEmits(['prev', 'next'])
   &:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
 }
 .label { text-align: center; min-width: 260px; }
-.tag-link:hover { text-decoration: underline; }
 .date {
   font: 600 24px/1.2 var(--sans);
   letter-spacing: -.02em;

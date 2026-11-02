@@ -1,11 +1,11 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import TeamMark from '../components/TeamMark.vue'
 import LeaderCard from '../components/LeaderCard.vue'
 import TeamBoxTable from '../components/TeamBoxTable.vue'
 import Awards from '../components/Awards.vue'
-import DateNav from '../components/DateNav.vue'
+import GameNav from '../components/GameNav.vue'
 import { getGame, getGames, getAwards } from '../api/index.js'
 import { team } from '../data/teams.js'
 import ARENAS from '../data/arenas.json'
@@ -13,7 +13,6 @@ import ARENA_MAPS from '../data/arenaMaps.js'
 import { todayNY, dateLong, dateShort, dayTag, weekday, shortName } from '../utils.js'
 
 const route = useRoute()
-const router = useRouter()
 const today = todayNY()
 
 const game = ref(null)
@@ -36,17 +35,9 @@ watch(() => route.params.id, async id => {
 
 // Arrows step through that night's games, in tip-off order.
 const index = computed(() => dayGames.value.findIndex(g => g.id === game.value?.id))
-const goGame = n => {
-  const g = dayGames.value[index.value + n]
-  if (g) router.push(`/game/${g.id}`)
-}
 const navTag = computed(() => {
   const t = dayTag(game.value.date, today)
   return /night|tonight|tomorrow/i.test(t) ? t : `${weekday(game.value.date)} night`
-})
-const navSummary = computed(() => {
-  const n = dayGames.value.length
-  return index.value >= 0 && n > 1 ? `Game ${index.value + 1} of ${n}` : ''
 })
 
 const sides = computed(() => {
@@ -124,18 +115,15 @@ const leaders = computed(() => {
     <p v-if="!loading && !game" class="missing card">Game not found. <RouterLink to="/" class="eyebrow">Back to scores</RouterLink></p>
 
     <template v-else-if="game">
-      <DateNav
-        class="nav"
-        unit="game"
+      <GameNav
         :tag="navTag"
-        :tag-to="`/${game.date}`"
         :title="dateLong(game.date)"
         :short="dateShort(game.date)"
-        :summary="navSummary"
-        :can-prev="index > 0"
-        :can-next="index >= 0 && index < dayGames.length - 1"
-        @prev="goGame(-1)"
-        @next="goGame(1)"
+        :day-to="`/${game.date}`"
+        :index="index"
+        :total="dayGames.length"
+        :prev="dayGames[index - 1] ?? null"
+        :next="index >= 0 ? dayGames[index + 1] ?? null : null"
       />
 
       <section
@@ -206,7 +194,6 @@ const leaders = computed(() => {
 
 <style scoped>
 .page { padding-bottom: 48px; }
-.nav { padding-left: 0; padding-right: 0; padding-bottom: 0; }
 
 /* Scoreboard: navy card with the arena map showing through on the right. */
 .board {
