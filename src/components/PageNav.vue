@@ -25,7 +25,8 @@ defineProps({
       <RouterLink v-if="tagTo" :to="tagTo" class="eyebrow tag-link">{{ tag }}</RouterLink>
       <div v-else class="eyebrow">{{ tag }}</div>
       <h1 class="title">{{ title }}</h1>
-      <div v-if="sub" class="sub">{{ sub }}</div>
+      <!-- Always rendered so the block keeps its height while data loads. -->
+      <div class="sub">{{ sub || '\u00a0' }}</div>
     </div>
 
     <RouterLink v-if="next" :to="next.to" class="side next" :aria-label="next.aria">
@@ -82,7 +83,7 @@ defineProps({
   text-transform: uppercase;
   color: var(--mu);
 }
-.val { font: 600 12px var(--mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.val { min-height: 1.3em; font: 600 12px/1.3 var(--mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .mid { text-align: center; }
 /* Block-level so the link version sits exactly where the plain label does. */
@@ -93,7 +94,7 @@ defineProps({
   letter-spacing: -.03em;
   margin: 4px 0 0;
 }
-.sub { font-size: 12px; color: var(--mu); margin-top: 4px; }
+.sub { font-size: 12px; line-height: 1.4; color: var(--mu); margin-top: 4px; }
 
 @media (max-width: 860px) {
   .pagenav {
