@@ -8,6 +8,7 @@
   --ac:  oklch(0.58 0.14 215);
   --hi:  oklch(0.58 0.14 215 / .09);
   --dn:  oklch(0.58 0.16 25);
+  --up:  oklch(0.62 0.15 150);
 
   --sans: Sora, system-ui, sans-serif;
   --mono: 'DM Mono', ui-monospace, monospace;
@@ -28,6 +29,7 @@
   --ac:  oklch(0.8 0.12 215);
   --hi:  oklch(0.8 0.12 215 / .13);
   --dn:  oklch(0.76 0.14 25);
+  --up:  oklch(0.76 0.15 150);
 
   color-scheme: dark;
 }

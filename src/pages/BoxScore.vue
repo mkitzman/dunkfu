@@ -207,7 +207,7 @@ const leaders = computed(() => {
   & > span:not(:first-child) { text-align: right; color: var(--mu); padding: 4px 8px 4px 0; border-radius: 6px; }
   & > span.up { color: var(--fg); }
   & > span.tot { font-weight: 600; }
-  & > span.q-won { color: var(--fg); background: color-mix(in oklch, var(--ac) var(--heat), transparent); }
+  & > span.q-won { color: var(--fg); background: color-mix(in oklch, var(--up) var(--heat), transparent); }
   & > span.q-lost { background: color-mix(in oklch, var(--dn) var(--heat), transparent); }
 }
 .st { font: 500 11px var(--mono); letter-spacing: .1em; color: var(--mu); }
