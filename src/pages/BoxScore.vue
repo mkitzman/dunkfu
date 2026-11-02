@@ -30,7 +30,12 @@ watch(() => route.params.id, async id => {
 }, { immediate: true })
 
 const backTo = computed(() => (game.value && game.value.date !== addDays(today, -1) ? `/${game.value.date}` : '/'))
-const backLabel = computed(() => game.value && `${dayTag(game.value.date, today)} · ${dateLong(game.value.date)}`)
+// "Last night · Sat, Oct 31"; older games just show the date.
+const backLabel = computed(() => {
+  if (!game.value) return ''
+  const d = game.value.date, tag = dayTag(d, today)
+  return /night|tonight|tomorrow/i.test(tag) ? `${tag} · ${dateLong(d)}` : dateLong(d)
+})
 
 const sides = computed(() => {
   const g = game.value
@@ -52,10 +57,11 @@ const qLabels = computed(() => {
   return l.concat('T')
 })
 // Quarter heat map: shade each quarter by the margin it was won or lost by.
-// Within 2 points stays plain; 15+ gets the full shade.
+// Close quarters (won by 1–2) get a light grey on the winner only; ties stay
+// plain; 15+ gets the full shade.
 function heat(margin) {
   const title = margin > 0 ? `Won the quarter by ${margin}` : margin < 0 ? `Lost the quarter by ${-margin}` : 'Even quarter'
-  if (Math.abs(margin) <= 2) return { class: 'q', title }
+  if (Math.abs(margin) <= 2) return { class: ['q', { 'q-close': margin > 0 }], title }
   const strength = Math.min(Math.abs(margin), 15) / 15
   return {
     class: ['q', margin > 0 ? 'q-won' : 'q-lost'],
@@ -205,6 +211,7 @@ const leaders = computed(() => {
   & > span.tot { font-weight: 600; }
   & > span.q-won { color: var(--fg); background: color-mix(in oklch, var(--up) var(--heat), transparent); }
   & > span.q-lost { background: color-mix(in oklch, var(--dn) var(--heat), transparent); }
+  & > span.q-close { color: var(--fg); background: color-mix(in oklch, var(--fg) 7%, transparent); }
 }
 .st { font: 500 11px var(--mono); letter-spacing: .1em; color: var(--mu); }
 .qr > .ql { font-size: 11px; }
