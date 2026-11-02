@@ -80,6 +80,8 @@ defineProps({
 .val { font: 600 12px var(--mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .mid { text-align: center; }
+/* Block-level so the link version sits exactly where the plain label does. */
+.tag-link { display: table; margin: 0 auto; }
 .tag-link:hover { text-decoration: underline; }
 .title {
   font: 800 30px/1.1 var(--sans);
