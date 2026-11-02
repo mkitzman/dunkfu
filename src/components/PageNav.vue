@@ -53,8 +53,13 @@ defineProps({
   border-radius: 999px;
   background: var(--sf);
 
+  transition: transform .15s ease;
+
   &:hover { border-color: var(--mu); }
   &:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  a.side:hover { transform: scale(1.02); }
 }
 .prev { justify-self: start; padding-right: 18px; }
 .next { justify-self: end; padding-left: 18px; }
