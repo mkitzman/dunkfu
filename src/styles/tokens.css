@@ -5,10 +5,10 @@
   --mu:  #646a72;
   --ln:  rgba(20, 23, 26, .12);
   --ln2: rgba(20, 23, 26, .06);
-  --ac:  oklch(0.58 0.14 215);
-  --hi:  oklch(0.58 0.14 215 / .09);
+  --ac:  oklch(0.52 0.17 255);
+  --hi:  oklch(0.52 0.17 255 / .09);
   --dn:  oklch(0.58 0.16 25);
-  --up:  oklch(0.62 0.15 150);
+  --up:  oklch(0.55 0.15 150);
 
   --sans: Sora, system-ui, sans-serif;
   --mono: 'DM Mono', ui-monospace, monospace;
@@ -26,10 +26,10 @@
   --mu:  #8f959d;
   --ln:  rgba(255, 255, 255, .12);
   --ln2: rgba(255, 255, 255, .05);
-  --ac:  oklch(0.8 0.12 215);
-  --hi:  oklch(0.8 0.12 215 / .13);
+  --ac:  oklch(0.78 0.12 255);
+  --hi:  oklch(0.78 0.12 255 / .13);
   --dn:  oklch(0.76 0.14 25);
-  --up:  oklch(0.76 0.15 150);
+  --up:  oklch(0.78 0.14 150);
 
   color-scheme: dark;
 }
@@ -85,6 +85,17 @@ button { font: inherit; color: inherit; }
 }
 
 .pos { color: var(--ac); }
+
+/* Team abbreviation as bare text in the team's color (lightened in dark mode). */
+.team-chip {
+  display: inline;
+  font: 600 10px var(--mono);
+  letter-spacing: .04em;
+  vertical-align: baseline;
+  margin: 0 3px 0 4px;
+  color: var(--team, var(--mu));
+}
+[data-theme="dark"] .team-chip { color: color-mix(in oklch, var(--team, var(--mu)) 55%, #fff); }
 .neg { color: var(--dn); }
 
 /* Shared table pattern */

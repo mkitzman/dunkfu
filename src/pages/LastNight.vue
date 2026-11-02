@@ -88,13 +88,8 @@ const go = n => router.push(`/${addDays(date.value, n)}`)
       <Awards v-if="awards?.night" :awards="awards.night" scope="night" class="awards" />
 
       <section v-if="players.length" class="players">
-        <div class="section-head">
-          <h2>{{ isResults ? 'Player stats' : 'Season averages, players in action' }}</h2>
-          <span class="meta">
-            {{ players.length }} players ·
-            <span class="hint-desk">click a column to sort</span>
-            <span class="hint-mob">tap a column to sort · swipe for more</span>
-          </span>
+        <div v-if="!isResults" class="section-head">
+          <h2>Season averages, players in action</h2>
         </div>
         <PlayerTable :players="players" :averages="!isResults" />
       </section>
@@ -118,7 +113,6 @@ const go = n => router.push(`/${addDays(date.value, n)}`)
   font-size: 13px;
   margin: 0 0 28px;
 }
-.hint-mob { display: none; }
 
 @media (max-width: 720px) {
   .hero {
@@ -141,7 +135,5 @@ const go = n => router.push(`/${addDays(date.value, n)}`)
     & h2 { font-size: 15px; }
     & .meta { display: block; font-size: 10px; margin-top: 2px; }
   }
-  .hint-desk { display: none; }
-  .hint-mob { display: inline; }
 }
 </style>

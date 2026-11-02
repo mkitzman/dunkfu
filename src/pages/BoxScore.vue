@@ -5,15 +5,17 @@ import TeamMark from '../components/TeamMark.vue'
 import LeaderCard from '../components/LeaderCard.vue'
 import TeamBoxTable from '../components/TeamBoxTable.vue'
 import Awards from '../components/Awards.vue'
-import { getGame, getAwards } from '../api/index.js'
+import GameStrip from '../components/GameStrip.vue'
+import { getGame, getGames, getAwards } from '../api/index.js'
 import { team } from '../data/teams.js'
 import ARENAS from '../data/arenas.json'
-import { todayNY, addDays, dateLong, dayTag, shortName } from '../utils.js'
+import ARENA_MAPS from '../data/arenaMaps.js'
+import { dateFull, shortName } from '../utils.js'
 
 const route = useRoute()
-const today = todayNY()
 
 const game = ref(null)
+const dayGames = ref([])
 const gameAwards = ref(null)
 const loading = ref(true)
 
@@ -22,20 +24,13 @@ watch(() => route.params.id, async id => {
   const n = ++req
   loading.value = true
   const g = await getGame(id)
-  const a = g ? await getAwards(g.date) : null
+  const [day, a] = g ? await Promise.all([getGames(g.date), getAwards(g.date)]) : [[], null]
   if (n !== req) return
   game.value = g
+  dayGames.value = day.filter(x => x.status === 'final')
   gameAwards.value = a?.games?.[id] ?? null
   loading.value = false
 }, { immediate: true })
-
-const backTo = computed(() => (game.value && game.value.date !== addDays(today, -1) ? `/${game.value.date}` : '/'))
-// "Last night · Sat, Oct 31"; older games just show the date.
-const backLabel = computed(() => {
-  if (!game.value) return ''
-  const d = game.value.date, tag = dayTag(d, today)
-  return /night|tonight|tomorrow/i.test(tag) ? `${tag} · ${dateLong(d)}` : dateLong(d)
-})
 
 const sides = computed(() => {
   const g = game.value
@@ -47,8 +42,19 @@ const sides = computed(() => {
   ]
 })
 
-// Arena comes from config by home team (neutral-site games will show the home team's arena).
+// Arena and map art come from config by home team (neutral-site games will
+// show the home team's arena). No map record: plain navy card, no pin.
 const arena = computed(() => game.value && ARENAS[game.value.home.abbr])
+const map = computed(() => game.value && ARENA_MAPS[game.value.home.abbr])
+const MAP_W = 1800
+const mapStyle = computed(() => map.value && {
+  backgroundImage: `url(${map.value.src})`,
+  marginLeft: `${-map.value.focal.x * MAP_W}px`,
+})
+const pinStyle = computed(() => map.value && {
+  '--pin': map.value.pin,
+  top: `calc(50% + ${(map.value.focal.y - 0.5) * MAP_W * map.value.aspect}px)`,
+})
 
 const nq = computed(() => game.value?.away.quarters?.length ?? 4)
 const qLabels = computed(() => {
@@ -56,23 +62,26 @@ const qLabels = computed(() => {
   for (let i = 4; i < nq.value; i++) l.push(i === 4 ? 'OT' : `${i - 3}OT`)
   return l.concat('T')
 })
-// Quarter heat map: shade each quarter by the margin it was won or lost by.
-// Close quarters (won by 1–2) get a light grey on the winner only; ties stay
-// plain; 15+ gets the full shade.
+
+// Quarter heat map: tint strength scales with the margin, full at 15+.
 function heat(margin) {
   const title = margin > 0 ? `Won the quarter by ${margin}` : margin < 0 ? `Lost the quarter by ${-margin}` : 'Even quarter'
-  if (Math.abs(margin) <= 2) return { class: ['q', { 'q-close': margin > 0 }], title }
-  const strength = Math.min(Math.abs(margin), 15) / 15
-  return {
-    class: ['q', margin > 0 ? 'q-won' : 'q-lost'],
-    style: { '--heat': `${Math.round(8 + strength * 24)}%` },
-    title,
-  }
+  if (margin === 0) return { class: 'q q-tie', title }
+  const a = Math.min(1, Math.abs(margin) / 15)
+  return { class: ['q', margin > 0 ? 'q-won' : 'q-lost'], style: { '--a': (0.2 + 0.8 * a).toFixed(2) }, title }
 }
 
 const status = computed(() => (nq.value > 5 ? `FINAL/${nq.value - 4}OT` : nq.value > 4 ? 'FINAL/OT' : 'FINAL'))
 
 const hasBox = computed(() => sides.value.length && sides.value.every(s => s.players))
+
+// Empty rows so the shorter bench lines up with the longer one.
+const benchPad = computed(() => {
+  if (!hasBox.value) return [0, 0]
+  const bench = sides.value.map(s => s.players.filter(p => !p.starter).length)
+  const max = Math.max(...bench)
+  return bench.map(b => max - b)
+})
 
 const CATS = [
   ['Points', 'pts', p => `${p.fgm}/${p.fga} FG, ${p.ftm}/${p.fta} FT`],
@@ -98,42 +107,58 @@ const leaders = computed(() => {
     <p v-if="!loading && !game" class="missing card">Game not found. <RouterLink to="/" class="eyebrow">Back to scores</RouterLink></p>
 
     <template v-else-if="game">
-      <RouterLink :to="backTo" class="eyebrow back">◀ {{ backLabel }}</RouterLink>
+      <div class="top">
+        <RouterLink :to="`/${game.date}`" class="date">{{ dateFull(game.date) }}</RouterLink>
+        <GameStrip v-if="dayGames.length > 1" :games="dayGames" :current-id="game.id" />
+      </div>
 
-      <section class="strip" :aria-label="`${sides[0].name} ${sides[0].score}, ${sides[1].name} ${sides[1].score}, final`">
-        <div class="teams">
-          <div v-for="s in sides" :key="s.abbr" class="trow" :class="{ won: s.won }">
-            <TeamMark :abbr="s.abbr" :size="44" :radius="8" :font-size="13" />
-            <div class="tn">
-              <h1 class="name"><span class="full">{{ s.name }}</span><span class="nick">{{ s.nick }}</span></h1>
-              <div class="ctx">{{ s.ctx }}</div>
+      <section
+        class="board"
+        :style="{ '--base': map?.baseColor ?? '#0e2440' }"
+        :aria-label="`${sides[0].name} ${sides[0].score}, ${sides[1].name} ${sides[1].score}, final`"
+      >
+        <div v-if="map" class="map" :style="mapStyle" aria-hidden="true"></div>
+        <div class="shade" aria-hidden="true"></div>
+        <span v-if="map" class="pin" :style="pinStyle" aria-hidden="true">
+          <span v-for="i in 3" :key="i" class="ring" :style="{ animationDelay: `${(i - 1) * 2}s` }"></span>
+          <span class="dot"></span>
+        </span>
+
+        <div class="content">
+          <div class="teams">
+            <div v-for="s in sides" :key="s.abbr" class="trow" :class="{ won: s.won }">
+              <TeamMark :abbr="s.abbr" :size="44" :radius="8" :font-size="13" />
+              <div class="tn">
+                <h1 class="name"><span class="full">{{ s.name }}</span><span class="nick">{{ s.nick }}</span></h1>
+                <div class="ctx">{{ s.ctx }}</div>
+              </div>
+              <div class="score">{{ s.score }}</div>
             </div>
-            <div class="score">{{ s.score }}</div>
           </div>
-        </div>
 
-        <div class="quarters" :style="{ '--cols': qLabels.length }" role="table" aria-label="Scoring by quarter">
-          <div role="row" class="qr">
-            <span role="columnheader" class="st">{{ status }}</span>
-            <span v-for="l in qLabels" :key="l" role="columnheader" class="ql">{{ l }}</span>
+          <div class="quarters" :style="{ '--nq': qLabels.length - 1 }" role="table" aria-label="Scoring by quarter">
+            <div role="row" class="qr">
+              <span role="columnheader" class="st">{{ status }}</span>
+              <span v-for="l in qLabels" :key="l" role="columnheader" class="ql">{{ l }}</span>
+            </div>
+            <div v-for="(s, si) in sides" :key="s.abbr" role="row" class="qr">
+              <span role="rowheader" class="ab">{{ s.abbr }}</span>
+              <span
+                v-for="(q, i) in s.quarters"
+                :key="i"
+                role="cell"
+                v-bind="heat(q - sides[1 - si].quarters[i])"
+              >{{ q }}</span>
+              <span role="cell" class="tot" :class="{ won: s.won }">{{ s.score }}</span>
+            </div>
           </div>
-          <div v-for="(s, si) in sides" :key="s.abbr" role="row" class="qr">
-            <span role="rowheader" class="ab">{{ s.abbr }}</span>
-            <span
-              v-for="(q, i) in s.quarters"
-              :key="i"
-              role="cell"
-              v-bind="heat(q - sides[1 - si].quarters[i])"
-            >{{ q }}</span>
-            <span role="cell" class="tot" :class="{ up: s.won }">{{ s.score }}</span>
-          </div>
-        </div>
 
-        <div v-if="arena" class="venue">{{ arena.name }}<br>{{ arena.city }}, {{ arena.state }}</div>
+          <div v-if="arena" class="venue">{{ arena.name }}<br><span>{{ arena.city }}, {{ arena.state }}</span></div>
+        </div>
       </section>
 
       <template v-if="hasBox">
-        <Awards v-if="gameAwards" :awards="gameAwards" scope="game" :heading="false" class="block" />
+        <Awards v-if="gameAwards" :awards="gameAwards" scope="game" class="block" />
 
         <section class="block" aria-label="Game leaders">
           <div class="leaders">
@@ -141,13 +166,9 @@ const leaders = computed(() => {
           </div>
         </section>
 
-        <section class="block box">
-          <div class="section-head">
-            <h2>Box score</h2>
-            <span class="meta">FG · 3PT · FT as made-attempted</span>
-          </div>
+        <section class="block box" aria-label="Box score">
           <div class="pair">
-            <TeamBoxTable v-for="s in sides" :key="s.abbr" :team="s" :players="s.players" />
+            <TeamBoxTable v-for="(s, i) in sides" :key="s.abbr" :team="s" :players="s.players" :pad="benchPad[i]" />
           </div>
         </section>
       </template>
@@ -158,20 +179,86 @@ const leaders = computed(() => {
 </template>
 
 <style scoped>
-.page { padding-bottom: 32px; }
-.back { display: inline-block; padding-top: 18px; }
-.back:hover { text-decoration: underline; }
+.page { padding-top: 28px; padding-bottom: 48px; }
 
-.strip {
-  margin-top: 14px;
-  background: var(--sf);
-  border: 1px solid var(--ln);
+.top { display: grid; gap: 12px; }
+.date {
+  justify-self: center;
+  font: 600 14px var(--sans);
+  color: var(--ac);
+
+  &:hover { text-decoration: underline; }
+}
+
+/* Scoreboard: navy card with the arena map showing through on the right. */
+.board {
+  --fg: #f4f6f9;
+  --mu: #c9d2df;
+  --ln: rgba(255, 255, 255, .18);
+  --tie: rgba(255, 255, 255, .12);
+  position: relative;
+  overflow: hidden;
+  margin-top: 26px;
   border-radius: 12px;
-  padding: 20px 24px;
+  background: var(--base);
+  color: var(--fg);
+}
+.map {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 84%;
+  width: 1800px;
+  background: 0 50% / 1800px auto no-repeat;
+}
+.shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(10, 26, 46, .97) 0%, rgba(10, 26, 46, .97) 58%, rgba(10, 26, 46, .55) 72%, rgba(10, 26, 46, .08) 100%);
+}
+.pin {
+  position: absolute;
+  left: 84%;
+  width: 0;
+  height: 0;
+
+  & .dot {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--pin);
+    border: 2px solid #fff;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--pin) 30%, transparent), 0 0 0 1px rgba(0, 0, 0, .25);
+  }
+  & .ring {
+    position: absolute;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 1.5px solid color-mix(in srgb, var(--pin) 80%, transparent);
+    transform: translate(-50%, -50%) scale(.3);
+    opacity: 0;
+    animation: ping 6s cubic-bezier(.2, .6, .4, 1) infinite;
+    pointer-events: none;
+  }
+}
+@keyframes ping {
+  0% { transform: translate(-50%, -50%) scale(.3); opacity: .7; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pin .ring { display: none; }
+}
+
+.content {
+  position: relative;
   display: grid;
   grid-template-columns: auto 1fr auto;
   gap: 28px;
   align-items: center;
+  padding: 20px 24px;
 }
 .teams { display: grid; gap: 14px; }
 .trow { display: flex; align-items: center; gap: 12px; }
@@ -186,9 +273,11 @@ const leaders = computed(() => {
 .score {
   font: 800 40px/1 var(--sans);
   letter-spacing: -.04em;
+  font-variant-numeric: tabular-nums;
+  min-width: 84px;
+  text-align: right;
   margin-left: auto;
   color: var(--mu);
-  font-variant-numeric: tabular-nums;
 }
 .trow.won .name, .trow.won .score { color: var(--fg); }
 
@@ -196,35 +285,41 @@ const leaders = computed(() => {
   border-left: 1px solid var(--ln);
   padding-left: 28px;
   display: grid;
-  row-gap: 4px;
+  row-gap: 8px;
   font: 400 14px var(--mono);
   font-variant-numeric: tabular-nums;
 }
 .qr {
   display: grid;
-  grid-template-columns: 48px repeat(var(--cols), 44px);
-  column-gap: 4px;
+  grid-template-columns: 52px repeat(var(--nq), 48px) 54px;
+  column-gap: 6px;
   align-items: center;
 
-  & > span:not(:first-child) { text-align: center; color: var(--mu); padding: 4px 0; border-radius: 6px; }
-  & > span.up { color: var(--fg); }
-  & > span.tot { font-weight: 600; }
-  & > span.q-won { color: var(--fg); background: color-mix(in oklch, var(--up) var(--heat), transparent); }
-  & > span.q-lost { background: color-mix(in oklch, var(--dn) var(--heat), transparent); }
-  & > span.q-close { color: var(--fg); background: color-mix(in oklch, var(--fg) 7%, transparent); }
+  & > span:not(:first-child) { text-align: center; }
+  & > .ql { font-size: 11px; color: var(--mu); }
+  & > .q { padding: 9px 0; border-radius: 5px; }
+  & > .q-won { background: oklch(.42 .09 150 / var(--a)); }
+  & > .q-lost { background: oklch(.42 .09 20 / var(--a)); color: var(--mu); }
+  & > .q-tie { background: var(--tie); }
+  & > .tot { font-weight: 600; color: var(--mu); }
+  & > .tot.won { color: var(--fg); }
 }
 .st { font: 500 11px var(--mono); letter-spacing: .1em; color: var(--mu); }
-.qr > .ql { font-size: 11px; }
-.ab { font: 600 12px var(--sans); }
+.ab { font: 600 13px var(--sans); }
 
 .venue {
+  align-self: end;
+  min-width: 180px;
   text-align: right;
-  font: 400 11px/1.7 var(--mono);
-  color: var(--mu);
+  font: 500 11px/1.7 var(--mono);
+  color: #fff;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, .9);
+
+  & span { opacity: .75; }
 }
 
-.block { padding-top: 28px; }
-.box { padding-top: 30px; container-type: inline-size; }
+.block { padding-top: 26px; }
+.box { container-type: inline-size; }
 .leaders {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -249,14 +344,18 @@ const leaders = computed(() => {
   font-size: 13px;
 }
 
-@media (max-width: 860px) {
-  .strip { grid-template-columns: 1fr auto; }
+@media (max-width: 1040px) {
+  .content { grid-template-columns: 1fr auto; }
   .venue { display: none; }
+  .leaders { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 720px) {
-  .back { font-size: 10px; padding-top: 14px; }
-  .strip {
+  .page { padding-top: 18px; }
+  .board { margin-top: 18px; }
+  .map, .pin { display: none; }
+  .shade { background: none; }
+  .content {
     grid-template-columns: 1fr;
     gap: 10px;
     padding: 14px;
@@ -271,23 +370,22 @@ const leaders = computed(() => {
   .full { display: none; }
   .nick { display: inline; }
   .ctx { font-size: 10px; }
-  .score { font-size: 30px; }
+  .score { font-size: 30px; min-width: 0; }
   .quarters {
     border-left: 0;
     padding-left: 0;
-    border-top: 1px solid var(--ln2);
+    border-top: 1px solid var(--ln);
     padding-top: 10px;
     row-gap: 4px;
     font-size: 12px;
   }
-  .qr { grid-template-columns: 40px repeat(var(--cols), 1fr); }
+  .qr { grid-template-columns: 40px repeat(calc(var(--nq) + 1), 1fr); column-gap: 4px; }
+  .qr > .q { padding: 6px 0; }
   .st { font-size: 0; }
   .qr > .ql { font-size: 10px; }
   .ab { font-size: 11px; }
 
-  .block { padding-top: 20px; }
-  .section-head h2 { font-size: 15px; }
-  .box .section-head .meta { display: none; }
+  .block { padding-top: 18px; }
   .leaders {
     display: flex;
     gap: 10px;
@@ -300,7 +398,6 @@ const leaders = computed(() => {
     & > * { flex: none; width: 300px; scroll-snap-align: start; }
   }
   .box { margin: 0 calc(-1 * var(--gutter)); }
-  .box .section-head { padding: 0 var(--gutter); }
   .pair { gap: 18px; }
   .pair > * + * { margin-top: 0; }
 }

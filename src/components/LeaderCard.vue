@@ -1,6 +1,4 @@
 <script setup>
-import { onColor } from '../data/teams.js'
-
 defineProps({
   label: { type: String, required: true },
   leaders: { type: Array, required: true }, // [{ key, name, short, num, abbr, color, value, sub }]
@@ -15,9 +13,7 @@ defineProps({
         <span class="rank">{{ i + 1 }}</span>
         <div class="who">
           <div class="name">
-            <span class="full">{{ p.name }}</span><span class="abbrv">{{ p.short }}</span>
-            <span class="chip" :style="{ background: p.color, color: onColor(p.color) }">{{ p.abbr }}</span>
-            <span class="num">#{{ p.num }}</span>
+            <span class="full">{{ p.name }}</span><span class="abbrv">{{ p.short }}</span><span class="team-chip" :style="{ '--team': p.color }">{{ p.abbr }}</span><span class="num">#{{ p.num }}</span>
           </div>
           <div class="sub">{{ p.sub }}</div>
           <div class="track"><div :style="{ width: `${leaders[0].value ? (100 * p.value) / leaders[0].value : 0}%`, background: p.color }"></div></div>
@@ -45,7 +41,7 @@ h3 {
 ol { list-style: none; margin: 0; padding: 0; }
 li {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: 16px 1fr 56px;
   gap: 12px;
   align-items: center;
   padding: 8px 0;
@@ -61,15 +57,7 @@ li {
   text-overflow: ellipsis;
 }
 .first .name { font-weight: 600; opacity: 1; }
-.chip {
-  display: inline-block;
-  font: 600 9px var(--mono);
-  padding: 1px 5px;
-  border-radius: 4px;
-  vertical-align: 1px;
-  margin-left: 4px;
-}
-.num { font: 400 11px var(--mono); color: var(--mu); margin-left: 4px; }
+.num { font: 400 11px var(--mono); color: var(--mu); }
 .abbrv { display: none; }
 .sub { font: 400 11px var(--mono); color: var(--mu); margin-top: 2px; }
 .track {
@@ -82,6 +70,7 @@ li {
   & div { height: 100%; }
 }
 .value {
+  text-align: center;
   font: 800 20px/1 var(--sans);
   letter-spacing: -.03em;
   font-variant-numeric: tabular-nums;
@@ -94,8 +83,7 @@ li {
   li { gap: 10px; padding: 7px 0; }
   .rank { font-size: 12px; width: 14px; }
   .name { font-size: 13px; }
-  .chip { font-size: 8px; }
-  .num { display: none; }
+    .num { display: none; }
   .full { display: none; }
   .abbrv { display: inline; }
   .sub { font-size: 10px; }
