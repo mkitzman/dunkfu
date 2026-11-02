@@ -10,7 +10,7 @@ import { getGame, getGames, getAwards } from '../api/index.js'
 import { team } from '../data/teams.js'
 import ARENAS from '../data/arenas.json'
 import ARENA_MAPS from '../data/arenaMaps.js'
-import { todayNY, dateLong, dateShort, dayTag, weekday, shortName } from '../utils.js'
+import { todayNY, dateLong, dayTag, weekday, shortName } from '../utils.js'
 
 const route = useRoute()
 const today = todayNY()
@@ -40,13 +40,15 @@ const navTag = computed(() => {
   return /night|tonight|tomorrow/i.test(t) ? t : `${weekday(game.value.date)} night`
 })
 
-// Neighbouring game in tip-off order, or (at either end) a pill back to the day.
+// The night's games as a carousel: prev/next wrap around the ends. With only
+// two games a single pill shows (next on the first game, prev on the second).
 const score = g => `${g.away.abbr} ${g.away.score} · ${g.home.abbr} ${g.home.score}`
 function navPill(step) {
-  const g = index.value >= 0 ? dayGames.value[index.value + step] : null
-  if (g) return { to: `/game/${g.id}`, label: step < 0 ? 'Prev game' : 'Next game', text: score(g), aria: `${step < 0 ? 'Previous' : 'Next'} game: ${score(g)}` }
-  const n = dayGames.value.length
-  return { to: `/${game.value.date}`, label: 'All games', text: `${dateShort(game.value.date)} · ${n} game${n === 1 ? '' : 's'}`, aria: 'All games this night' }
+  const n = dayGames.value.length, i = index.value
+  if (i < 0 || n < 2) return null
+  if (n === 2 && (step > 0) !== (i === 0)) return null
+  const g = dayGames.value[(i + step + n) % n]
+  return { to: `/game/${g.id}`, label: step < 0 ? 'Prev game' : 'Next game', text: score(g), aria: `${step < 0 ? 'Previous' : 'Next'} game: ${score(g)}` }
 }
 
 const sides = computed(() => {
@@ -211,7 +213,7 @@ const leaders = computed(() => {
   position: relative;
   overflow: hidden;
   margin-top: 22px;
-  border-radius: 12px;
+  border-radius: 8px;
   background: var(--base);
   color: var(--fg);
 }
@@ -345,10 +347,15 @@ const leaders = computed(() => {
   display: grid;
   grid-template-columns: 1fr 1fr;
 
+  & > * { overflow: hidden; }
+  & > :first-child { border-radius: 8px 0 0 8px; }
+  & > :last-child { border-radius: 0 8px 8px 0; }
   & > * + * { margin-left: -1px; }
 }
 @container (max-width: 1040px) {
   .pair { grid-template-columns: 1fr; }
+  .pair > :first-child { border-radius: 8px 8px 0 0; }
+  .pair > :last-child { border-radius: 0 0 8px 8px; }
   .pair > * + * { margin-left: 0; margin-top: -1px; }
 }
 
@@ -414,6 +421,7 @@ const leaders = computed(() => {
   }
   .box { margin: 0 calc(-1 * var(--gutter)); }
   .pair { gap: 18px; }
+  .pair > * { border-radius: 0 !important; }
   .pair > * + * { margin-top: 0; }
 }
 </style>

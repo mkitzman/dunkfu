@@ -60,7 +60,7 @@ const big = computed(() => [['PTS', a.value.pts], ['REB', a.value.reb], ['AST', 
   display: block;
   background: var(--sf);
   border: 1px solid var(--ln);
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 18px 18px 14px;
 }
 a.linked { transition: transform .15s ease; }

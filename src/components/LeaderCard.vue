@@ -28,7 +28,7 @@ defineProps({
 .leader-card {
   background: var(--sf);
   border: 1px solid var(--ln);
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 16px 18px 10px;
 }
 h3 {

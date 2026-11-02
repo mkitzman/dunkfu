@@ -85,7 +85,7 @@ button { font: inherit; color: inherit; }
 .card {
   background: var(--sf);
   border: 1px solid var(--ln);
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 .pos { color: var(--ac); }
