@@ -51,17 +51,19 @@ const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
       <SegmentedControl v-model="view" :options="VIEWS" label="Standings view" />
     </div>
 
-    <div class="wrap legend">
-      <span><SeedMark :seed="6" class="sm" />Playoff · seeds 1–6</span>
-      <span><SeedMark :seed="8" class="sm" />Play-in · seeds 7–10</span>
-      <span><b class="pos">▲2</b><b class="neg">▼1</b>Seed change, last 7 days</span>
-    </div>
 
     <div class="wrap groups">
-      <section v-for="g in groups" :key="g.key" class="group">
+      <section v-for="(g, gi) in groups" :key="g.key" class="group">
         <div class="ghead">
           <h2>{{ g.title }}</h2>
-          <span v-if="g.sub">{{ g.sub }}</span>
+          <div v-if="gi === 0 || g.sub" class="meta-row">
+            <div v-if="gi === 0" class="legend">
+              <span><SeedMark :seed="6" class="sm" />Playoff · seeds 1–6</span>
+              <span><SeedMark :seed="8" class="sm" />Play-in · seeds 7–10</span>
+              <span><b class="pos">▲2</b><b class="neg">▼1</b>Seed change, last 7 days</span>
+            </div>
+            <span v-if="g.sub" class="sub">{{ g.sub }}</span>
+          </div>
         </div>
         <div class="table-wrap card">
           <table class="stats edge">
@@ -131,7 +133,6 @@ h1 {
   flex-wrap: wrap;
   gap: 22px;
   align-items: center;
-  padding-bottom: 18px;
   font: 400 11px var(--mono);
   color: var(--mu);
 
@@ -141,13 +142,22 @@ h1 {
 }
 
 .groups { display: grid; gap: 26px; padding-bottom: 32px; }
+.group { min-width: 0; } /* let the table scroll instead of widening the page */
 .ghead {
   display: grid;
-  gap: 2px;
+  gap: 8px;
   margin-bottom: 10px;
 
   & h2 { font: 600 16px var(--sans); margin: 0; }
-  & span { font: 400 11px var(--mono); color: var(--mu); }
+}
+/* Legend (first table only) on the left, the table's note on the right. */
+.meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 22px;
+
+  & .sub { margin-left: auto; text-align: right; font: 400 11px var(--mono); color: var(--mu); }
 }
 
 .team { display: flex; align-items: center; gap: 10px; }
@@ -185,9 +195,8 @@ table.stats {
   .through { font-size: 10px; margin: 0; }
 
   .legend {
-    gap: 14px;
-    padding-top: 12px;
-    padding-bottom: 4px;
+    width: 100%;
+    gap: 6px 14px;
     font-size: 10px;
     & .sm { width: 14px; height: 14px; font-size: 0; }
   }
@@ -196,7 +205,7 @@ table.stats {
   .group { padding-top: 16px; }
   .ghead { padding: 0 var(--gutter); margin-bottom: 8px; }
   .ghead h2 { font-size: 15px; }
-  .ghead span { font-size: 10px; }
+  .meta-row .sub { font-size: 10px; margin-left: 0; text-align: left; }
   .card { border-left: 0; border-right: 0; border-bottom: 0; border-radius: 0; background: transparent; }
 
   .team { gap: 8px; --mark-size: 24px; --mark-r: 5px; --mark-fs: 8px; }
