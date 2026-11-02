@@ -5,7 +5,7 @@ import TeamMark from '../components/TeamMark.vue'
 import LeaderCard from '../components/LeaderCard.vue'
 import TeamBoxTable from '../components/TeamBoxTable.vue'
 import Awards from '../components/Awards.vue'
-import GameNav from '../components/GameNav.vue'
+import PageNav from '../components/PageNav.vue'
 import { getGame, getGames, getAwards } from '../api/index.js'
 import { team } from '../data/teams.js'
 import ARENAS from '../data/arenas.json'
@@ -39,6 +39,15 @@ const navTag = computed(() => {
   const t = dayTag(game.value.date, today)
   return /night|tonight|tomorrow/i.test(t) ? t : `${weekday(game.value.date)} night`
 })
+
+// Neighbouring game in tip-off order, or (at either end) a pill back to the day.
+const score = g => `${g.away.abbr} ${g.away.score} · ${g.home.abbr} ${g.home.score}`
+function navPill(step) {
+  const g = index.value >= 0 ? dayGames.value[index.value + step] : null
+  if (g) return { to: `/game/${g.id}`, label: step < 0 ? 'Prev game' : 'Next game', text: score(g), aria: `${step < 0 ? 'Previous' : 'Next'} game: ${score(g)}` }
+  const n = dayGames.value.length
+  return { to: `/${game.value.date}`, label: 'All games', text: `${dateShort(game.value.date)} · ${n} game${n === 1 ? '' : 's'}`, aria: 'All games this night' }
+}
 
 const sides = computed(() => {
   const g = game.value
@@ -115,15 +124,13 @@ const leaders = computed(() => {
     <p v-if="!loading && !game" class="missing card">Game not found. <RouterLink to="/" class="eyebrow">Back to scores</RouterLink></p>
 
     <template v-else-if="game">
-      <GameNav
+      <PageNav
         :tag="navTag"
+        :tag-to="`/${game.date}`"
         :title="dateLong(game.date)"
-        :short="dateShort(game.date)"
-        :day-to="`/${game.date}`"
-        :index="index"
-        :total="dayGames.length"
-        :prev="dayGames[index - 1] ?? null"
-        :next="index >= 0 ? dayGames[index + 1] ?? null : null"
+        :sub="dayGames.length > 1 && index >= 0 ? `Game ${index + 1} of ${dayGames.length}` : ''"
+        :prev="navPill(-1)"
+        :next="navPill(1)"
       />
 
       <section

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import DateNav from '../components/DateNav.vue'
+import { useRoute } from 'vue-router'
+import PageNav from '../components/PageNav.vue'
 import GameCard from '../components/GameCard.vue'
 import PlayerTable from '../components/PlayerTable.vue'
 import Awards from '../components/Awards.vue'
@@ -9,7 +9,6 @@ import { getGames, getBoxscores, getAverages, getAwards } from '../api/index.js'
 import { todayNY, addDays, dateLong, dateShort, dayTag } from '../utils.js'
 
 const route = useRoute()
-const router = useRouter()
 
 const today = todayNY()
 const date = computed(() => route.params.date || addDays(today, -1))
@@ -17,6 +16,7 @@ const isResults = computed(() => date.value < today)
 const canNext = computed(() => date.value < addDays(today, 1))
 
 const games = ref([])
+const neighbours = ref({}) // date -> game count for the prev/next pills
 const players = ref([])
 const awards = ref(null)
 const loading = ref(true)
@@ -25,12 +25,14 @@ let req = 0
 watch(date, async d => {
   const id = ++req
   loading.value = true
-  const g = await getGames(d)
+  const prevD = addDays(d, -1), nextD = addDays(d, 1)
+  const [g, gp, gn] = await Promise.all([getGames(d), getGames(prevD), nextD <= addDays(today, 1) ? getGames(nextD) : null])
   const [p, a] = d < today
     ? await Promise.all([getBoxscores(d), getAwards(d)])
     : [await getAverages(g.flatMap(x => [x.away.abbr, x.home.abbr])), null]
   if (id !== req) return
   games.value = g
+  neighbours.value = { [prevD]: gp.length, ...(gn ? { [nextD]: gn.length } : {}) }
   players.value = p
   awards.value = a
   loading.value = false
@@ -63,19 +65,29 @@ const leaders = computed(() => {
 // "Michael Porter Jr." -> "Porter"
 const lastName = name => name.split(' ').filter(w => !/^(Jr\.?|Sr\.?|II|III|IV)$/.test(w)).pop()
 
-const go = n => router.push(`/${addDays(date.value, n)}`)
+// Prev/next day pills: "OCT 30 · 8 games". No next pill past tomorrow.
+function dayPill(step) {
+  const d = addDays(date.value, step)
+  if (step > 0 && !canNext.value) return null
+  const n = neighbours.value[d]
+  return {
+    to: d === addDays(today, -1) ? '/' : `/${d}`,
+    label: dateShort(d),
+    text: n == null ? '' : n ? plural(n, 'game') : 'No games',
+    aria: `${step < 0 ? 'Previous' : 'Next'} day: ${dateLong(d)}`,
+  }
+}
 </script>
 
 <template>
   <div class="page">
-    <DateNav
+    <PageNav
+      class="wrap nav"
       :tag="tag"
       :title="dateLong(date)"
-      :short="dateShort(date)"
-      :summary="summary"
-      :can-next="canNext"
-      @prev="go(-1)"
-      @next="canNext && go(1)"
+      :sub="summary"
+      :prev="dayPill(-1)"
+      :next="dayPill(1)"
     />
 
     <div class="wrap">
@@ -98,6 +110,7 @@ const go = n => router.push(`/${addDays(date.value, n)}`)
 </template>
 
 <style scoped>
+.nav { margin-bottom: 22px; }
 .hero {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -115,6 +128,7 @@ const go = n => router.push(`/${addDays(date.value, n)}`)
 }
 
 @media (max-width: 720px) {
+  .nav { margin-bottom: 4px; }
   .hero {
     display: flex;
     gap: 10px;
