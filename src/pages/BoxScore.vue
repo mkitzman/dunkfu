@@ -90,6 +90,17 @@ function heat(margin) {
   return { class: ['q', margin > 0 ? 'q-won' : 'q-lost'], style: { '--a': (0.2 + 0.8 * a).toFixed(2) }, title }
 }
 
+// "Warriors win by 17 in OT · top scorer Luka Doncic", like the day summary.
+const summary = computed(() => {
+  const [a, h] = sides.value
+  if (!a) return ''
+  const w = a.won ? a : h, margin = Math.abs(a.score - h.score)
+  const ot = nq.value > 5 ? ` in ${nq.value - 4}OT` : nq.value > 4 ? ' in OT' : ''
+  const players = hasBox.value ? sides.value.flatMap(s => s.players) : []
+  const top = players.reduce((x, p) => (p.pts > (x?.pts ?? -1) ? p : x), null)
+  return `${w.nick} win by ${margin}${ot}` + (top ? ` · top scorer ${top.name}` : '')
+})
+
 const status = computed(() => (nq.value > 5 ? `FINAL/${nq.value - 4}OT` : nq.value > 4 ? 'FINAL/OT' : 'FINAL'))
 
 const hasBox = computed(() => sides.value.length && sides.value.every(s => s.players))
@@ -130,7 +141,7 @@ const leaders = computed(() => {
         :tag="navTag"
         :tag-to="`/${game.date}`"
         :title="dateLong(game.date)"
-        :sub="dayGames.length > 1 && index >= 0 ? `Game ${index + 1} of ${dayGames.length}` : ''"
+        :sub="summary"
         :prev="navPill(-1)"
         :next="navPill(1)"
       />
