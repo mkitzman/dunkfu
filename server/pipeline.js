@@ -70,6 +70,7 @@ class Stop extends Error {}
 
 export async function refresh({ store, key, deadline = Infinity, log = console.log }) {
   if (!key) throw new Error('HIGHLIGHTLY_API_KEY is not set')
+  const started = Date.now()
 
   let remaining = Infinity
   let used = 0
@@ -87,12 +88,13 @@ export async function refresh({ store, key, deadline = Infinity, log = console.l
     return res.json()
   }
 
-  // Fetch once, then serve from the cache forever.
-  async function cached(k, pathname) {
+  // Fetch once, then serve from the cache forever. Responses that fail `ok`
+  // (e.g. a box score that isn't filled in yet) aren't cached.
+  async function cached(k, pathname, ok = () => true) {
     const hit = await store.get(`cache/${k}`)
     if (hit) return hit
     const data = await api(pathname)
-    await store.set(`cache/${k}`, data)
+    if (ok(data)) await store.set(`cache/${k}`, data)
     return data
   }
 
@@ -122,6 +124,22 @@ export async function refresh({ store, key, deadline = Infinity, log = console.l
   })))
   if (!groups) throw new Error('Out of requests before standings could be fetched')
   const seasonStart = nyDate(new Date(groups[0].startDate))
+
+  // Save standings right away (plus today's snapshot for the 7-day seed change).
+  const rows = groups.flatMap(g => g.data.map(r => {
+    const s = Object.fromEntries(r.statistics.map(x => [x.displayName, x.value]))
+    return {
+      abbr: abbrOf(r.team), seed: Number(s.Position), w: Number(s.Wins), l: Number(s.Losses),
+      home: s.Home, away: s.Road, conf: s.CONF, ppg: Number(s['Points Per Game']), opp: Number(s['Opponent Points Per Game']),
+      streak: s.Streak, last10: s['Last Ten Games'], clincher: s.Clincher || null,
+    }
+  }))
+  await store.set(`history/standings-${today}.json`, rows.map(r => ({ abbr: r.abbr, seed: r.seed })))
+  const weekAgo = (await store.list('history/standings-'))
+    .filter(k => k.slice(-15, -5) <= addDays(today, -7)).sort().pop()
+  const past = weekAgo ? Object.fromEntries((await store.get(weekAgo)).map(r => [r.abbr, r.seed])) : {}
+  await store.set('data/standings.json', { asOf: yesterday, rows: rows.map(r => ({ ...r, seed7dAgo: past[r.abbr] ?? null })) })
+
 
   // 2. Games for every day of the season. Settled past days come from cache.
   const dates = [tomorrow, today]
@@ -168,12 +186,13 @@ export async function refresh({ store, key, deadline = Infinity, log = console.l
   //    the box score plus the lineups (for positions): two requests per game.
   const published = new Set((await store.list('data/box/')).map(k => k.split('/').pop().replace('.json', '')))
   const todo = games.filter(g => g.status === 'final' && !published.has(g.id)).reverse()
-  const newLines = {}
+  const fetched = new Set()
   await pool(todo, 4, g => attempt(async () => {
     const [box, lineups] = await Promise.all([
-      cached(`box/${g.id}.json`, `/box-score/${g.id}`),
-      cached(`lineups/${g.id}.json`, `/lineups/${g.id}`),
+      cached(`box/${g.id}.json`, `/box-score/${g.id}`, b => b.some(t => t.boxScores?.length)),
+      cached(`lineups/${g.id}.json`, `/lineups/${g.id}`, l => l?.home?.lineup?.length > 0),
     ])
+    if (!box.some(t => t.boxScores?.length)) return // not available yet; retried next run
     const pos = {}
     for (const side of ['home', 'away']) for (const p of lineups?.[side]?.lineup ?? []) pos[p.id] = p.positionAbbreviation || ''
     const lines = teamId => {
@@ -188,58 +207,56 @@ export async function refresh({ store, key, deadline = Infinity, log = console.l
     const away = lines(g.awayTeamId), home = lines(g.homeTeamId)
     const out = strip(g)
     await store.set(`data/box/${g.id}.json`, { ...out, away: { ...out.away, players: away }, home: { ...out.home, players: home } })
-    const day = (newLines[g.date] ??= [])
-    for (const [abbr, ps] of [[g.away.abbr, away], [g.home.abbr, home]]) for (const p of ps) day.push({ ...p, abbr, gameId: g.id })
+    fetched.add(g.id)
   }, `box score ${g.id}`))
 
-  // 5. Merge new player lines into lines/DATE.json.
-  await pool(Object.entries(newLines), 10, async ([d, add]) => {
-    const ids = new Set(add.map(p => p.gameId))
-    const prev = ((await store.get(`data/lines/${d}.json`)) ?? []).filter(p => !ids.has(p.gameId))
+  // 5. lines/DATE.json: every player line for a date, built from published box
+  //    scores. Any published game missing from its day's file gets added, so an
+  //    interrupted run repairs itself next time.
+  const finalsByDate = {}
+  for (const g of games) if (g.status === 'final' && (published.has(g.id) || fetched.has(g.id))) (finalsByDate[g.date] ??= []).push(g.id)
+  let linesChanged = false
+  await pool(Object.entries(finalsByDate), 6, async ([d, ids]) => {
+    const prev = (await store.get(`data/lines/${d}.json`)) ?? []
+    const have = new Set(prev.map(p => p.gameId))
+    const missing = ids.filter(id => !have.has(id))
+    if (!missing.length) return
+    const add = (await pool(missing, 6, id => store.get(`data/box/${id}.json`))).flatMap(b =>
+      b ? [b.away, b.home].flatMap(t => t.players.map(p => ({ ...p, abbr: t.abbr, gameId: b.id }))) : [])
     await store.set(`data/lines/${d}.json`, prev.concat(add))
+    linesChanged = true
   })
 
-  // 6. Season averages from every published player line.
-  const lineKeys = (await store.list('data/lines/')).sort()
-  const days = await pool(lineKeys, 20, k => store.get(k))
-  const acc = {}
-  for (const day of days) {
-    for (const p of day ?? []) {
-      if (!p.min) continue
-      const a = (acc[p.id] ??= { id: p.id, gp: 0, tot: Object.fromEntries(Object.values(STAT).map(k => [k, 0])) })
-      a.gp++
-      Object.assign(a, { name: p.name, num: p.num, pos: p.pos || a.pos || '', abbr: p.abbr })
-      for (const k of Object.keys(a.tot)) a.tot[k] += p[k]
+  // 6. Season averages from every published player line (only when they changed).
+  let playerCount = null
+  if (linesChanged || !(await store.get('data/averages.json'))) {
+    const lineKeys = (await store.list('data/lines/')).sort()
+    const days = await pool(lineKeys, 20, k => store.get(k))
+    const acc = {}
+    for (const day of days) {
+      for (const p of day ?? []) {
+        if (!p.min) continue
+        const a = (acc[p.id] ??= { id: p.id, gp: 0, tot: Object.fromEntries(Object.values(STAT).map(k => [k, 0])) })
+        a.gp++
+        Object.assign(a, { name: p.name, num: p.num, pos: p.pos || a.pos || '', abbr: p.abbr })
+        for (const k of Object.keys(a.tot)) a.tot[k] += p[k]
+      }
     }
+    const pct = (m, a) => (a ? r1((100 * m) / a) : 0)
+    const averages = Object.values(acc).map(({ tot: t, gp, ...p }) => ({
+      ...p, gp,
+      min: r1(t.min / gp), pts: r1(t.pts / gp), reb: r1(t.reb / gp), ast: r1(t.ast / gp),
+      stl: r1(t.stl / gp), blk: r1(t.blk / gp), tov: r1(t.to / gp), pm: r1(t.pm / gp),
+      fgPct: pct(t.fgm, t.fga), tpPct: pct(t.tpm, t.tpa), ftPct: pct(t.ftm, t.fta),
+    }))
+    await store.set('data/averages.json', averages)
+    playerCount = averages.length
   }
-  const pct = (m, a) => (a ? r1((100 * m) / a) : 0)
-  const averages = Object.values(acc).map(({ tot: t, gp, ...p }) => ({
-    ...p, gp,
-    min: r1(t.min / gp), pts: r1(t.pts / gp), reb: r1(t.reb / gp), ast: r1(t.ast / gp),
-    stl: r1(t.stl / gp), blk: r1(t.blk / gp), tov: r1(t.to / gp), pm: r1(t.pm / gp),
-    fgPct: pct(t.fgm, t.fga), tpPct: pct(t.tpm, t.tpa), ftPct: pct(t.ftm, t.fta),
-  }))
-  await store.set('data/averages.json', averages)
 
-  // 7. Standings, plus today's snapshot for the 7-day seed change.
-  const rows = groups.flatMap(g => g.data.map(r => {
-    const s = Object.fromEntries(r.statistics.map(x => [x.displayName, x.value]))
-    return {
-      abbr: abbrOf(r.team), seed: Number(s.Position), w: Number(s.Wins), l: Number(s.Losses),
-      home: s.Home, away: s.Road, conf: s.CONF, ppg: Number(s['Points Per Game']), opp: Number(s['Opponent Points Per Game']),
-      streak: s.Streak, last10: s['Last Ten Games'], clincher: s.Clincher || null,
-    }
-  }))
-  await store.set(`history/standings-${today}.json`, rows.map(r => ({ abbr: r.abbr, seed: r.seed })))
-  const weekAgo = (await store.list('history/standings-'))
-    .filter(k => k.slice(-15, -5) <= addDays(today, -7)).sort().pop()
-  const past = weekAgo ? Object.fromEntries((await store.get(weekAgo)).map(r => [r.abbr, r.seed])) : {}
-  await store.set('data/standings.json', { asOf: yesterday, rows: rows.map(r => ({ ...r, seed7dAgo: past[r.abbr] ?? null })) })
-
-  const backlog = todo.length - Object.values(newLines).reduce((n, ls) => n + new Set(ls.map(p => p.gameId)).size, 0)
+  const backlog = todo.length - fetched.size
   const meta = { updatedAt: new Date().toISOString(), season, requests: used, remaining, backlog, complete: !stopped && backlog === 0 }
   await store.set('data/meta.json', meta)
-  log(`${used} requests used, ${remaining === Infinity ? '?' : remaining} left today; ${games.length} games, ${published.size + todo.length - backlog} box scores, ${averages.length} players.`)
+  log(`${used} requests used, ${remaining === Infinity ? '?' : remaining} left today; ${games.length} games, ${published.size + fetched.size} box scores${playerCount == null ? '' : `, ${playerCount} players`}; ${((Date.now() - started) / 1000).toFixed(1)}s.`)
   if (backlog) log(`${backlog} box scores still to fetch; the next run continues.`)
   return meta
 }
