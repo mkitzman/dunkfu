@@ -204,7 +204,7 @@ const leaders = computed(() => {
   column-gap: 4px;
   align-items: center;
 
-  & > span:not(:first-child) { text-align: right; color: var(--mu); padding: 4px 8px 4px 0; border-radius: 6px; }
+  & > span:not(:first-child) { text-align: center; color: var(--mu); padding: 4px 0; border-radius: 6px; }
   & > span.up { color: var(--fg); }
   & > span.tot { font-weight: 600; }
   & > span.q-won { color: var(--fg); background: color-mix(in oklch, var(--up) var(--heat), transparent); }
