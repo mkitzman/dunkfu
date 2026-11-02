@@ -142,13 +142,12 @@ h1 {
 
 .groups { display: grid; gap: 26px; padding-bottom: 32px; }
 .ghead {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
+  display: grid;
+  gap: 2px;
   margin-bottom: 10px;
 
   & h2 { font: 600 16px var(--sans); margin: 0; }
-  & span { font: 400 11px var(--mono); color: var(--mu); margin-left: auto; text-align: right; }
+  & span { font: 400 11px var(--mono); color: var(--mu); }
 }
 
 .team { display: flex; align-items: center; gap: 10px; }
@@ -195,7 +194,7 @@ table.stats {
 
   .groups { gap: 0; padding-left: 0; padding-right: 0; padding-bottom: 24px; }
   .group { padding-top: 16px; }
-  .ghead { padding: 0 var(--gutter); margin-bottom: 8px; gap: 8px; }
+  .ghead { padding: 0 var(--gutter); margin-bottom: 8px; }
   .ghead h2 { font-size: 15px; }
   .ghead span { font-size: 10px; }
   .card { border-left: 0; border-right: 0; border-bottom: 0; border-radius: 0; background: transparent; }
