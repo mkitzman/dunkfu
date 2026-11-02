@@ -28,6 +28,10 @@ export async function getGame(id) {
   return load(`box/${encodeURIComponent(id)}.json`)
 }
 
+export async function getAwards(date) {
+  return load(`awards/${date}.json`)
+}
+
 export async function getStandings() {
   return (await load('standings.json'))?.rows ?? []
 }

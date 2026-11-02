@@ -8,9 +8,10 @@
 //   getAverages(teams)  season per-game averages for players on those teams
 //   getGame(id)         one game with venue + full player lines
 //   getStandings()      30 rows with splits, seed, seed7dAgo
+//   getAwards(date)     high performer + dud for the night and for each game
 import * as real from './real.js'
 import * as mock from './mock/index.js'
 
 const src = import.meta.env.VITE_MOCK ? mock : real
 
-export const { getGames, getBoxscores, getAverages, getGame, getStandings } = src
+export const { getGames, getBoxscores, getAverages, getGame, getStandings, getAwards } = src

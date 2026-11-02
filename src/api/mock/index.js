@@ -131,3 +131,7 @@ export async function getStandings() {
   }
   return rows.map(({ seedChange, ...r }) => ({ ...r, seed7dAgo: r.seed + seedChange }))
 }
+
+export async function getAwards() {
+  return null
+}

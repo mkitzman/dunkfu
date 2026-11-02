@@ -5,7 +5,7 @@
 // needs get(key) -> object|null, set(key, object), and list(prefix) -> keys.
 //
 // Keys:
-//   data/...     what the site reads (games/DATE, box/ID, lines/DATE, averages, standings, meta)
+//   data/...     what the site reads (games/DATE, box/ID, lines/DATE, awards/DATE, averages, standings, meta)
 //   cache/...    raw API responses that can't change (settled days, box scores, lineups)
 //   history/...  daily standings snapshots for the 7-day seed change
 //
@@ -14,6 +14,7 @@
 // only ever downloaded once.
 
 import TEAMS from '../src/data/teams.json' with { type: 'json' }
+import { computeAwards, VERSION as AWARDS_VERSION } from './awards.js'
 
 const API = 'https://nba.highlightly.net'
 const TZ = 'America/New_York'
@@ -227,11 +228,18 @@ export async function refresh({ store, key, deadline = Infinity, log = console.l
     linesChanged = true
   })
 
-  // 6. Season averages from every published player line (only when they changed).
+  // 6. Season averages and awards from every published player line. Only
+  //    recomputed when lines changed or the awards formula version changed.
   let playerCount = null
-  if (linesChanged || !(await store.get('data/averages.json'))) {
+  const awardsStale = (await store.get('cache/awards-version.json'))?.v !== AWARDS_VERSION
+  if (linesChanged || awardsStale || !(await store.get('data/averages.json'))) {
     const lineKeys = (await store.list('data/lines/')).sort()
     const days = await pool(lineKeys, 20, k => store.get(k))
+
+    const awards = computeAwards(lineKeys.map((k, i) => ({ date: k.slice(-15, -5), lines: days[i] })))
+    await pool(Object.entries(awards), 10, ([d, a]) => store.set(`data/awards/${d}.json`, a))
+    await store.set('cache/awards-version.json', { v: AWARDS_VERSION })
+
     const acc = {}
     for (const day of days) {
       for (const p of day ?? []) {

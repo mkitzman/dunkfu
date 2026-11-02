@@ -4,7 +4,8 @@ import { useRoute, useRouter } from 'vue-router'
 import DateNav from '../components/DateNav.vue'
 import GameCard from '../components/GameCard.vue'
 import PlayerTable from '../components/PlayerTable.vue'
-import { getGames, getBoxscores, getAverages } from '../api/index.js'
+import Awards from '../components/Awards.vue'
+import { getGames, getBoxscores, getAverages, getAwards } from '../api/index.js'
 import { todayNY, addDays, dateLong, dateShort, dayTag } from '../utils.js'
 
 const route = useRoute()
@@ -17,6 +18,7 @@ const canNext = computed(() => date.value < addDays(today, 1))
 
 const games = ref([])
 const players = ref([])
+const awards = ref(null)
 const loading = ref(true)
 
 let req = 0
@@ -24,10 +26,13 @@ watch(date, async d => {
   const id = ++req
   loading.value = true
   const g = await getGames(d)
-  const p = d < today ? await getBoxscores(d) : await getAverages(g.flatMap(x => [x.away.abbr, x.home.abbr]))
+  const [p, a] = d < today
+    ? await Promise.all([getBoxscores(d), getAwards(d)])
+    : [await getAverages(g.flatMap(x => [x.away.abbr, x.home.abbr])), null]
   if (id !== req) return
   games.value = g
   players.value = p
+  awards.value = a
   loading.value = false
 }, { immediate: true })
 
@@ -80,6 +85,8 @@ const go = n => router.push(`/${addDays(date.value, n)}`)
         <GameCard v-for="g in games" :key="g.id" :game="g" :leaders="leaders" />
       </section>
 
+      <Awards v-if="awards?.night" :awards="awards.night" scope="night" class="awards" />
+
       <section v-if="players.length" class="players">
         <div class="section-head">
           <h2>{{ isResults ? 'Player stats' : 'Season averages, players in action' }}</h2>
@@ -103,6 +110,7 @@ const go = n => router.push(`/${addDays(date.value, n)}`)
   padding-bottom: 28px;
 }
 .players { padding-bottom: 28px; }
+.awards { padding-bottom: 28px; }
 .empty {
   padding: 28px;
   text-align: center;

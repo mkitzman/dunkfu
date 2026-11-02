@@ -4,7 +4,8 @@ import { useRoute } from 'vue-router'
 import TeamMark from '../components/TeamMark.vue'
 import LeaderCard from '../components/LeaderCard.vue'
 import TeamBoxTable from '../components/TeamBoxTable.vue'
-import { getGame } from '../api/index.js'
+import Awards from '../components/Awards.vue'
+import { getGame, getAwards } from '../api/index.js'
 import { team } from '../data/teams.js'
 import ARENAS from '../data/arenas.json'
 import { todayNY, addDays, dateLong, dayTag, shortName } from '../utils.js'
@@ -13,6 +14,7 @@ const route = useRoute()
 const today = todayNY()
 
 const game = ref(null)
+const gameAwards = ref(null)
 const loading = ref(true)
 
 let req = 0
@@ -20,8 +22,10 @@ watch(() => route.params.id, async id => {
   const n = ++req
   loading.value = true
   const g = await getGame(id)
+  const a = g ? await getAwards(g.date) : null
   if (n !== req) return
   game.value = g
+  gameAwards.value = a?.games?.[id] ?? null
   loading.value = false
 }, { immediate: true })
 
@@ -110,6 +114,8 @@ const leaders = computed(() => {
       </section>
 
       <template v-if="hasBox">
+        <Awards v-if="gameAwards" :awards="gameAwards" scope="game" class="block" />
+
         <section class="block">
           <div class="section-head">
             <h2>Game leaders</h2>
