@@ -94,7 +94,7 @@ h3 {
   border-radius: 4px;
   vertical-align: 1px;
 }
-.num { font: 400 11px var(--mono); color: var(--mu); }
+.num { font: 400 11px var(--mono); color: var(--mu); margin-left: 4px; }
 .sub { font: 400 11px var(--mono); color: var(--mu); margin-top: 2px; }
 .reason.performer { color: var(--ac); }
 .reason.dud { color: var(--dn); }
