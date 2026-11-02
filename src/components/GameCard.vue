@@ -105,12 +105,11 @@ a.game:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
   row-gap: 8px;
   column-gap: 4px;
 }
-.ql { font: 500 11px var(--mono); color: var(--mu); text-align: right; }
-.q { font: 400 13px var(--mono); color: var(--mu); text-align: right; font-variant-numeric: tabular-nums; }
+.ql { font: 500 11px var(--mono); color: var(--mu); text-align: center; }
+.q { font: 400 13px var(--mono); color: var(--mu); text-align: center; font-variant-numeric: tabular-nums; }
 .total {
-  font: 800 20px var(--sans);
-  letter-spacing: -.02em;
-  text-align: right;
+  font: 700 15px var(--mono);
+  text-align: center;
   color: var(--mu);
   font-variant-numeric: tabular-nums;
 
@@ -142,7 +141,7 @@ a.game:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
   .grid { grid-template-columns: 1fr repeat(var(--nq), 26px) 38px; row-gap: 6px; column-gap: 2px; }
   .ql { font-size: 10px; }
   .q { font-size: 12px; }
-  .total { font-size: 18px; letter-spacing: 0; }
+  .total { font-size: 14px; }
   .team { gap: 7px; }
   .team .nick { font-size: 13px; }
   .team .ctx { font-size: 10px; }
