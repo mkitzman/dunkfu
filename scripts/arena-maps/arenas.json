@@ -1,0 +1,213 @@
+{
+ "_note": "Arena map art. lat/lon from OpenStreetMap (Nominatim); colors from nbacolors.com. base = city color, accent = highways + pin. Run: npm run arena-maps [ABBR...]",
+ "ATL": {
+  "arena": "State Farm Arena",
+  "lat": 33.75737,
+  "lon": -84.396385,
+  "base": "#E03A3E",
+  "accent": "#C1D32F"
+ },
+ "BOS": {
+  "arena": "TD Garden",
+  "lat": 42.366299,
+  "lon": -71.062162,
+  "base": "#007A33",
+  "accent": "#BA9653"
+ },
+ "BKN": {
+  "arena": "Barclays Center",
+  "lat": 40.682511,
+  "lon": -73.975252,
+  "base": "#707070",
+  "accent": "#FFFFFF"
+ },
+ "CHA": {
+  "arena": "Spectrum Center",
+  "lat": 35.225098,
+  "lon": -80.839154,
+  "base": "#1D1160",
+  "accent": "#00788C"
+ },
+ "CHI": {
+  "arena": "United Center",
+  "lat": 41.880683,
+  "lon": -87.674185,
+  "base": "#CE1141",
+  "accent": "#FFFFFF"
+ },
+ "CLE": {
+  "arena": "Rocket Arena",
+  "lat": 41.496686,
+  "lon": -81.688575,
+  "base": "#860038",
+  "accent": "#FDBB30"
+ },
+ "DAL": {
+  "arena": "American Airlines Center",
+  "lat": 32.790489,
+  "lon": -96.810283,
+  "base": "#00538C",
+  "accent": "#B8C4CA"
+ },
+ "DEN": {
+  "arena": "Ball Arena",
+  "lat": 39.748684,
+  "lon": -105.007544,
+  "base": "#1D428A",
+  "accent": "#FEC524"
+ },
+ "DET": {
+  "arena": "Little Caesars Arena",
+  "lat": 42.340977,
+  "lon": -83.054954,
+  "base": "#1D42BA",
+  "accent": "#C8102E"
+ },
+ "GSW": {
+  "arena": "Chase Center",
+  "lat": 37.7679,
+  "lon": -122.387422,
+  "base": "#1D428A",
+  "accent": "#FFC72C"
+ },
+ "HOU": {
+  "arena": "Toyota Center",
+  "lat": 29.750747,
+  "lon": -95.362231,
+  "base": "#CE1141",
+  "accent": "#C4CED4"
+ },
+ "IND": {
+  "arena": "Gainbridge Fieldhouse",
+  "lat": 39.763933,
+  "lon": -86.155502,
+  "base": "#002D62",
+  "accent": "#FDBB30"
+ },
+ "LAC": {
+  "arena": "Intuit Dome",
+  "lat": 33.944259,
+  "lon": -118.342172,
+  "base": "#C8102E",
+  "accent": "#BEC0C2"
+ },
+ "LAL": {
+  "arena": "Crypto.com Arena",
+  "lat": 34.042998,
+  "lon": -118.267135,
+  "base": "#552583",
+  "accent": "#F9A01B"
+ },
+ "MEM": {
+  "arena": "FedExForum",
+  "lat": 35.138233,
+  "lon": -90.050769,
+  "base": "#5D76A9",
+  "accent": "#F5B112"
+ },
+ "MIA": {
+  "arena": "Kaseya Center",
+  "lat": 25.78136,
+  "lon": -80.187944,
+  "base": "#98002E",
+  "accent": "#F9A01B"
+ },
+ "MIL": {
+  "arena": "Fiserv Forum",
+  "lat": 43.04501,
+  "lon": -87.917487,
+  "base": "#00471B",
+  "accent": "#EEE1C6"
+ },
+ "MIN": {
+  "arena": "Target Center",
+  "lat": 44.979592,
+  "lon": -93.275983,
+  "base": "#236192",
+  "accent": "#78BE20"
+ },
+ "NOP": {
+  "arena": "Smoothie King Center",
+  "lat": 29.949067,
+  "lon": -90.081963,
+  "base": "#0C2340",
+  "accent": "#85714D"
+ },
+ "NYK": {
+  "arena": "Madison Square Garden",
+  "lat": 40.750513,
+  "lon": -73.993516,
+  "base": "#006BB6",
+  "accent": "#F58426"
+ },
+ "OKC": {
+  "arena": "Paycom Center",
+  "lat": 35.463396,
+  "lon": -97.515081,
+  "base": "#007AC1",
+  "accent": "#EF3B24"
+ },
+ "ORL": {
+  "arena": "Kia Center",
+  "lat": 28.539287,
+  "lon": -81.383889,
+  "base": "#0077C0",
+  "accent": "#C4CED4"
+ },
+ "PHI": {
+  "arena": "Xfinity Mobile Arena",
+  "lat": 39.9011,
+  "lon": -75.172016,
+  "base": "#006BB6",
+  "accent": "#ED174C"
+ },
+ "PHX": {
+  "arena": "Mortgage Matchup Center",
+  "lat": 33.446039,
+  "lon": -112.071101,
+  "base": "#1D1160",
+  "accent": "#E56020"
+ },
+ "POR": {
+  "arena": "Moda Center",
+  "lat": 45.531579,
+  "lon": -122.666834,
+  "base": "#E03A3E",
+  "accent": "#FFFFFF"
+ },
+ "SAC": {
+  "arena": "Golden 1 Center",
+  "lat": 38.58014,
+  "lon": -121.499501,
+  "base": "#5A2D81",
+  "accent": "#C4CED4"
+ },
+ "SAS": {
+  "arena": "Frost Bank Center",
+  "lat": 29.426921,
+  "lon": -98.437506,
+  "base": "#8A949B",
+  "accent": "#FFFFFF"
+ },
+ "TOR": {
+  "arena": "Scotiabank Arena",
+  "lat": 43.643434,
+  "lon": -79.379078,
+  "base": "#CE1141",
+  "accent": "#B4975A"
+ },
+ "UTA": {
+  "arena": "Delta Center",
+  "lat": 40.768327,
+  "lon": -111.901055,
+  "base": "#002B5C",
+  "accent": "#F9A01B"
+ },
+ "WAS": {
+  "arena": "Capital One Arena",
+  "lat": 38.898188,
+  "lon": -77.020938,
+  "base": "#002B5C",
+  "accent": "#E31837"
+ }
+}

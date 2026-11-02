@@ -1,0 +1,122 @@
+{
+ "ATL": {
+  "baseColor": "#551618",
+  "pin": "#C1D32F"
+ },
+ "BOS": {
+  "baseColor": "#002e13",
+  "pin": "#BA9653"
+ },
+ "BKN": {
+  "baseColor": "#2b2b2b",
+  "pin": "#FFFFFF"
+ },
+ "CHA": {
+  "baseColor": "#0b0624",
+  "pin": "#00788C"
+ },
+ "CHI": {
+  "baseColor": "#4e0619",
+  "pin": "#FFFFFF"
+ },
+ "CLE": {
+  "baseColor": "#330015",
+  "pin": "#FDBB30"
+ },
+ "DAL": {
+  "baseColor": "#002035",
+  "pin": "#B8C4CA"
+ },
+ "DEN": {
+  "baseColor": "#0b1934",
+  "pin": "#FEC524"
+ },
+ "DET": {
+  "baseColor": "#0b1947",
+  "pin": "#C8102E"
+ },
+ "GSW": {
+  "baseColor": "#0b1934",
+  "pin": "#FFC72C"
+ },
+ "HOU": {
+  "baseColor": "#4e0619",
+  "pin": "#C4CED4"
+ },
+ "IND": {
+  "baseColor": "#001125",
+  "pin": "#FDBB30"
+ },
+ "LAC": {
+  "baseColor": "#4c0611",
+  "pin": "#BEC0C2"
+ },
+ "LAL": {
+  "baseColor": "#200e32",
+  "pin": "#F9A01B"
+ },
+ "MEM": {
+  "baseColor": "#232d40",
+  "pin": "#F5B112"
+ },
+ "MIA": {
+  "baseColor": "#3a0011",
+  "pin": "#F9A01B"
+ },
+ "MIL": {
+  "baseColor": "#001b0a",
+  "pin": "#EEE1C6"
+ },
+ "MIN": {
+  "baseColor": "#0d2537",
+  "pin": "#78BE20"
+ },
+ "NOP": {
+  "baseColor": "#050d18",
+  "pin": "#85714D"
+ },
+ "NYK": {
+  "baseColor": "#002945",
+  "pin": "#F58426"
+ },
+ "OKC": {
+  "baseColor": "#002e49",
+  "pin": "#EF3B24"
+ },
+ "ORL": {
+  "baseColor": "#002d49",
+  "pin": "#C4CED4"
+ },
+ "PHI": {
+  "baseColor": "#002945",
+  "pin": "#ED174C"
+ },
+ "PHX": {
+  "baseColor": "#0b0624",
+  "pin": "#E56020"
+ },
+ "POR": {
+  "baseColor": "#551618",
+  "pin": "#FFFFFF"
+ },
+ "SAC": {
+  "baseColor": "#221131",
+  "pin": "#C4CED4"
+ },
+ "SAS": {
+  "baseColor": "#34383b",
+  "pin": "#FFFFFF"
+ },
+ "TOR": {
+  "baseColor": "#4e0619",
+  "pin": "#B4975A"
+ },
+ "UTA": {
+  "baseColor": "#001023",
+  "pin": "#F9A01B"
+ },
+ "WAS": {
+  "baseColor": "#001023",
+  "pin": "#E31837"
+ }
+}

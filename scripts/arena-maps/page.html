@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="/maplibre-gl.css">
+<style>html,body{margin:0;background:#000}#m{width:1800px;height:448px}</style>
+<script src="/maplibre-gl.js"></script></head>
+<body><div id="m"></div>
+<script>
+// Renders one arena map from OpenStreetMap data (OpenFreeMap / OpenMapTiles
+// vector tiles) in a team's colors. Driven by render.mjs; query string gives
+// lat, lon, zoom, base, accent. Sets document.title = 'DONE' when drawn.
+const q = new URLSearchParams(location.search)
+const base = q.get('base'), accent = q.get('accent')
+const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16))
+const mix = (a, b, t) => '#' + hex(a).map((v, i) => Math.round(v * (1 - t) + hex(b)[i] * t).toString(16).padStart(2, '0')).join('')
+
+const deep = mix(base, '#000000', 0.62) // water and the card behind the map
+const land = mix(base, '#c9ced8', 0.55) // team color, toned toward grey
+const C = {
+  water: deep, land, building: base,
+  park: mix(land, deep, 0.28),
+  minor: mix(deep, '#9aa3b5', 0.35),
+  major: mix(deep, '#c0c6d2', 0.5),
+  motorway: accent,
+}
+const roads = (id, classes, color, w) => ({
+  id, type: 'line', source: 'omt', 'source-layer': 'transportation',
+  filter: ['in', ['get', 'class'], ['literal', classes]],
+  layout: { 'line-cap': 'round', 'line-join': 'round' },
+  paint: { 'line-color': color, 'line-width': ['interpolate', ['exponential', 1.6], ['zoom'], 12, w[0], 18, w[1]] },
+})
+const style = {
+  version: 8,
+  sources: { omt: { type: 'vector', url: 'https://tiles.openfreemap.org/planet' } },
+  layers: [
+    { id: 'land', type: 'background', paint: { 'background-color': C.land } },
+    { id: 'park', type: 'fill', source: 'omt', 'source-layer': 'park', paint: { 'fill-color': C.park } },
+    { id: 'green', type: 'fill', source: 'omt', 'source-layer': 'landcover', filter: ['in', ['get', 'class'], ['literal', ['grass', 'wood']]], paint: { 'fill-color': C.park } },
+    { id: 'water', type: 'fill', source: 'omt', 'source-layer': 'water', paint: { 'fill-color': C.water } },
+    { id: 'waterway', type: 'line', source: 'omt', 'source-layer': 'waterway', paint: { 'line-color': C.water, 'line-width': 2 } },
+    { id: 'building', type: 'fill', source: 'omt', 'source-layer': 'building', paint: { 'fill-color': C.building, 'fill-opacity': 0.9 } },
+    roads('minor', ['minor', 'service', 'track', 'path', 'pedestrian'], C.minor, [0.6, 9]),
+    roads('major', ['primary', 'secondary', 'tertiary', 'trunk'], C.major, [1.2, 16]),
+    roads('rail', ['rail', 'transit'], C.motorway, [0.4, 3]),
+    roads('motorway', ['motorway'], C.motorway, [1.6, 22]),
+  ],
+}
+window.mapColors = { deep }
+const map = new maplibregl.Map({
+  container: 'm', style, center: [+q.get('lon'), +q.get('lat')], zoom: +q.get('zoom'),
+  interactive: false, attributionControl: false, fadeDuration: 0, pixelRatio: 1.5,
+  canvasContextAttributes: { preserveDrawingBuffer: true },
+})
+map.on('idle', () => { document.title = 'DONE' })
+</script></body></html>

@@ -214,7 +214,11 @@ const leaders = computed(() => {
 .shade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(10, 26, 46, .97) 0%, rgba(10, 26, 46, .97) 58%, rgba(10, 26, 46, .55) 72%, rgba(10, 26, 46, .08) 100%);
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--base) 97%, transparent) 0%,
+    color-mix(in srgb, var(--base) 97%, transparent) 58%,
+    color-mix(in srgb, var(--base) 55%, transparent) 72%,
+    color-mix(in srgb, var(--base) 8%, transparent) 100%);
 }
 .pin {
   position: absolute;
