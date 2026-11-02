@@ -97,7 +97,7 @@ const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
                   <td>{{ t.streak }}</td>
                   <td>{{ t.last10 }}</td>
                 </tr>
-                <tr v-if="g.cuts && (t.seed === 6 || t.seed === 10)" class="cut" aria-hidden="true">
+                <tr v-if="g.cutAfter?.(t)" class="cut" aria-hidden="true">
                   <td :colspan="COLS.length + 2"></td>
                 </tr>
               </template>

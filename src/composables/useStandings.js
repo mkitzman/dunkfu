@@ -26,7 +26,8 @@ const CONF_NAME = { E: 'Eastern', W: 'Western' }
 
 export function groupStandings(rows, view) {
   if (view === 'league') {
-    return [{ key: 'league', title: 'League', sub: 'Conference seed in grey', rows: rankGroup(rows), tag: t => `${t.conference}${t.seed}` }]
+    // The 14 non-playoff teams go to the draft lottery: line above the bottom 14.
+    return [{ key: 'league', title: 'League', sub: 'Conference seed in grey · lottery below the dashed line', rows: rankGroup(rows), tag: t => `${t.conference}${t.seed}`, cutAfter: t => t.rank === rows.length - 14 }]
   }
   if (view === 'division') {
     return DIVISIONS.map(([c, d]) => ({
@@ -39,6 +40,6 @@ export function groupStandings(rows, view) {
   return ['W', 'E'].map(c => ({
     key: c, title: `${CONF_NAME[c]} Conference`, sub: '',
     rows: rankGroup(rows.filter(t => t.conference === c)).map(t => ({ ...t, rank: t.seed })).sort((a, b) => a.seed - b.seed),
-    cuts: true,
+    cutAfter: t => t.seed === 6 || t.seed === 10,
   }))
 }
