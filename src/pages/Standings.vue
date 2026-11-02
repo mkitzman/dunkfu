@@ -61,7 +61,7 @@ const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
       <section v-for="g in groups" :key="g.key" class="group">
         <div class="ghead">
           <h2>{{ g.title }}</h2>
-          <span>{{ g.sub }}</span>
+          <span v-if="g.sub">{{ g.sub }}</span>
         </div>
         <div class="table-wrap card">
           <table class="stats edge">

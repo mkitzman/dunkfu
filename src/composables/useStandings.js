@@ -26,18 +26,18 @@ const CONF_NAME = { E: 'Eastern', W: 'Western' }
 
 export function groupStandings(rows, view) {
   if (view === 'league') {
-    return [{ key: 'league', title: 'League', sub: 'All 30 teams · conference seed in grey', rows: rankGroup(rows), tag: t => `${t.conference}${t.seed}` }]
+    return [{ key: 'league', title: 'League', sub: 'Conference seed in grey', rows: rankGroup(rows), tag: t => `${t.conference}${t.seed}` }]
   }
   if (view === 'division') {
     return DIVISIONS.map(([c, d]) => ({
       key: d, title: d,
-      sub: `${CONF_NAME[c]} Conference · seed marks show conference position`,
+      sub: `${CONF_NAME[c]} Conference`,
       rows: rankGroup(rows.filter(t => t.division === d)),
       tag: t => `${t.conference} · ${t.seed}`,
     }))
   }
   return ['W', 'E'].map(c => ({
-    key: c, title: `${CONF_NAME[c]} Conference`, sub: 'Seeded by record',
+    key: c, title: `${CONF_NAME[c]} Conference`, sub: '',
     rows: rankGroup(rows.filter(t => t.conference === c)).map(t => ({ ...t, rank: t.seed })).sort((a, b) => a.seed - b.seed),
     cuts: true,
   }))
