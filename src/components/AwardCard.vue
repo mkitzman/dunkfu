@@ -1,7 +1,6 @@
 <script setup>
 import { computed } from 'vue'
 import { team, onColor } from '../data/teams.js'
-import { shortName } from '../utils.js'
 
 const props = defineProps({
   label: { type: String, required: true },
@@ -38,7 +37,7 @@ const fill = computed(() => Math.max(0, Math.min(100, (100 * a.value.gs) / 40)))
     <div class="row">
       <div class="who">
         <div class="name">
-          {{ shortName(award.name) }}
+          {{ award.name }}
           <span class="chip" :style="{ background: color, color: onColor(color) }">{{ award.abbr }}</span>
           <span class="num">#{{ award.num }}</span>
         </div>

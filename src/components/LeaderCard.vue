@@ -3,7 +3,7 @@ import { onColor } from '../data/teams.js'
 
 defineProps({
   label: { type: String, required: true },
-  leaders: { type: Array, required: true }, // [{ key, short, num, abbr, color, value, sub }]
+  leaders: { type: Array, required: true }, // [{ key, name, short, num, abbr, color, value, sub }]
 })
 </script>
 
@@ -15,7 +15,7 @@ defineProps({
         <span class="rank">{{ i + 1 }}</span>
         <div class="who">
           <div class="name">
-            {{ p.short }}
+            <span class="full">{{ p.name }}</span><span class="abbrv">{{ p.short }}</span>
             <span class="chip" :style="{ background: p.color, color: onColor(p.color) }">{{ p.abbr }}</span>
             <span class="num">#{{ p.num }}</span>
           </div>
@@ -67,8 +67,10 @@ li {
   padding: 1px 5px;
   border-radius: 4px;
   vertical-align: 1px;
+  margin-left: 4px;
 }
 .num { font: 400 11px var(--mono); color: var(--mu); margin-left: 4px; }
+.abbrv { display: none; }
 .sub { font: 400 11px var(--mono); color: var(--mu); margin-top: 2px; }
 .track {
   height: 3px;
@@ -94,6 +96,8 @@ li {
   .name { font-size: 13px; }
   .chip { font-size: 8px; }
   .num { display: none; }
+  .full { display: none; }
+  .abbrv { display: inline; }
   .sub { font-size: 10px; }
   .value { font-size: 18px; }
   .first .value { font-size: 26px; }

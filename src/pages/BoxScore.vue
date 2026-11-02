@@ -81,7 +81,7 @@ const leaders = computed(() => {
   return CATS.map(([label, key, sub]) => ({
     label,
     list: all.slice().sort((a, b) => b[key] - a[key] || b.min - a.min).slice(0, 3).map(p => ({
-      key: `${p.abbr}-${p.name}`, short: shortName(p.name), num: p.num, abbr: p.abbr, color: p.color, value: p[key], sub: sub(p),
+      key: `${p.abbr}-${p.name}`, name: p.name, short: shortName(p.name), num: p.num, abbr: p.abbr, color: p.color, value: p[key], sub: sub(p),
     })),
   }))
 })
