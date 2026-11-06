@@ -232,8 +232,11 @@ export async function refresh({ store, key, deadline = Infinity, log = console.l
   //    recomputed when lines changed or the awards formula version changed.
   let playerCount = null
   const awardsStale = (await store.get('cache/awards-version.json'))?.v !== AWARDS_VERSION
-  if (linesChanged || awardsStale || !(await store.get('data/averages.json'))) {
-    const lineKeys = (await store.list('data/lines/')).sort()
+  const lineKeys = (await store.list('data/lines/')).sort()
+  // Any day with player lines but no awards file (e.g. a run cut off mid-save)?
+  const haveAwards = new Set((await store.list('data/awards/')).map(k => k.slice(-15, -5)))
+  const awardsMissing = lineKeys.some(k => !haveAwards.has(k.slice(-15, -5)))
+  if (linesChanged || awardsStale || awardsMissing || !(await store.get('data/averages.json'))) {
     const days = await pool(lineKeys, 20, k => store.get(k))
 
     const awards = computeAwards(lineKeys.map((k, i) => ({ date: k.slice(-15, -5), lines: days[i] })))

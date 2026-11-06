@@ -2,6 +2,7 @@
 // 10:00 UTC is 6 AM Eastern (5 AM in winter), after West Coast games finish.
 // Scheduled functions get ~30s. New API requests stop at 15s, leaving time to
 // save everything; the next run continues any backlog.
+import { purgeCache } from '@netlify/functions'
 import { refresh } from '../../server/pipeline.js'
 import { blobStore } from '../lib/store.mjs'
 
@@ -11,6 +12,8 @@ export default async () => {
     key: process.env.HIGHLIGHTLY_API_KEY,
     deadline: Date.now() + 15_000,
   })
+  // Drop cached /data responses so the first visitor gets today's files.
+  await purgeCache({ tags: ['data'] })
 }
 
 export const config = { schedule: '0 10 * * *' }
