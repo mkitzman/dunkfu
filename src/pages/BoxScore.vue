@@ -11,7 +11,7 @@ import { announce } from '../composables/useAnnounce.js'
 import { team } from '../data/teams.js'
 import ARENAS from '../data/arenas.json'
 import ARENA_MAPS from '../data/arenaMaps.js'
-import { todayNY, dateLong, dayTitle, shortName } from '../utils.js'
+import { todayNY, dayHeading, shortName } from '../utils.js'
 
 const route = useRoute()
 const today = todayNY()
@@ -40,7 +40,7 @@ watch(() => route.params.id, async (id, old) => {
 
 // Arrows step through that night's games, in tip-off order.
 const index = computed(() => dayGames.value.findIndex(g => g.id === game.value?.id))
-const navTitle = computed(() => dayTitle(game.value.date, today))
+const heading = computed(() => dayHeading(game.value.date, today))
 
 // The night's games as a carousel: prev/next wrap around the ends. With only
 // two games a single pill shows (next on the first game, prev on the second).
@@ -140,9 +140,9 @@ const leaders = computed(() => {
 
     <template v-else-if="game">
       <PageNav
-        :tag="dateLong(game.date)"
+        :tag="heading.tag"
         :tag-to="`/${game.date}`"
-        :title="navTitle"
+        :title="heading.title"
         :sub="summary"
         :prev="navPill(-1)"
         :next="navPill(1)"

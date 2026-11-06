@@ -8,7 +8,7 @@ import Awards from '../components/Awards.vue'
 import DaySkeleton from '../components/DaySkeleton.vue'
 import { getGames, getBoxscores, getAverages, getAwards } from '../api/index.js'
 import { announce } from '../composables/useAnnounce.js'
-import { todayNY, addDays, dateLong, dateShort, dayTitle } from '../utils.js'
+import { todayNY, addDays, dateLong, dateShort, dayHeading } from '../utils.js'
 
 const route = useRoute()
 
@@ -43,7 +43,7 @@ watch(date, async (d, old) => {
   if (old) announce(`${dateLong(d)}. ${summary.value}`)
 }, { immediate: true })
 
-const title = computed(() => dayTitle(date.value, today))
+const heading = computed(() => dayHeading(date.value, today))
 
 const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`
 
@@ -88,8 +88,8 @@ function dayPill(step) {
   <div class="page">
     <PageNav
       class="wrap nav"
-      :tag="dateLong(date)"
-      :title="title"
+      :tag="heading.tag"
+      :title="heading.title"
       :sub="summary"
       :prev="dayPill(-1)"
       :next="dayPill(1)"

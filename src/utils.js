@@ -32,13 +32,12 @@ export const signed = (v, digits = 0) => (v > 0 ? '+' : '') + (digits ? v.toFixe
 
 export const pct = (m, a) => (a ? Math.round((100 * m) / a) + '%' : '—')
 
-// Heading for a game date relative to today ("Last night", "Thursday night").
-// The actual date goes in the eyebrow above it.
-export function dayTitle(d, today) {
-  if (d === addDays(today, -1)) return 'Last night'
-  if (d === today) return 'Tonight'
-  if (d === addDays(today, 1)) return 'Tomorrow'
-  return `${weekday(d)} night`
+// Eyebrow + heading for a game date. Yesterday/today/tomorrow lead with the
+// relative name ("Last night", date above it); older nights lead with the date
+// ("Wed, Nov 4", "Wednesday night" above) so a shared link reads on its own.
+export function dayHeading(d, today) {
+  const rel = { [addDays(today, -1)]: 'Last night', [today]: 'Tonight', [addDays(today, 1)]: 'Tomorrow' }[d]
+  return rel ? { tag: dateLong(d), title: rel } : { tag: `${weekday(d)} night`, title: dateLong(d) }
 }
 
 // Full names for stat column abbreviations (header tooltips).
