@@ -32,13 +32,13 @@ export const signed = (v, digits = 0) => (v > 0 ? '+' : '') + (digits ? v.toFixe
 
 export const pct = (m, a) => (a ? Math.round((100 * m) / a) + '%' : '—')
 
-// Eyebrow label for a game date relative to today.
-export function dayTag(d, today) {
-  if (d === addDays(today, -1)) return 'Last night in the NBA'
+// Heading for a game date relative to today ("Last night", "Thursday night").
+// The actual date goes in the eyebrow above it.
+export function dayTitle(d, today) {
+  if (d === addDays(today, -1)) return 'Last night'
   if (d === today) return 'Tonight'
   if (d === addDays(today, 1)) return 'Tomorrow'
-  if (d < today && d > addDays(today, -7)) return `${weekday(d)} night`
-  return fmt(d, { month: 'short', day: 'numeric', year: 'numeric' })
+  return `${weekday(d)} night`
 }
 
 // Full names for stat column abbreviations (header tooltips).
