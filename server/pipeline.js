@@ -240,7 +240,9 @@ export async function refresh({ store, key, deadline = Infinity, log = console.l
     const days = await pool(lineKeys, 20, k => store.get(k))
 
     const awards = computeAwards(lineKeys.map((k, i) => ({ date: k.slice(-15, -5), lines: days[i] })))
-    await pool(Object.entries(awards), 10, ([d, a]) => store.set(`data/awards/${d}.json`, a))
+    // Don't save an empty day (lines not readable yet); the next run sees it as missing.
+    const filled = Object.entries(awards).filter(([, a]) => a.night.performer)
+    await pool(filled, 10, ([d, a]) => store.set(`data/awards/${d}.json`, a))
     await store.set('cache/awards-version.json', { v: AWARDS_VERSION })
 
     const acc = {}
