@@ -5,6 +5,7 @@ import PageNav from '../components/PageNav.vue'
 import GameCard from '../components/GameCard.vue'
 import PlayerTable from '../components/PlayerTable.vue'
 import Awards from '../components/Awards.vue'
+import DaySkeleton from '../components/DaySkeleton.vue'
 import { getGames, getBoxscores, getAverages, getAwards } from '../api/index.js'
 import { announce } from '../composables/useAnnounce.js'
 import { todayNY, addDays, dateLong, dateShort, dayTag } from '../utils.js'
@@ -21,6 +22,7 @@ const neighbours = ref({}) // date -> game count for the prev/next pills
 const players = ref([])
 const awards = ref(null)
 const loading = ref(true)
+const loaded = ref(false) // has any day finished loading yet
 
 let req = 0
 watch(date, async (d, old) => {
@@ -37,6 +39,7 @@ watch(date, async (d, old) => {
   players.value = p
   awards.value = a
   loading.value = false
+  loaded.value = true
   if (old) announce(`${dateLong(d)}. ${summary.value}`)
 }, { immediate: true })
 
@@ -93,7 +96,10 @@ function dayPill(step) {
     />
 
     <div class="wrap">
-      <p v-if="!loading && !games.length" class="empty card">No games scheduled for {{ dateLong(date) }}.</p>
+      <!-- First load only; switching days keeps the current day up until the next arrives. -->
+      <DaySkeleton v-if="!loaded" />
+
+      <p v-else-if="!loading && !games.length" class="empty card">No games scheduled for {{ dateLong(date) }}.</p>
 
       <section v-else class="hero" :aria-busy="loading" aria-label="Games">
         <GameCard v-for="g in games" :key="g.id" :game="g" :leaders="leaders" />
