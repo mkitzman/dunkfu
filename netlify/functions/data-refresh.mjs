@@ -12,8 +12,8 @@ export default async () => {
     key: process.env.HIGHLIGHTLY_API_KEY,
     deadline: Date.now() + 15_000,
   })
-  // Drop cached /data responses so the first visitor gets today's files.
-  await purgeCache({ tags: ['data'] })
+  // Belt and braces: the client already versions data URLs by meta.updatedAt.
+  await purgeCache()
 }
 
 export const config = { schedule: '0 10 * * *' }

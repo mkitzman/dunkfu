@@ -1,7 +1,19 @@
 // Reads the JSON files written by scripts/fetch-data.js (served from /data).
 
+// Every data URL carries the last refresh time (?v=), so a new morning's data
+// never comes from an old cached copy. meta.json itself is never cached.
+let version
+function dataVersion() {
+  version ??= fetch('/data/meta.json', { cache: 'no-store' })
+    .then(r => (r.ok && r.headers.get('content-type')?.includes('json') ? r.json() : null))
+    .then(m => m?.updatedAt ?? '')
+    .catch(() => '')
+  return version
+}
+
 async function load(file) {
-  const res = await fetch(`/data/${file}`)
+  const v = await dataVersion()
+  const res = await fetch(`/data/${file}${v ? `?v=${encodeURIComponent(v)}` : ''}`)
   if (!res.ok) return null
   // Vite's dev server answers missing files with index.html, so check the type.
   if (!res.headers.get('content-type')?.includes('json')) return null

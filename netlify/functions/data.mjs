@@ -9,7 +9,14 @@ export default async req => {
   const data = await blobStore().get(`data/${file}`)
   if (!data) return new Response('Not found', { status: 404, headers: { 'cache-control': 'no-store' } })
 
-  // Data changes once a day; let the CDN hold it briefly.
+  // meta.json is the version the client stamps on every other request (?v=),
+  // so it must never be cached.
+  if (file === 'meta.json') {
+    return new Response(JSON.stringify(data), { headers: { 'content-type': 'application/json', 'cache-control': 'no-store' } })
+  }
+
+  // Everything else is requested with ?v=<updatedAt>, so a new run means new
+  // URLs; caching hard is safe.
   return new Response(JSON.stringify(data), {
     headers: {
       'content-type': 'application/json',
