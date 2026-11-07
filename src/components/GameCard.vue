@@ -46,10 +46,9 @@ const sides = computed(() => {
       <span v-for="l in qLabels" :key="l" class="ql">{{ l }}</span>
       <template v-for="s in sides" :key="s.abbr">
         <div class="team" :class="{ won: s.won }">
-          <TeamMark :abbr="s.abbr" round :size="24" :font-size="7" />
+          <TeamMark :abbr="s.abbr" round :size="30" :font-size="8" />
           <div class="tn">
             <div class="nick"><span class="full">{{ s.nick }}</span><span class="ab">{{ s.abbr }}</span></div>
-            <div class="ctx"><span class="full">{{ s.ctx }}</span><span class="ab">{{ s.record }}</span></div>
           </div>
         </div>
         <span v-for="(q, i) in s.quarters" :key="i" class="q">{{ q }}</span>
@@ -62,7 +61,7 @@ const sides = computed(() => {
     <div class="top"><span :class="{ net: game.network }">{{ status }}</span><span v-if="game.network">{{ game.tip }} ET</span></div>
     <div class="sched">
       <div v-for="s in sides" :key="s.abbr" class="srow">
-        <TeamMark :abbr="s.abbr" round :size="24" :font-size="7" />
+        <TeamMark :abbr="s.abbr" round :size="30" :font-size="8" />
         <div class="tn">
           <div class="nick">{{ s.nick }}</div>
           <div class="ctx">{{ s.ctx }}</div>
@@ -74,14 +73,18 @@ const sides = computed(() => {
 </template>
 
 <style scoped>
+/* Glass card: sits on the navy scores panel, which scopes --sf/--ln/--fg. */
 .game {
+  border-radius: 10px;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
   padding: 14px 16px 12px;
   display: grid;
   gap: 10px;
   align-content: start;
 }
 a.game { transition: transform .15s ease; }
-a.game:hover { border-color: color-mix(in srgb, var(--fg) 28%, transparent); }
+a.game:hover { border-color: color-mix(in srgb, var(--fg) 34%, transparent); }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   a.game:hover { transform: scale(1.02); }
 }
@@ -108,7 +111,8 @@ a.game:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
 .ql { font: 500 11px var(--mono); color: var(--mu); text-align: center; }
 .q { font: 400 13px var(--mono); color: var(--mu); text-align: center; font-variant-numeric: tabular-nums; }
 .total {
-  font: 700 15px var(--mono);
+  font: 800 20px var(--sans);
+  letter-spacing: -.02em;
   text-align: center;
   color: var(--mu);
   font-variant-numeric: tabular-nums;
@@ -136,15 +140,14 @@ a.game:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
 .leader { font-size: 11px; color: var(--mu); text-align: right; }
 
 @media (max-width: 720px) {
-  .game { padding: 12px 14px; gap: 8px; --mark-size: 20px; --mark-fs: 0; }
+  .game { padding: 12px 14px; gap: 8px; --mark-size: 24px; --mark-fs: 0; }
   .top { font-size: 10px; }
   .grid { grid-template-columns: 1fr repeat(var(--nq), 26px) 38px; row-gap: 6px; column-gap: 2px; }
   .ql { font-size: 10px; }
   .q { font-size: 12px; }
-  .total { font-size: 14px; }
+  .total { font-size: 17px; }
   .team { gap: 7px; }
   .team .nick { font-size: 13px; }
-  .team .ctx { font-size: 10px; }
   .team .full { display: none; }
   .team .ab { display: inline; }
   .sched { gap: 8px; }

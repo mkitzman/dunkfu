@@ -2,6 +2,7 @@
 import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import ThemeToggle from './ThemeToggle.vue'
+import BrandLockup from './BrandLockup.vue'
 
 const route = useRoute()
 const open = ref(false)
@@ -20,7 +21,7 @@ watch(() => route.fullPath, () => { open.value = false })
 <template>
   <header class="header">
     <div class="bar">
-      <RouterLink to="/" class="wordmark" aria-label="dunkfu home">dunk<span>fu</span></RouterLink>
+      <RouterLink to="/" class="home" aria-label="dunkfu home"><BrandLockup /></RouterLink>
       <nav class="nav" aria-label="Main">
         <RouterLink
           v-for="l in links"
@@ -67,21 +68,18 @@ watch(() => route.fullPath, () => { open.value = false })
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px var(--gutter);
+  gap: 20px;
+  height: 72px;
+  padding: 0 var(--gutter);
   max-width: var(--max);
   margin: 0 auto;
 }
-.wordmark {
-  font: 800 24px/1 var(--sans);
-  letter-spacing: -.03em;
-
-  & span { font-weight: 400; color: var(--ac); }
-}
+.home { display: flex; border-radius: 4px; }
+.home:focus-visible { outline: 2px solid var(--ac); outline-offset: 4px; }
 .nav {
   display: flex;
-  gap: 26px;
-  font-size: 13px;
-  font-weight: 600;
+  gap: 28px;
+  font: 600 15px var(--sans);
   color: var(--mu);
 
   & a:hover, & a.active { color: var(--fg); }
@@ -90,8 +88,7 @@ watch(() => route.fullPath, () => { open.value = false })
 .menu-btn, .mobile-nav { display: none; }
 
 @media (max-width: 720px) {
-  .bar { padding-top: 14px; padding-bottom: 14px; }
-  .wordmark { font-size: 20px; }
+  .bar { height: 60px; }
   .nav { display: none; }
   .menu-btn {
     display: grid;

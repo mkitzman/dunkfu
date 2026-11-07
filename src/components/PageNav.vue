@@ -2,12 +2,15 @@
 // Centered title block with labelled prev/next pills. Used on the day
 // overview (pills step through days) and the box score (pills step through
 // that night's games).
-//   prev / next: { to, label, text, aria } or null (side left empty)
+//   prev / next: { to, label, text, aria }, { disabled: true, label, text }
+//   (shown dimmed, not a link) or null (side left empty)
 defineProps({
   tag: { type: String, required: true }, // "Last night"
   tagTo: { type: String, default: null }, // makes the eyebrow a link
   title: { type: String, required: true }, // "Sun, Nov 1"
   sub: { type: String, default: '' },
+  subTo: { type: String, default: null }, // makes the sub line a link
+  subLink: { type: String, default: '' }, // trailing link text: "· All games"
   prev: { type: Object, default: null },
   next: { type: Object, default: null },
 })
@@ -15,10 +18,18 @@ defineProps({
 
 <template>
   <nav class="pagenav" aria-label="Navigation">
-    <RouterLink v-if="prev" :to="prev.to" class="side prev" :aria-label="prev.aria">
+    <component
+      :is="prev.disabled ? 'span' : 'RouterLink'"
+      v-if="prev"
+      :to="prev.disabled ? undefined : prev.to"
+      class="side prev"
+      :class="{ disabled: prev.disabled }"
+      :aria-label="prev.aria"
+      :aria-hidden="prev.disabled ? 'true' : undefined"
+    >
       <span class="arrow" aria-hidden="true">◀</span>
       <span class="txt"><span class="lbl">{{ prev.label }}</span><span class="val">{{ prev.text }}</span></span>
-    </RouterLink>
+    </component>
     <span v-else class="side empty" aria-hidden="true"></span>
 
     <div class="mid">
@@ -26,13 +37,22 @@ defineProps({
       <div v-else class="eyebrow">{{ tag }}</div>
       <h1 class="title">{{ title }}</h1>
       <!-- Always rendered so the block keeps its height while data loads. -->
-      <div class="sub">{{ sub || '\u00a0' }}</div>
+      <RouterLink v-if="subTo" :to="subTo" class="sub sub-link">{{ sub }}<span v-if="subLink" class="sub-more">{{ subLink }}</span></RouterLink>
+      <div v-else class="sub">{{ sub || '\u00a0' }}</div>
     </div>
 
-    <RouterLink v-if="next" :to="next.to" class="side next" :aria-label="next.aria">
+    <component
+      :is="next.disabled ? 'span' : 'RouterLink'"
+      v-if="next"
+      :to="next.disabled ? undefined : next.to"
+      class="side next"
+      :class="{ disabled: next.disabled }"
+      :aria-label="next.aria"
+      :aria-hidden="next.disabled ? 'true' : undefined"
+    >
       <span class="txt"><span class="lbl">{{ next.label }}</span><span class="val">{{ next.text }}</span></span>
       <span class="arrow" aria-hidden="true">▶</span>
-    </RouterLink>
+    </component>
     <span v-else class="side empty" aria-hidden="true"></span>
   </nav>
 </template>
@@ -43,7 +63,7 @@ defineProps({
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 20px;
-  padding-top: 26px;
+  padding-top: 28px;
 }
 .side {
   display: flex;
@@ -56,23 +76,24 @@ defineProps({
 
   transition: transform .15s ease;
 
-  &:hover { border-color: var(--mu); }
+  &:not(.disabled):hover { border-color: var(--mu); }
   &:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
 }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   a.side:hover { transform: scale(1.02); }
 }
-.prev { justify-self: start; padding-right: 18px; }
-.next { justify-self: end; padding-left: 18px; }
+.prev { justify-self: start; padding: 6px 16px 6px 6px; }
+.next { justify-self: end; padding: 6px 6px 6px 16px; }
+.disabled { opacity: .35; }
 .empty { visibility: hidden; }
 .arrow {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background: var(--ln2);
   display: grid;
   place-items: center;
-  font-size: 11px;
+  font-size: 10px;
   flex: none;
 }
 .txt { display: grid; gap: 2px; min-width: 0; }
@@ -87,14 +108,18 @@ defineProps({
 
 .mid { text-align: center; }
 /* Block-level so the link version sits exactly where the plain label does. */
+.eyebrow { letter-spacing: .14em; }
 .tag-link { display: table; margin: 0 auto; }
 .tag-link:hover { text-decoration: underline; }
 .title {
-  font: 800 30px/1.1 var(--sans);
+  font: 800 34px/1.1 var(--sans);
   letter-spacing: -.03em;
   margin: 4px 0 0;
 }
-.sub { font-size: 12px; line-height: 1.4; color: var(--mu); margin-top: 4px; }
+.sub { font-size: 15px; line-height: 1.4; color: var(--mu); margin-top: 6px; }
+.sub-link { display: inline-flex; align-items: baseline; gap: 6px; font-size: 13px; }
+.sub-link:hover { color: var(--ac); }
+.sub-more { font-size: 11px; }
 
 @media (max-width: 860px) {
   .pagenav {
@@ -110,6 +135,6 @@ defineProps({
   .arrow { width: 28px; height: 28px; font-size: 10px; }
   .val { font-size: 11px; }
   .title { font-size: 26px; }
-  .sub { font-size: 11px; }
+  .sub { font-size: 13px; }
 }
 </style>

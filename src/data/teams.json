@@ -6,6 +6,7 @@
     "conference": "E",
     "division": "Atlantic",
     "seedColor": "#006BB6",
+    "secondary": "#ED174C",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -15,6 +16,7 @@
     "conference": "E",
     "division": "Central",
     "seedColor": "#C8102E",
+    "secondary": "#1D42BA",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -24,6 +26,7 @@
     "conference": "E",
     "division": "Atlantic",
     "seedColor": "#007A33",
+    "secondary": "#BA9653",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -33,6 +36,7 @@
     "conference": "E",
     "division": "Central",
     "seedColor": "#860038",
+    "secondary": "#FDBB30",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -42,6 +46,7 @@
     "conference": "E",
     "division": "Atlantic",
     "seedColor": "#CE1141",
+    "secondary": "#A1A1A4",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -51,6 +56,7 @@
     "conference": "E",
     "division": "Southeast",
     "seedColor": "#E31837",
+    "secondary": "#002B5C",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -60,6 +66,7 @@
     "conference": "E",
     "division": "Atlantic",
     "seedColor": "#F58426",
+    "secondary": "#006BB6",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -69,6 +76,7 @@
     "conference": "E",
     "division": "Southeast",
     "seedColor": "#98002E",
+    "secondary": "#F9A01B",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -78,6 +86,7 @@
     "conference": "E",
     "division": "Southeast",
     "seedColor": "#E03A3E",
+    "secondary": "#C1D32F",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -87,6 +96,7 @@
     "conference": "E",
     "division": "Southeast",
     "seedColor": "#1D8CAB",
+    "secondary": "#1D1160",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -96,6 +106,7 @@
     "conference": "E",
     "division": "Southeast",
     "seedColor": "#0077C0",
+    "secondary": "#C4CED4",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -105,6 +116,7 @@
     "conference": "E",
     "division": "Central",
     "seedColor": "#CE1141",
+    "secondary": "#000000",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -114,6 +126,7 @@
     "conference": "E",
     "division": "Central",
     "seedColor": "#1A6B3A",
+    "secondary": "#EEE1C6",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -123,6 +136,7 @@
     "conference": "E",
     "division": "Central",
     "seedColor": "#E0A52A",
+    "secondary": "#002D62",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -132,6 +146,7 @@
     "conference": "E",
     "division": "Atlantic",
     "seedColor": "#4a4a4a",
+    "secondary": "#FFFFFF",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -141,6 +156,7 @@
     "conference": "W",
     "division": "Northwest",
     "seedColor": "#007AC1",
+    "secondary": "#EF5133",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -150,6 +166,7 @@
     "conference": "W",
     "division": "Southwest",
     "seedColor": "#7F8C99",
+    "secondary": "#000000",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -159,6 +176,7 @@
     "conference": "W",
     "division": "Northwest",
     "seedColor": "#E03A3E",
+    "secondary": "#000000",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -168,6 +186,7 @@
     "conference": "W",
     "division": "Northwest",
     "seedColor": "#E0B020",
+    "secondary": "#0E2240",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -177,6 +196,7 @@
     "conference": "W",
     "division": "Pacific",
     "seedColor": "#7B4FA8",
+    "secondary": "#FDB927",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -186,6 +206,7 @@
     "conference": "W",
     "division": "Pacific",
     "seedColor": "#1D428A",
+    "secondary": "#FFC72C",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -195,6 +216,7 @@
     "conference": "W",
     "division": "Southwest",
     "seedColor": "#CE1141",
+    "secondary": "#000000",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -204,6 +226,7 @@
     "conference": "W",
     "division": "Pacific",
     "seedColor": "#E56020",
+    "secondary": "#1D1160",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -213,6 +236,7 @@
     "conference": "W",
     "division": "Northwest",
     "seedColor": "#236192",
+    "secondary": "#78BE20",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -222,6 +246,7 @@
     "conference": "W",
     "division": "Pacific",
     "seedColor": "#C8102E",
+    "secondary": "#BEC0C2",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -231,6 +256,7 @@
     "conference": "W",
     "division": "Southwest",
     "seedColor": "#5D76A9",
+    "secondary": "#F5B112",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -240,6 +266,7 @@
     "conference": "W",
     "division": "Southwest",
     "seedColor": "#0A5FA0",
+    "secondary": "#B8C4CA",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -249,6 +276,7 @@
     "conference": "W",
     "division": "Pacific",
     "seedColor": "#5A2D81",
+    "secondary": "#63727A",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -258,6 +286,7 @@
     "conference": "W",
     "division": "Northwest",
     "seedColor": "#F9A01B",
+    "secondary": "#002B5C",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -267,6 +296,7 @@
     "conference": "W",
     "division": "Southwest",
     "seedColor": "#B4975A",
+    "secondary": "#0C2340",
     "note": "verify primary/secondary at nbacolors.com"
   }
 ]

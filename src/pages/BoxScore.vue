@@ -4,14 +4,15 @@ import { useRoute } from 'vue-router'
 import TeamMark from '../components/TeamMark.vue'
 import LeaderCard from '../components/LeaderCard.vue'
 import TeamBoxTable from '../components/TeamBoxTable.vue'
-import Awards from '../components/Awards.vue'
+import SpotlightHero from '../components/SpotlightHero.vue'
+import SpotlightDud from '../components/SpotlightDud.vue'
 import PageNav from '../components/PageNav.vue'
 import { getGame, getGames, getAwards } from '../api/index.js'
 import { announce } from '../composables/useAnnounce.js'
 import { team } from '../data/teams.js'
 import ARENAS from '../data/arenas.json'
 import ARENA_MAPS from '../data/arenaMaps.js'
-import { todayNY, dayHeading, shortName } from '../utils.js'
+import { todayNY, addDays, dateLong, weekday, shortName } from '../utils.js'
 
 const route = useRoute()
 const today = todayNY()
@@ -40,7 +41,13 @@ watch(() => route.params.id, async (id, old) => {
 
 // Arrows step through that night's games, in tip-off order.
 const index = computed(() => dayGames.value.findIndex(g => g.id === game.value?.id))
-const heading = computed(() => dayHeading(game.value.date, today))
+// Eyebrow is the relative night ("Last night", "Wednesday night"), title the date.
+const heading = computed(() => {
+  const d = game.value.date
+  const rel = { [addDays(today, -1)]: 'Last night', [today]: 'Tonight' }[d]
+  return { tag: rel ?? `${weekday(d)} night`, title: dateLong(d) }
+})
+const gameOf = computed(() => index.value < 0 ? '' : `Game ${index.value + 1} of ${dayGames.value.length}`)
 
 // The night's games as a carousel: prev/next wrap around the ends. With only
 // two games a single pill shows (next on the first game, prev on the second).
@@ -103,7 +110,7 @@ const summary = computed(() => {
   return `${w.nick} win by ${margin}${ot}` + (top ? ` · top scorer ${top.name}` : '')
 })
 
-const status = computed(() => (nq.value > 5 ? `FINAL/${nq.value - 4}OT` : nq.value > 4 ? 'FINAL/OT' : 'FINAL'))
+const status = computed(() => (nq.value > 5 ? `Final/${nq.value - 4}OT` : nq.value > 4 ? 'Final/OT' : 'Final'))
 
 const hasBox = computed(() => sides.value.length && sides.value.every(s => s.players))
 
@@ -143,7 +150,9 @@ const leaders = computed(() => {
         :tag="heading.tag"
         :tag-to="`/${game.date}`"
         :title="heading.title"
-        :sub="summary"
+        :sub="gameOf || 'All games'"
+        :sub-to="`/${game.date}`"
+        :sub-link="gameOf ? '· All games' : ''"
         :prev="navPill(-1)"
         :next="navPill(1)"
       />
@@ -155,15 +164,25 @@ const leaders = computed(() => {
       >
         <div v-if="map" class="map" :style="mapStyle" aria-hidden="true"></div>
         <div class="shade" aria-hidden="true"></div>
+        <span class="wm" aria-hidden="true"></span>
         <span v-if="map" class="pin" :style="pinStyle" aria-hidden="true">
           <span v-for="i in 3" :key="i" class="ring" :style="{ animationDelay: `${(i - 1) * 2}s` }"></span>
           <span class="dot"></span>
         </span>
 
+        <header class="strip">
+          <div class="strip-l">
+            <span class="final">{{ status }}</span>
+            <span class="rule" aria-hidden="true"></span>
+            <span class="when">{{ dateLong(game.date) }}<template v-if="gameOf"> · {{ gameOf }}</template></span>
+          </div>
+          <div v-if="arena" class="venue">{{ arena.name }} · {{ arena.city }}</div>
+        </header>
+
         <div class="content">
           <div class="teams">
             <div v-for="s in sides" :key="s.abbr" class="trow" :class="{ won: s.won }">
-              <TeamMark :abbr="s.abbr" :size="44" :radius="8" :font-size="13" />
+              <TeamMark :abbr="s.abbr" :size="60" :radius="10" :font-size="16" />
               <div class="tn">
                 <h1 class="name"><span class="full">{{ s.name }}</span><span class="nick">{{ s.nick }}</span></h1>
                 <div class="ctx">{{ s.ctx }}</div>
@@ -174,7 +193,7 @@ const leaders = computed(() => {
 
           <div class="quarters" :style="{ '--nq': qLabels.length - 1 }" role="table" aria-label="Scoring by quarter">
             <div role="row" class="qr">
-              <span role="columnheader" class="st">{{ status }}</span>
+              <span role="columnheader" class="st">Q</span>
               <span v-for="l in qLabels" :key="l" role="columnheader" class="ql">{{ l }}</span>
             </div>
             <div v-for="(s, si) in sides" :key="s.abbr" role="row" class="qr">
@@ -189,18 +208,20 @@ const leaders = computed(() => {
             </div>
           </div>
 
-          <div v-if="arena" class="venue">{{ arena.name }}<br><span>{{ arena.city }}, {{ arena.state }}</span></div>
+          <div class="map-space" aria-hidden="true"></div>
         </div>
       </section>
 
       <template v-if="hasBox">
-        <Awards v-if="gameAwards" :awards="gameAwards" scope="game" class="block" />
+        <SpotlightHero v-if="gameAwards?.performer" class="block-gap" :player="gameAwards.performer" label="Player of the Game" />
 
         <section class="block" aria-label="Game leaders">
           <div class="leaders">
             <LeaderCard v-for="c in leaders" :key="c.label" :label="c.label" :leaders="c.list" />
           </div>
         </section>
+
+        <SpotlightDud v-if="gameAwards?.dud" class="block-gap" :player="gameAwards.dud" label="Dud" />
 
         <section class="block box" aria-label="Box score">
           <div class="pair">
@@ -225,16 +246,58 @@ const leaders = computed(() => {
   --tie: rgba(255, 255, 255, .12);
   position: relative;
   overflow: hidden;
-  margin-top: 22px;
-  border-radius: var(--radius);
+  isolation: isolate;
+  margin-top: 26px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, .08);
   background: var(--base);
   color: var(--fg);
+  /* Arena pin sits in the empty space right of the quarter grid. */
+  --pin-x: calc(100% - 80px);
 }
+/* Hairline texture over the map shade */
+.board::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: repeating-linear-gradient(135deg, rgba(255, 255, 255, .03) 0 1px, transparent 1px 14px);
+  pointer-events: none;
+}
+.wm {
+  position: absolute;
+  left: -90px;
+  bottom: -120px;
+  width: 300px;
+  height: 300px;
+  transform: rotate(22deg);
+  background: rgb(255 199 44 / .08);
+  -webkit-mask: url('../assets/brand/ball-lines-thin.png') center / contain no-repeat;
+  mask: url('../assets/brand/ball-lines-thin.png') center / contain no-repeat;
+  pointer-events: none;
+}
+.strip {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, .12);
+  font: 500 11px var(--mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.strip-l { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.final { font-weight: 600; letter-spacing: .16em; color: #FFC72C; white-space: nowrap; }
+.rule { width: 1px; height: 14px; background: rgba(255, 255, 255, .3); flex: none; }
+.when { color: var(--mu); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .map {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 84%;
+  left: var(--pin-x);
   width: 1800px;
   background: 0 50% / 1800px auto no-repeat;
 }
@@ -243,13 +306,13 @@ const leaders = computed(() => {
   inset: 0;
   background: linear-gradient(90deg,
     color-mix(in srgb, var(--base) 97%, transparent) 0%,
-    color-mix(in srgb, var(--base) 97%, transparent) 58%,
-    color-mix(in srgb, var(--base) 55%, transparent) 72%,
+    color-mix(in srgb, var(--base) 97%, transparent) calc(100% - 230px),
+    color-mix(in srgb, var(--base) 55%, transparent) calc(100% - 140px),
     color-mix(in srgb, var(--base) 8%, transparent) 100%);
 }
 .pin {
   position: absolute;
-  left: 84%;
+  left: var(--pin-x);
   width: 0;
   height: 0;
 
@@ -285,27 +348,29 @@ const leaders = computed(() => {
 
 .content {
   position: relative;
+  z-index: 1;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto auto 1fr;
   gap: 28px;
   align-items: center;
-  padding: 20px 24px;
+  padding: 28px 24px;
 }
-.teams { display: grid; gap: 14px; }
-.trow { display: flex; align-items: center; gap: 12px; }
-.tn { width: 200px; }
+.map-space { min-width: 100px; }
+.teams { display: grid; gap: 18px; }
+.trow { display: flex; align-items: center; gap: 14px; }
+.tn { width: 220px; }
 .name {
-  font: 600 17px/1.1 var(--sans);
+  font: 600 22px/1.1 var(--sans);
   margin: 0;
   color: var(--mu);
 }
 .nick { display: none; }
-.ctx { font-size: 11px; color: var(--mu); margin-top: 2px; }
+.ctx { font-size: 12px; color: var(--mu); margin-top: 3px; }
 .score {
-  font: 800 40px/1 var(--sans);
+  font: 800 64px/1 var(--sans);
   letter-spacing: -.04em;
   font-variant-numeric: tabular-nums;
-  min-width: 84px;
+  min-width: 124px;
   text-align: right;
   margin-left: auto;
   color: var(--mu);
@@ -317,18 +382,18 @@ const leaders = computed(() => {
   padding-left: 28px;
   display: grid;
   row-gap: 8px;
-  font: 400 14px var(--mono);
+  font: 400 16px var(--mono);
   font-variant-numeric: tabular-nums;
 }
 .qr {
   display: grid;
-  grid-template-columns: 52px repeat(var(--nq), 48px) 54px;
+  grid-template-columns: 52px repeat(var(--nq), 56px) 62px;
   column-gap: 6px;
   align-items: center;
 
   & > span:not(:first-child) { text-align: center; }
   & > .ql { font-size: 11px; color: var(--mu); }
-  & > .q { padding: 9px 0; border-radius: 5px; }
+  & > .q { padding: 13px 0; border-radius: 5px; }
   & > .q-won { background: oklch(.42 .09 150 / var(--a)); }
   & > .q-lost { background: oklch(.42 .09 20 / var(--a)); color: var(--mu); }
   & > .q-tie { background: var(--tie); }
@@ -339,17 +404,14 @@ const leaders = computed(() => {
 .ab { font: 600 13px var(--sans); }
 
 .venue {
-  align-self: end;
-  min-width: 180px;
   text-align: right;
-  font: 500 11px/1.7 var(--mono);
   color: #fff;
+  white-space: nowrap;
   text-shadow: 0 1px 8px rgba(0, 0, 0, .9);
-
-  & span { opacity: .75; }
 }
 
 .block { padding-top: 26px; }
+.block-gap { margin-top: 26px; }
 .box { container-type: inline-size; }
 .leaders {
   display: grid;
@@ -382,30 +444,35 @@ const leaders = computed(() => {
 
 @media (max-width: 1040px) {
   .content { grid-template-columns: 1fr auto; }
-  .venue { display: none; }
+  /* No room beside the quarter grid for the map: plain navy card. */
+  .map, .pin, .map-space { display: none; }
+  .shade { background: none; }
+  .tn { width: 200px; }
+  .score { font-size: 52px; min-width: 100px; }
   .leaders { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 720px) {
   .board { margin-top: 16px; }
-  .map, .pin { display: none; }
-  .shade { background: none; }
+  .strip { padding: 10px 14px; }
+  .venue { display: none; }
+  .wm { width: 220px; height: 220px; }
   .content {
     grid-template-columns: 1fr;
     gap: 10px;
     padding: 14px;
-    --mark-size: 34px;
-    --mark-r: 6px;
-    --mark-fs: 11px;
+    --mark-size: 40px;
+    --mark-r: 8px;
+    --mark-fs: 12px;
   }
-  .teams { gap: 10px; }
+  .teams { gap: 12px; }
   .trow { gap: 10px; }
   .tn { width: auto; flex: 1; }
-  .name { font-size: 14px; }
+  .name { font-size: 16px; }
   .full { display: none; }
   .nick { display: inline; }
   .ctx { font-size: 10px; }
-  .score { font-size: 30px; min-width: 0; }
+  .score { font-size: 40px; min-width: 0; }
   .quarters {
     border-left: 0;
     padding-left: 0;
@@ -415,12 +482,12 @@ const leaders = computed(() => {
     font-size: 12px;
   }
   .qr { grid-template-columns: 40px repeat(calc(var(--nq) + 1), 1fr); column-gap: 4px; }
-  .qr > .q { padding: 6px 0; }
-  .st { font-size: 0; }
+  .qr > .q { padding: 7px 0; }
   .qr > .ql { font-size: 10px; }
   .ab { font-size: 11px; }
 
   .block { padding-top: 18px; }
+  .block-gap { margin-top: 18px; }
   .leaders {
     display: flex;
     gap: 10px;

@@ -4,7 +4,9 @@ import { useRoute } from 'vue-router'
 import PageNav from '../components/PageNav.vue'
 import GameCard from '../components/GameCard.vue'
 import PlayerTable from '../components/PlayerTable.vue'
-import Awards from '../components/Awards.vue'
+import SpotlightHero from '../components/SpotlightHero.vue'
+import SpotlightDud from '../components/SpotlightDud.vue'
+import ScoresPanel from '../components/ScoresPanel.vue'
 import DaySkeleton from '../components/DaySkeleton.vue'
 import { getGames, getBoxscores, getAverages, getAwards } from '../api/index.js'
 import { announce } from '../composables/useAnnounce.js'
@@ -70,10 +72,10 @@ const leaders = computed(() => {
 // "Michael Porter Jr." -> "Porter"
 const lastName = name => name.split(' ').filter(w => !/^(Jr\.?|Sr\.?|II|III|IV)$/.test(w)).pop()
 
-// Prev/next day pills: "OCT 30 · 8 games". No next pill past tomorrow.
+// Prev/next day pills: "OCT 30 · 8 games". Next is disabled past tomorrow.
 function dayPill(step) {
   const d = addDays(date.value, step)
-  if (step > 0 && !canNext.value) return null
+  if (step > 0 && !canNext.value) return { disabled: true, label: dateShort(d), text: '\u00a0' }
   const n = neighbours.value[d]
   return {
     to: d === addDays(today, -1) ? '/' : `/${d}`,
@@ -101,11 +103,26 @@ function dayPill(step) {
 
       <p v-else-if="!loading && !games.length" class="empty card">No games scheduled for {{ dateLong(date) }}.</p>
 
-      <section v-else class="hero" :aria-busy="loading" aria-label="Games">
+      <ScoresPanel v-else class="block" :date="date" :final="isResults" :count="games.length" :aria-busy="loading">
         <GameCard v-for="g in games" :key="g.id" :game="g" :leaders="leaders" />
-      </section>
+      </ScoresPanel>
 
-      <Awards v-if="awards?.night" :awards="awards.night" scope="night" class="awards" />
+      <template v-if="isResults && awards?.night">
+        <SpotlightHero
+          v-if="awards.night.performer"
+          class="block"
+          :player="awards.night.performer"
+          label="Player of the Night"
+          :to="`/game/${awards.night.performer.gameId}`"
+        />
+        <SpotlightDud
+          v-if="awards.night.dud"
+          class="block"
+          :player="awards.night.dud"
+          label="Dud of the Night"
+          :to="`/game/${awards.night.dud.gameId}`"
+        />
+      </template>
 
       <section v-if="players.length" class="players">
         <div v-if="!isResults" class="section-head">
@@ -118,15 +135,9 @@ function dayPill(step) {
 </template>
 
 <style scoped>
-.nav { margin-bottom: 22px; }
-.hero {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 14px;
-  padding-bottom: 28px;
-}
-.players { padding-bottom: 28px; }
-.awards { padding-bottom: 28px; }
+.nav { margin-bottom: 26px; }
+.block { margin-bottom: 26px; }
+.players { padding-bottom: 48px; }
 .empty {
   padding: 28px;
   text-align: center;
@@ -136,19 +147,9 @@ function dayPill(step) {
 }
 
 @media (max-width: 720px) {
-  .nav { margin-bottom: 4px; }
-  .hero {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-padding: 0 var(--gutter);
-    margin: 0 calc(-1 * var(--gutter));
-    padding: 12px var(--gutter) 6px;
-
-    & > * { flex: none; width: 300px; scroll-snap-align: start; }
-  }
-  .players { padding-top: 14px; margin: 0 calc(-1 * var(--gutter)); }
+  .nav { margin-bottom: 16px; }
+  .block { margin-bottom: 16px; }
+  .players { padding-top: 6px; margin: 0 calc(-1 * var(--gutter)); }
   .section-head {
     display: block;
     padding: 0 var(--gutter);

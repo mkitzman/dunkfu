@@ -1,28 +1,22 @@
 import { ref } from 'vue'
 
+// Dark is the default whatever the OS prefers; a stored choice wins.
 const KEY = 'theme'
-const media = window.matchMedia('(prefers-color-scheme: dark)')
-const stored = () => {
-  const t = localStorage.getItem(KEY)
-  return t === 'light' || t === 'dark' ? t : null
+function stored() {
+  try { return localStorage.getItem(KEY) } catch { return null }
 }
 
-const theme = ref(stored() ?? (media.matches ? 'dark' : 'light'))
+const theme = ref(stored() === 'light' ? 'light' : 'dark')
 
 function apply(t) {
   theme.value = t
   document.documentElement.dataset.theme = t
 }
 
-// Follow the system until the user picks a theme.
-media.addEventListener('change', e => {
-  if (!stored()) apply(e.matches ? 'dark' : 'light')
-})
-
 export function useTheme() {
   function toggle() {
     const next = theme.value === 'dark' ? 'light' : 'dark'
-    localStorage.setItem(KEY, next)
+    try { localStorage.setItem(KEY, next) } catch {}
     apply(next)
   }
   return { theme, toggle }

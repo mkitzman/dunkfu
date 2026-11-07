@@ -1,7 +1,10 @@
 import TEAMS from './teams.json'
 
 const byAbbr = Object.fromEntries(
-  TEAMS.map(t => [t.abbr, { abbr: t.abbr, city: t.city, nick: t.nickname, name: `${t.city} ${t.nickname}`, conference: t.conference, division: t.division, color: t.seedColor }]),
+  TEAMS.map(t => [t.abbr, {
+    abbr: t.abbr, city: t.city, nick: t.nickname, name: `${t.city} ${t.nickname}`,
+    conference: t.conference, division: t.division, color: t.seedColor, secondary: t.secondary,
+  }]),
 )
 
 export const teams = Object.values(byAbbr)
@@ -41,7 +44,22 @@ function readable(hex, bg, toward) {
   return toward
 }
 
-// CSS variables for a .team-chip: light and dark theme versions on --sf.
+// CSS variables for a .team-chip: light (paper --sf) and dark theme versions.
 export function chipStyle(hex) {
-  return { '--team': readable(hex, '#ffffff', '#000000'), '--team-dark': readable(hex, '#1a1d21', '#ffffff') }
+  return { '--team': readable(hex, '#fbf8f2', '#000000'), '--team-dark': `color-mix(in oklch, ${hex} 55%, #fff)` }
 }
+
+// Accent for text and trim on a team-colour background (spotlight hero,
+// jersey): the team's secondary, or white when that is near-black or
+// near-navy (POR, HOU, UTA, PHX...).
+export function accent(abbr) {
+  const s = team(abbr)?.secondary
+  return s && lum(s) >= 0.04 ? s : '#ffffff'
+}
+
+// Multiply a hex colour's channels by f (0..1).
+export function darken(hex, f) {
+  return '#' + rgb(hex).map(v => Math.round(v * f).toString(16).padStart(2, '0')).join('')
+}
+
+export const alpha = (hex, a) => `rgb(${rgb(hex).join(' ')} / ${a})`

@@ -1,14 +1,41 @@
-:root {
-  --bg:  #faf9f7;
-  --sf:  #ffffff;
+/* Dark (charcoal) is the default; [data-theme="light"] is paper. */
+:root, [data-theme="dark"] {
+  --bg:  #1f2227;
+  --sf:  #272b31;
+  --fg:  #eceef0;
+  --mu:  #8f959d;
+  --ln:  rgba(255, 255, 255, .12);
+  --ln2: rgba(255, 255, 255, .05);
+  --ac:  oklch(0.78 0.12 255);
+  --up:  oklch(0.78 0.14 150);
+  --dn:  oklch(0.76 0.14 25);
+  --hi:  oklch(0.78 0.12 255 / .13);
+  --tie: rgba(255, 255, 255, .08);
+  --dn-bg: oklch(0.76 0.14 25 / .18);
+
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --bg:  #f4efe6;
+  --sf:  #fbf8f2;
   --fg:  #15171a;
   --mu:  #646a72;
-  --ln:  rgba(20, 23, 26, .12);
-  --ln2: rgba(20, 23, 26, .06);
+  --ln:  rgba(43, 37, 32, .14);
+  --ln2: rgba(43, 37, 32, .06);
   --ac:  oklch(0.52 0.17 255);
-  --hi:  oklch(0.52 0.17 255 / .09);
-  --dn:  oklch(0.55 0.16 25);
   --up:  oklch(0.55 0.15 150);
+  --dn:  oklch(0.58 0.16 25);
+  --hi:  oklch(0.52 0.17 255 / .09);
+  --tie: rgba(43, 37, 32, .06);
+  --dn-bg: oklch(0.58 0.16 25 / .12);
+
+  color-scheme: light;
+}
+
+:root {
+  /* Brand orange: never recolored per team or theme. */
+  --brand: #F26B21;
 
   --sans: Sora, system-ui, sans-serif;
   --mono: 'DM Mono', ui-monospace, monospace;
@@ -16,23 +43,6 @@
   --gutter: 28px;
   --radius: 8px; /* cards, panels, tables */
   --max: 1100px;
-
-  color-scheme: light;
-}
-
-[data-theme="dark"] {
-  --bg:  #121416;
-  --sf:  #1a1d21;
-  --fg:  #eceef0;
-  --mu:  #8f959d;
-  --ln:  rgba(255, 255, 255, .12);
-  --ln2: rgba(255, 255, 255, .05);
-  --ac:  oklch(0.78 0.12 255);
-  --hi:  oklch(0.78 0.12 255 / .13);
-  --dn:  oklch(0.76 0.14 25);
-  --up:  oklch(0.78 0.14 150);
-
-  color-scheme: dark;
 }
 
 @media (max-width: 720px) {
@@ -99,9 +109,9 @@ button { font: inherit; color: inherit; }
   letter-spacing: .04em;
   vertical-align: baseline;
   margin: 0 3px 0 4px;
-  color: var(--team, var(--mu));
+  color: var(--team-dark, var(--mu));
 }
-[data-theme="dark"] .team-chip { color: var(--team-dark, var(--mu)); }
+[data-theme="light"] .team-chip { color: var(--team, var(--mu)); }
 
 /* Visible to screen readers only. */
 .sr-only {
