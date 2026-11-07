@@ -1,15 +1,17 @@
 <script setup>
 // Dud / Dud of the Night: the quiet counterpart to SpotlightHero.
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import StatTrio from './StatTrio.vue'
+import BrandLockup from './BrandLockup.vue'
 import { team, chipStyle } from '../data/teams.js'
-import { share } from '../composables/useShare.js'
+import { useShareImage } from '../composables/useShare.js'
 import { statLine } from './spotlight.js'
 
 const props = defineProps({
   player: { type: Object, required: true },
   label: { type: String, required: true },
   to: { type: String, default: null },
+  capture: Boolean, // the off-screen copy rendered for the share image
 })
 
 const color = computed(() => team(props.player.abbr)?.color ?? '#646a72')
@@ -19,33 +21,57 @@ const tip = computed(() => {
   return `Game Score ${gs}` + (exp != null ? ` · expected ${exp}` : '')
 })
 
-const copied = ref(false)
-async function onShare() {
-  const p = props.player
-  const r = await share({
-    title: `${props.label}: ${p.name}`,
-    text: `${props.label}: ${p.name}, ${p.pts} PTS / ${p.reb} REB / ${p.ast} AST · dunkfu`,
-  })
-  if (r === 'copied') { copied.value = true; setTimeout(() => (copied.value = false), 1800) }
-}
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+const { prep, frame, status, share: onShare } = useShareImage(
+  () => `${props.label}|${props.player.id}|${props.player.gameId}`,
+  () => {
+    const p = props.player
+    return {
+      title: `${props.label}: ${p.name}`,
+      text: `${props.label}: ${p.name}, ${p.pts} PTS / ${p.reb} REB / ${p.ast} AST · dunkfu`,
+      filename: `dunkfu-${slug(props.label)}-${slug(p.name)}.png`,
+    }
+  },
+  !props.capture,
+)
 </script>
 
 <template>
-  <section class="dud" :aria-label="label" :title="tip">
-    <h2 class="badge"><span aria-hidden="true">▼</span>{{ label }}</h2>
-    <div class="who">
-      <div class="name">
-        <component :is="to ? 'RouterLink' : 'span'" :to="to ?? undefined" class="nm">{{ player.name }}</component><span
-          class="team-chip" :style="chipStyle(color)">{{ player.abbr }}</span><span class="num">#{{ player.num }}</span>
+  <section class="dud-c" :aria-label="label" :title="tip">
+    <div class="dud">
+      <h2 class="badge"><span aria-hidden="true">▼</span>{{ label }}</h2>
+      <div class="who">
+        <div class="name">
+          <component :is="to ? 'RouterLink' : 'span'" :to="to ?? undefined" class="nm">{{ player.name }}</component><span
+            class="team-chip" :style="chipStyle(color)">{{ player.abbr }}</span><span class="num">#{{ player.num }}</span>
+        </div>
+        <div class="line">{{ line }}</div>
       </div>
-      <div class="line">{{ line }}</div>
+      <StatTrio :pts="player.pts" :reb="player.reb" :ast="player.ast" />
+      <button v-if="!capture" type="button" class="share" @click="onShare"><span aria-hidden="true">↗</span>{{ status || 'Share' }}</button>
+      <BrandLockup v-if="capture" class="brand" />
     </div>
-    <StatTrio :pts="player.pts" :reb="player.reb" :ast="player.ast" />
-    <button type="button" class="share" @click="onShare"><span aria-hidden="true">↗</span>{{ copied ? 'Copied' : 'Share' }}</button>
+
+    <!-- Off-screen copy at a fixed desktop width, captured for Share. -->
+    <Teleport v-if="prep" to="body">
+      <div ref="frame" class="shot" aria-hidden="true" inert>
+        <SpotlightDud capture :player="player" :label="label" />
+      </div>
+    </Teleport>
   </section>
 </template>
 
 <style scoped>
+.shot {
+  position: fixed;
+  left: -10000px;
+  top: 0;
+  width: 1080px;
+  padding: 28px;
+  background: var(--bg);
+  pointer-events: none;
+}
+.dud-c { container: dud / inline-size; }
 .dud {
   position: relative;
   overflow: hidden;
@@ -96,6 +122,7 @@ a.nm:hover { text-decoration: underline; text-underline-offset: 3px; }
 a.nm:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; border-radius: 2px; }
 .num { font: 400 11px var(--mono); letter-spacing: 0; color: var(--mu); }
 .line { font: 400 12px var(--mono); color: var(--mu); margin-top: 5px; }
+.brand { transform: scale(.8); transform-origin: right center; }
 .share {
   display: inline-flex;
   align-items: center;
@@ -113,12 +140,12 @@ a.nm:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; border-r
   &:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
 }
 
-@media (max-width: 900px) {
+@container dud (max-width: 900px) {
   .dud { grid-template-columns: 1fr; gap: 12px; padding: 14px 16px 14px 20px; justify-items: start; }
   .who { justify-self: stretch; }
   .share { position: absolute; top: 12px; right: 14px; }
 }
-@media (max-width: 720px) {
+@container dud (max-width: 720px) {
   .name { font-size: 18px; }
   .line { font-size: 11px; }
 }

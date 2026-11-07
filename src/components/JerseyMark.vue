@@ -46,6 +46,6 @@ svg { position: absolute; inset: 0; width: 100%; height: 100%; }
   text-align: center;
   padding-top: 14px;
 }
-.ab { font: 700 10px var(--mono); letter-spacing: .16em; }
+.ab { font: 700 10px var(--mono); letter-spacing: .16em; margin-right: -.16em; }
 .num { font: 800 24px/1 var(--sans); letter-spacing: -.04em; }
 </style>

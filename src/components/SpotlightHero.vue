@@ -1,18 +1,19 @@
 <script setup>
 // Player of the Game / Player of the Night. `player` is an awards entry
 // (server/awards.js); `to` links the name to the player's game.
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import BrandLockup from './BrandLockup.vue'
 import JerseyMark from './JerseyMark.vue'
 import StatTrio from './StatTrio.vue'
 import { team, accent, darken, alpha } from '../data/teams.js'
-import { share } from '../composables/useShare.js'
+import { useShareImage } from '../composables/useShare.js'
 import { statLine } from './spotlight.js'
 
 const props = defineProps({
   player: { type: Object, required: true },
   label: { type: String, required: true },
   to: { type: String, default: null },
+  capture: Boolean, // the off-screen copy rendered for the share image
 })
 
 const t = computed(() => team(props.player.abbr))
@@ -31,15 +32,19 @@ const style = computed(() => {
 
 const line = computed(() => `${statLine(props.player)} · ${props.player.min} MIN`)
 
-const copied = ref(false)
-async function onShare() {
-  const p = props.player
-  const r = await share({
-    title: `${props.label}: ${p.name}`,
-    text: `${props.label}: ${p.name}, ${p.pts} PTS / ${p.reb} REB / ${p.ast} AST · dunkfu`,
-  })
-  if (r === 'copied') { copied.value = true; setTimeout(() => (copied.value = false), 1800) }
-}
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+const { prep, frame, status, share: onShare } = useShareImage(
+  () => `${props.label}|${props.player.id}|${props.player.gameId}`,
+  () => {
+    const p = props.player
+    return {
+      title: `${props.label}: ${p.name}`,
+      text: `${props.label}: ${p.name}, ${p.pts} PTS / ${p.reb} REB / ${p.ast} AST · dunkfu`,
+      filename: `dunkfu-${slug(props.label)}-${slug(p.name)}.png`,
+    }
+  },
+  !props.capture,
+)
 </script>
 
 <template>
@@ -53,7 +58,7 @@ async function onShare() {
         <span class="rule" aria-hidden="true"></span>
         <h2 class="label">{{ label }}</h2>
       </div>
-      <button type="button" class="share" @click="onShare"><span aria-hidden="true">↗</span>{{ copied ? 'Copied' : 'Share' }}</button>
+      <button v-if="!capture" type="button" class="share" @click="onShare"><span aria-hidden="true">↗</span>{{ status || 'Share' }}</button>
     </header>
 
     <div class="body">
@@ -65,10 +70,26 @@ async function onShare() {
       </div>
       <StatTrio class="trio" hero :accent="sec" :pts="player.pts" :reb="player.reb" :ast="player.ast" />
     </div>
+  
+    <!-- Off-screen copy at a fixed desktop width, captured for Share. -->
+    <Teleport v-if="prep" to="body">
+      <div ref="frame" class="shot" aria-hidden="true" inert>
+        <SpotlightHero capture :player="player" :label="label" />
+      </div>
+    </Teleport>
   </section>
 </template>
 
 <style scoped>
+.shot {
+  position: fixed;
+  left: -10000px;
+  top: 0;
+  width: 1080px;
+  padding: 28px;
+  background: var(--bg);
+  pointer-events: none;
+}
 .hero {
   position: relative;
   overflow: hidden;
@@ -80,6 +101,7 @@ async function onShare() {
     radial-gradient(60% 80% at 0% 0%, rgba(255, 255, 255, .08), transparent 60%),
     radial-gradient(90% 120% at 85% 110%, var(--glow), transparent 60%),
     var(--bg);
+  container: spot / inline-size;
   /* Scoped tokens so nested components (StatTrio) read on the team colour. */
   --fg: #fff;
   --mu: rgba(255, 255, 255, .8);
@@ -153,7 +175,7 @@ a.name:focus-visible { outline: 2px solid #fff; outline-offset: 3px; border-radi
 .team { font: 500 12px var(--mono); letter-spacing: .06em; opacity: .85; margin-top: 10px; }
 .line { font: 400 12px var(--mono); letter-spacing: .04em; opacity: .75; margin-top: 10px; }
 
-@media (max-width: 760px) {
+@container spot (max-width: 760px) {
   .strip { padding: 10px 16px; }
   .body {
     grid-template-columns: auto 1fr;
@@ -166,7 +188,7 @@ a.name:focus-visible { outline: 2px solid #fff; outline-offset: 3px; border-radi
   .line { margin-top: 6px; font-size: 11px; }
   .trio { grid-column: 1 / -1; justify-self: center; --trio-size: 48px; }
 }
-@media (max-width: 420px) {
+@container spot (max-width: 420px) {
   .rule, .brand :deep(.lockup) { display: none; }
 }
 </style>

@@ -38,11 +38,11 @@ defineProps({
   font-variant-numeric: tabular-nums;
   color: var(--fg);
 }
-.l { font: 500 9px var(--mono); letter-spacing: .1em; color: var(--mu); margin-top: 5px; }
+.l { font: 500 9px var(--mono); letter-spacing: .1em; margin-right: -.1em; color: var(--mu); margin-top: 5px; }
 
 .onteam { --n: var(--trio-size, 60px); gap: 14px; }
 .onteam .sep { color: rgba(255, 255, 255, .22); }
 .onteam .stat { min-width: 52px; }
 .onteam .v { letter-spacing: -.06em; color: #fff; }
-.onteam .l { font-size: 11px; letter-spacing: .16em; color: rgba(255, 255, 255, .8); margin-top: 8px; }
+.onteam .l { font-size: 11px; letter-spacing: .16em; margin-right: -.16em; color: rgba(255, 255, 255, .8); margin-top: 8px; }
 </style>
