@@ -2,7 +2,7 @@
 import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import TeamMark from '../components/TeamMark.vue'
-import LeaderCard from '../components/LeaderCard.vue'
+import LeadersRow from '../components/LeadersRow.vue'
 import TeamBoxTable from '../components/TeamBoxTable.vue'
 import SpotlightHero from '../components/SpotlightHero.vue'
 import SpotlightDud from '../components/SpotlightDud.vue'
@@ -12,7 +12,7 @@ import { announce } from '../composables/useAnnounce.js'
 import { team } from '../data/teams.js'
 import ARENAS from '../data/arenas.json'
 import ARENA_MAPS from '../data/arenaMaps.js'
-import { todayNY, addDays, dateLong, weekday, shortName } from '../utils.js'
+import { todayNY, addDays, dateLong, weekday } from '../utils.js'
 
 const route = useRoute()
 const today = todayNY()
@@ -122,23 +122,10 @@ const benchPad = computed(() => {
   return bench.map(b => max - b)
 })
 
-const CATS = [
-  ['Points', 'pts', p => `${p.fgm}/${p.fga} FG, ${p.ftm}/${p.fta} FT`],
-  ['Rebounds', 'reb', p => `${p.dreb} DREB, ${p.oreb} OREB`],
-  ['Assists', 'ast', p => `${p.to} TO, ${p.min} MIN`],
-]
-
-// Top 3 across both teams per category; ties go to more minutes.
-const leaders = computed(() => {
-  if (!hasBox.value) return []
-  const all = sides.value.flatMap(s => s.players.map(p => ({ ...p, abbr: s.abbr, color: s.color })))
-  return CATS.map(([label, key, sub]) => ({
-    label,
-    list: all.slice().sort((a, b) => b[key] - a[key] || b.min - a.min).slice(0, 3).map(p => ({
-      key: `${p.abbr}-${p.name}`, name: p.name, short: shortName(p.name), num: p.num, abbr: p.abbr, color: p.color, value: p[key], sub: sub(p),
-    })),
-  }))
-})
+// Both teams' lines for the leader cards.
+const allPlayers = computed(() => hasBox.value
+  ? sides.value.flatMap(s => s.players.map(p => ({ ...p, abbr: s.abbr, color: s.color })))
+  : [])
 </script>
 
 <template>
@@ -215,11 +202,7 @@ const leaders = computed(() => {
       <template v-if="hasBox">
         <SpotlightHero v-if="gameAwards?.performer" class="block-gap" :player="gameAwards.performer" label="Player of the Game" />
 
-        <section class="block" aria-label="Game leaders">
-          <div class="leaders">
-            <LeaderCard v-for="c in leaders" :key="c.label" :label="c.label" :leaders="c.list" />
-          </div>
-        </section>
+        <LeadersRow class="block" :players="allPlayers" label="Game leaders" />
 
         <SpotlightDud v-if="gameAwards?.dud" class="block-gap" :player="gameAwards.dud" label="Dud" />
 
@@ -413,11 +396,6 @@ const leaders = computed(() => {
 .block { padding-top: 26px; }
 .block-gap { margin-top: 26px; }
 .box { container-type: inline-size; }
-.leaders {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-}
 .pair {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -449,7 +427,6 @@ const leaders = computed(() => {
   .shade { background: none; }
   .tn { width: 200px; }
   .score { font-size: 52px; min-width: 100px; }
-  .leaders { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 720px) {
@@ -488,17 +465,6 @@ const leaders = computed(() => {
 
   .block { padding-top: 18px; }
   .block-gap { margin-top: 18px; }
-  .leaders {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-padding: 0 var(--gutter);
-    margin: 0 calc(-1 * var(--gutter));
-    padding: 0 var(--gutter) 6px;
-
-    & > * { flex: none; width: 300px; scroll-snap-align: start; }
-  }
   .box { margin: 0 calc(-1 * var(--gutter)); }
   .pair { gap: 18px; }
   .pair > * { border-radius: 0 !important; }
