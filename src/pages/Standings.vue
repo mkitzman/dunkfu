@@ -152,8 +152,9 @@ const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
     <div class="wrap groups">
       <section v-for="g in groups" :key="g.key" class="group" :class="{ 'conf-start': g.confHead }">
         <h2 v-if="g.confHead" class="conf-head">{{ g.confHead }}</h2>
-        <div class="ghead">
-          <component :is="g.confHead !== undefined ? 'h3' : 'h2'" class="gtitle">{{ g.title }}</component>
+        <!-- League view: one table, so its "League" heading is for screen readers only. -->
+        <div class="ghead" :class="{ 'sr-only': view === 'league' }">
+          <component :is="g.confHead !== undefined ? 'h3' : 'h2'" class="gtitle" :class="{ big: view === 'conference' }">{{ g.title }}</component>
           <span v-if="g.sub" class="sub">{{ g.sub }}</span>
         </div>
         <div class="table-wrap card">
@@ -248,7 +249,9 @@ h1 {
 }
 /* Division view: conference heading above its first division; extra space
    before the second conference. */
-.conf-head { font: 800 22px/1.1 var(--sans); letter-spacing: -.02em; margin: 0 0 14px; }
+/* Conference headings: same size in the Conference view as above the divisions. */
+.conf-head, .ghead .gtitle.big { font: 800 22px/1.1 var(--sans); letter-spacing: -.02em; margin: 0 0 14px; }
+.ghead .gtitle.big { margin: 0; }
 .group.conf-start:not(:first-child) { margin-top: 22px; }
 .sub { font: 400 11px var(--mono); color: var(--mu); }
 
@@ -297,6 +300,7 @@ table.stats {
   .ghead { padding: 0 var(--gutter); margin-bottom: 8px; }
   .ghead .gtitle { font-size: 15px; }
   .conf-head { font-size: 19px; padding: 0 var(--gutter); margin-bottom: 10px; }
+  .ghead .gtitle.big { font-size: 19px; }
   .group.conf-start:not(:first-child) { margin-top: 18px; }
   .sub { font-size: 10px; }
   table.stats tbody tr.fav > td { background: color-mix(in oklch, var(--tc) var(--fav-mix), var(--bg)); }
