@@ -63,6 +63,10 @@ const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
                 <span><SeedMark :seed="6" class="sm" />Playoff · seeds 1–6</span>
                 <span><SeedMark :seed="8" class="sm" />Play-in · seeds 7–10</span>
                 <span><b class="pos">▲2</b><b class="neg">▼1</b>Seed change, last night</span>
+                <template v-if="view === 'league'">
+                  <span><b class="ex-tag">W1</b>Conference seed</span>
+                  <span><i class="ex-cut" aria-hidden="true"></i>Lottery below the dashed line</span>
+                </template>
               </div>
             </HelpPopover>
           </h2>
@@ -142,6 +146,8 @@ h1 {
   & > span { display: flex; align-items: center; gap: 7px; }
   & b { font-weight: 500; }
   & .sm { width: 18px; height: 18px; font-size: 9px; }
+  & .ex-tag { font: 400 10px var(--mono); color: var(--mu); }
+  & .ex-cut { display: inline-block; width: 22px; border-top: 1px dashed var(--ac); }
 }
 
 .groups { display: grid; gap: 26px; padding-bottom: 32px; }
