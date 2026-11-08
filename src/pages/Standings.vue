@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import SegmentedControl from '../components/SegmentedControl.vue'
 import SeedMark from '../components/SeedMark.vue'
 import TeamMark from '../components/TeamMark.vue'
+import HelpPopover from '../components/HelpPopover.vue'
 import { getStandings } from '../api/index.js'
 import { prepare, groupStandings } from '../composables/useStandings.js'
 import { todayNY, addDays, dateLong, STAT_NAMES } from '../utils.js'
@@ -55,22 +56,24 @@ const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
     <div class="wrap groups">
       <section v-for="(g, gi) in groups" :key="g.key" class="group">
         <div class="ghead">
-          <h2>{{ g.title }}</h2>
-          <div v-if="gi === 0 || g.sub" class="meta-row">
-            <div v-if="gi === 0" class="legend">
-              <span><SeedMark :seed="6" class="sm" />Playoff · seeds 1–6</span>
-              <span><SeedMark :seed="8" class="sm" />Play-in · seeds 7–10</span>
-              <span><b class="pos">▲2</b><b class="neg">▼1</b>Seed change, last 7 days</span>
-            </div>
-            <span v-if="g.sub" class="sub">{{ g.sub }}</span>
-          </div>
+          <h2>
+            {{ g.title }}
+            <HelpPopover v-if="gi === 0" label="Standings key" class="key">
+              <div class="legend">
+                <span><SeedMark :seed="6" class="sm" />Playoff · seeds 1–6</span>
+                <span><SeedMark :seed="8" class="sm" />Play-in · seeds 7–10</span>
+                <span><b class="pos">▲2</b><b class="neg">▼1</b>Seed change, last night</span>
+              </div>
+            </HelpPopover>
+          </h2>
+          <span v-if="g.sub" class="sub">{{ g.sub }}</span>
         </div>
         <div class="table-wrap card">
           <table class="stats edge">
             <thead>
               <tr>
                 <th scope="col">TEAM</th>
-                <th scope="col" class="c" :title="STAT_NAMES['7D']">7D</th>
+                <th scope="col" class="c" :title="STAT_NAMES.CHG">CHG</th>
                 <th v-for="c in COLS" :key="c" scope="col" :title="STAT_NAMES[c]">{{ c }}</th>
               </tr>
             </thead>
@@ -128,11 +131,11 @@ h1 {
 }
 .through { font-size: 12px; color: var(--mu); margin-top: 4px; }
 
+.key { margin-left: 6px; }
+/* Key inside the "?" popover: one item per line. */
 .legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 22px;
-  align-items: center;
+  display: grid;
+  gap: 10px;
   font: 400 11px var(--mono);
   color: var(--mu);
 
@@ -150,15 +153,7 @@ h1 {
 
   & h2 { font: 600 16px var(--sans); margin: 0; }
 }
-/* Legend (first table only) on the left, the table's note on the right. */
-.meta-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 22px;
-
-  & .sub { margin-left: auto; text-align: right; font: 400 11px var(--mono); color: var(--mu); }
-}
+.sub { font: 400 11px var(--mono); color: var(--mu); }
 
 .team { display: flex; align-items: center; gap: 10px; }
 .name { font: 600 13px var(--sans); color: var(--fg); }
@@ -194,18 +189,12 @@ table.stats {
   h1 { font-size: 20px; margin: 0; }
   .through { font-size: 10px; margin: 0; }
 
-  .legend {
-    width: 100%;
-    gap: 6px 14px;
-    font-size: 10px;
-    & .sm { width: 14px; height: 14px; font-size: 0; }
-  }
 
   .groups { gap: 0; padding-left: 0; padding-right: 0; padding-bottom: 24px; }
   .group { padding-top: 16px; }
   .ghead { padding: 0 var(--gutter); margin-bottom: 8px; }
   .ghead h2 { font-size: 15px; }
-  .meta-row .sub { font-size: 10px; margin-left: 0; text-align: left; }
+  .sub { font-size: 10px; }
   .card { border-left: 0; border-right: 0; border-bottom: 0; border-radius: 0; background: transparent; }
 
   .team { gap: 8px; --mark-size: 24px; --mark-r: 5px; --mark-fs: 8px; }
