@@ -59,6 +59,7 @@ const { prep, frame, status, share: onShare } = useShareImage(
         <h2 class="label">{{ label }}</h2>
       </div>
       <button v-if="!capture" type="button" class="share" @click="onShare"><span aria-hidden="true">↗</span>{{ status || 'Share' }}</button>
+      <span v-else class="site">dunkfu.com</span>
     </header>
 
     <div class="body">
@@ -137,6 +138,12 @@ const { prep, frame, status, share: onShare } = useShareImage(
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.site {
+  flex: none;
+  font: 500 12px var(--mono);
+  letter-spacing: .08em;
+  color: rgba(255, 255, 255, .85);
 }
 .share {
   display: inline-flex;
