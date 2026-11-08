@@ -49,7 +49,7 @@ onBeforeUnmount(close)
       :aria-controls="id"
       @click="toggle"
     >?</button>
-    <div v-show="open" ref="panel" :id="id" class="panel" :style="shift ? { transform: `translateX(${-shift}px)` } : null" role="region" :aria-label="label">
+    <div v-show="open" ref="panel" :id="id" class="panel" :style="{ '--shift': `${shift}px`, transform: shift ? `translateX(${-shift}px)` : null }" role="region" :aria-label="label">
       <slot />
     </div>
   </span>
@@ -80,16 +80,30 @@ onBeforeUnmount(close)
 }
 .panel {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 10px);
   left: 0;
   z-index: 10;
   width: max-content;
   max-width: calc(100vw - 2 * var(--gutter));
-  padding: 12px 14px;
+  padding: 14px 16px;
   background: var(--sf);
   border: 1px solid var(--ln);
   border-radius: 10px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
   text-align: left;
+
+  /* Notch pointing up at the button (moves with any on-screen shift). */
+  &::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: calc(9px - 5px + var(--shift, 0px));
+    width: 10px;
+    height: 10px;
+    background: var(--sf);
+    border-left: 1px solid var(--ln);
+    border-top: 1px solid var(--ln);
+    transform: rotate(45deg);
+  }
 }
 </style>

@@ -60,15 +60,14 @@ const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
           <h2>
             {{ g.title }}
             <HelpPopover v-if="gi === 0" label="Standings key" class="key">
-              <div class="legend">
-                <span><SeedMark :seed="6" class="sm" />Playoff · seeds 1–6</span>
-                <span><SeedMark :seed="8" class="sm" />Play-in · seeds 7–10</span>
-                <span><b class="pos">▲2</b><b class="neg">▼1</b>Seed change, last night</span>
-                <template v-if="view === 'league'">
-                  <span><b class="ex-tag">W1</b>Conference seed</span>
-                  <span><i class="ex-cut" aria-hidden="true"></i>Lottery below the dashed line</span>
-                </template>
-              </div>
+              <dl class="legend">
+                <div class="li"><dt><SeedMark :seed="6" label="" class="sm" /></dt><dd>Playoff</dd><dd class="rg">1–6</dd></div>
+                <div class="li"><dt><SeedMark :seed="8" label="" class="sm" /></dt><dd>Play-in</dd><dd class="rg">7–10</dd></div>
+                <div v-if="view !== 'division'" class="li"><dt><i class="ex-cut"></i></dt><dd>Lottery</dd><dd class="rg">11–15</dd></div>
+                <hr>
+                <div class="li"><dt class="arrows"><b class="pos">▲</b><b class="neg">▼</b></dt><dd>Seed change since last night</dd></div>
+                <div v-if="view === 'league'" class="li"><dt class="ex-tag">W1</dt><dd>Conference seed</dd></div>
+              </dl>
             </HelpPopover>
           </h2>
           <span v-if="g.sub" class="sub">{{ g.sub }}</span>
@@ -137,18 +136,26 @@ h1 {
 .through { font-size: 12px; color: var(--mu); margin-top: 4px; }
 
 .key { margin-left: 6px; }
-/* Key inside the "?" popover: one item per line. */
+/* Key inside the "?" popover: symbol column, label, seed range on the right. */
 .legend {
   display: grid;
-  gap: 10px;
-  font: 400 11px var(--mono);
-  color: var(--mu);
+  grid-template-columns: 34px auto auto;
+  column-gap: 12px;
+  row-gap: 12px;
+  align-items: center;
+  margin: 2px 2px;
+  min-width: 240px;
 
-  & > span { display: flex; align-items: center; gap: 7px; }
-  & b { font-weight: 500; }
-  & .sm { width: 18px; height: 18px; font-size: 9px; }
-  & .ex-tag { font: 400 10px var(--mono); color: var(--mu); }
-  & .ex-cut { display: inline-block; width: 22px; border-top: 1px dashed var(--ac); }
+  & .li { display: contents; }
+  & dt { display: flex; justify-content: center; align-items: center; }
+  & dd { margin: 0; font: 500 14px var(--sans); color: var(--fg); white-space: nowrap; }
+  & .li > dd:last-child:not(.rg) { grid-column: span 2; } /* no range: label takes both columns */
+  & .rg { justify-self: end; font: 400 11px var(--mono); color: var(--mu); }
+  & hr { grid-column: 1 / -1; width: 100%; margin: 2px 0; border: 0; border-top: 1px solid var(--ln); }
+  & b { font: 500 11px var(--sans); }
+  & .sm { width: 20px; height: 20px; }
+  & .ex-tag { font: 400 11px var(--mono); color: var(--mu); }
+  & .ex-cut { display: block; width: 26px; border-top: 1.5px dashed var(--ac); }
 }
 
 .groups { display: grid; gap: 26px; padding-bottom: 32px; }
@@ -171,6 +178,8 @@ table.stats {
   /* Favourite team's row, tinted in its colour (sticky first cell too). */
   & tbody tr.fav > td { background: color-mix(in oklch, var(--tc) var(--fav-mix), var(--sf)); }
   & .c { text-align: center; }
+  /* CHG column: room before W so the arrows don't crowd the wins. */
+  & th.c, & td.mv { padding-left: 14px; padding-right: 22px; }
   & td.mv { font-weight: 500; }
   & td.pos { color: var(--ac); }
   & td.neg { color: var(--dn); }
