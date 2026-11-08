@@ -68,7 +68,7 @@ const { prep, frame, status, share: onShare } = useShareImage(
         <div class="team">{{ t?.name ?? player.abbr }}</div>
         <div class="line">{{ line }}</div>
       </div>
-      <StatTrio class="trio" hero :accent="sec" :pts="player.pts" :reb="player.reb" :ast="player.ast" />
+      <StatTrio class="trio" hero :pts="player.pts" :reb="player.reb" :ast="player.ast" />
     </div>
   
     <!-- Off-screen copy at a fixed desktop width, captured for Share. -->

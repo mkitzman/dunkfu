@@ -1,12 +1,11 @@
 <script setup>
-// PTS / REB / AST in big numbers. `hero` is the white-on-team-colour version
-// (PTS in the accent colour); the default sits on --sf.
+// PTS / REB / AST in big numbers. `hero` is the white-on-team-colour version;
+// the default sits on --sf.
 defineProps({
   pts: { type: Number, required: true },
   reb: { type: Number, required: true },
   ast: { type: Number, required: true },
   hero: Boolean,
-  accent: { type: String, default: null }, // PTS colour in the hero
 })
 </script>
 
@@ -15,7 +14,7 @@ defineProps({
     <template v-for="([l, v], i) in [['PTS', pts], ['REB', reb], ['AST', ast]]" :key="l">
       <span v-if="i" class="sep" aria-hidden="true">/</span>
       <span class="stat">
-        <span class="v" :style="hero && i === 0 && accent ? { color: accent } : null">{{ v }}</span>
+        <span class="v">{{ v }}</span>
         <span class="l">{{ l }}</span>
       </span>
     </template>

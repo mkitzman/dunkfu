@@ -25,6 +25,8 @@ const year = new Date().getFullYear()
 .row {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
+  text-align: center;
   gap: 6px 22px;
   padding-top: 18px;
   padding-bottom: 24px;
