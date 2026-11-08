@@ -2,6 +2,7 @@ import { ref, watch, nextTick, onMounted, onBeforeUnmount } from 'vue'
 import { announce } from './useAnnounce.js'
 
 const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+const touch = matchMedia('(pointer: coarse)').matches
 const idle = () => new Promise(r => (window.requestIdleCallback ?? setTimeout)(r, { timeout: 1500 }))
 
 // Share a spotlight card as an image.
@@ -60,18 +61,21 @@ export function useShareImage(key, meta, enabled = true) {
   async function share() {
     const { title, text } = meta()
     const url = location.href
-    // 1. Share sheet with the image (phones, Safari).
-    if (file && navigator.canShare?.({ files: [file] })) {
+    const canShareFile = file && navigator.canShare?.({ files: [file] })
+    const shareFile = async () => {
       try { await navigator.share({ files: [file], title, text: `${text} ${url}` }) } catch { /* dismissed */ }
-      return
     }
-    // 2. Copy the image (desktop Chrome / Firefox).
+    // 1. Phones: share sheet with the image.
+    if (canShareFile && touch) return shareFile()
+    // 2. Desktop: copy just the image. (The macOS share sheet's Copy puts it
+    //    on the clipboard twice, so Slack etc. paste two attachments.)
     if (file && window.ClipboardItem && navigator.clipboard?.write) {
       try {
         await navigator.clipboard.write([new ClipboardItem({ 'image/png': file })])
         return flash('Copied image')
       } catch { /* fall through */ }
     }
+    if (canShareFile) return shareFile()
     // 3. Link only.
     if (navigator.share) {
       try { await navigator.share({ title, text, url }) } catch { /* dismissed */ }
