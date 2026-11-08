@@ -69,9 +69,10 @@ const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
 
 
     <div class="wrap groups">
-      <section v-for="g in groups" :key="g.key" class="group">
+      <section v-for="g in groups" :key="g.key" class="group" :class="{ 'conf-start': g.confHead }">
+        <h2 v-if="g.confHead" class="conf-head">{{ g.confHead }}</h2>
         <div class="ghead">
-          <h2>{{ g.title }}</h2>
+          <component :is="g.confHead !== undefined ? 'h3' : 'h2'" class="gtitle">{{ g.title }}</component>
           <span v-if="g.sub" class="sub">{{ g.sub }}</span>
         </div>
         <div class="table-wrap card">
@@ -172,8 +173,12 @@ h1 {
   gap: 8px;
   margin-bottom: 10px;
 
-  & h2 { font: 600 16px var(--sans); margin: 0; }
+  & .gtitle { font: 600 16px var(--sans); margin: 0; }
 }
+/* Division view: conference heading above its first division; extra space
+   before the second conference. */
+.conf-head { font: 800 22px/1.1 var(--sans); letter-spacing: -.02em; margin: 0 0 14px; }
+.group.conf-start:not(:first-child) { margin-top: 22px; }
 .sub { font: 400 11px var(--mono); color: var(--mu); }
 
 .team { display: flex; align-items: center; gap: 10px; min-width: 0; }
@@ -220,7 +225,9 @@ table.stats {
   .groups { gap: 0; padding-left: 0; padding-right: 0; padding-bottom: 24px; }
   .group { padding-top: 16px; }
   .ghead { padding: 0 var(--gutter); margin-bottom: 8px; }
-  .ghead h2 { font-size: 15px; }
+  .ghead .gtitle { font-size: 15px; }
+  .conf-head { font-size: 19px; padding: 0 var(--gutter); margin-bottom: 10px; }
+  .group.conf-start:not(:first-child) { margin-top: 18px; }
   .sub { font-size: 10px; }
   table.stats tbody tr.fav > td { background: color-mix(in oklch, var(--tc) var(--fav-mix), var(--bg)); }
   .card { border-left: 0; border-right: 0; border-bottom: 0; border-radius: 0; background: transparent; }

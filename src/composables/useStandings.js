@@ -35,9 +35,10 @@ export function groupStandings(rows, view, fav = null) {
   if (view === 'division') {
     const divs = !favTeam ? DIVISIONS : DIVISIONS.slice().sort((a, b) =>
       (b[1] === favTeam.division) - (a[1] === favTeam.division) || (b[0] === favTeam.conference) - (a[0] === favTeam.conference))
-    return divs.map(([c, d]) => ({
-      key: d, title: d,
-      sub: `${CONF_NAME[c]} Conference`,
+    // confHead: the conference heading shown once, above its first division.
+    return divs.map(([c, d], i) => ({
+      key: d, title: d, sub: '',
+      confHead: i === 0 || divs[i - 1][0] !== c ? `${CONF_NAME[c]} Conference` : null,
       rows: rankGroup(rows.filter(t => t.division === d)),
       tag: t => `${t.conference} · ${t.seed}`,
     }))
