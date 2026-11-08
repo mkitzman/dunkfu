@@ -37,6 +37,8 @@ onMounted(async () => { rows.value = prepare(await getStandings()) })
 const groups = computed(() => (rows.value.length ? groupStandings(rows.value, view.value, favorite.value) : []))
 
 const COLS = ['W', 'L', 'PCT', 'GB', 'HOME', 'AWAY', 'CONF', 'PPG', 'OPP', 'DIFF', 'STRK', 'L10']
+// Fixed widths so every table (conference, division) lines up; TEAM takes the rest.
+const WIDTHS = { CHG: 72, W: 40, L: 40, PCT: 60, GB: 50, HOME: 60, AWAY: 60, CONF: 60, PPG: 60, OPP: 60, DIFF: 60, STRK: 52, L10: 52 }
 const fmtPct = p => p.toFixed(3).replace(/^0/, '')
 const move = m => (m > 0 ? `▲${m}` : m < 0 ? `▼${-m}` : '—')
 const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
@@ -74,6 +76,11 @@ const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
         </div>
         <div class="table-wrap card">
           <table class="stats edge">
+            <colgroup>
+              <col>
+              <col :style="{ width: `${WIDTHS.CHG}px` }">
+              <col v-for="c in COLS" :key="c" :style="{ width: `${WIDTHS[c]}px` }">
+            </colgroup>
             <thead>
               <tr>
                 <th scope="col">TEAM</th>
@@ -169,12 +176,14 @@ h1 {
 }
 .sub { font: 400 11px var(--mono); color: var(--mu); }
 
-.team { display: flex; align-items: center; gap: 10px; }
-.name { font: 600 13px var(--sans); color: var(--fg); }
+.team { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.name { font: 600 13px var(--sans); color: var(--fg); min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .nick { display: none; }
-.tag { font: 400 10px var(--mono); color: var(--mu); }
+.tag { flex: none; font: 400 10px var(--mono); color: var(--mu); }
 
 table.stats {
+  table-layout: fixed;
+  min-width: 860px; /* team column never narrower than ~130px; scrolls on phones */
   /* Favourite team's row, tinted in its colour (sticky first cell too). */
   & tbody tr.fav > td { background: color-mix(in oklch, var(--tc) var(--fav-mix), var(--sf)); }
   & .c { text-align: center; }
