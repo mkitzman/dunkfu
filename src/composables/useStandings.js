@@ -65,8 +65,9 @@ const CONF_NAME = { E: 'Eastern', W: 'Western' }
 export function groupStandings(rows, view, fav = null) {
   const favTeam = fav && rows.find(r => r.abbr === fav)
   if (view === 'league') {
-    // The 14 non-playoff teams go to the draft lottery: line above the bottom 14.
-    return [{ key: 'league', title: 'League', sub: '', rows: rankGroup(rows), tag: t => `${t.conference}${t.seed}`, cutAfter: t => t.rank === rows.length - 14 }]
+    // No cutoff line: playoff / play-in / lottery is set by conference seed,
+    // not league rank, so the seed marks carry it.
+    return [{ key: 'league', title: 'League', sub: '', rows: rankGroup(rows), tag: t => `${t.conference}${t.seed}` }]
   }
   if (view === 'division') {
     const divs = !favTeam ? DIVISIONS : DIVISIONS.slice().sort((a, b) =>

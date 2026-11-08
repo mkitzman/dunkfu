@@ -126,6 +126,10 @@ const CHANGE_LABEL = {
   league: 'League rank change since last night',
   cup: 'Group rank change since last night',
 }
+// What the dashed line marks; only the conference view draws one.
+const LINE_LABEL = {
+  conference: 'Playoff / play-in line',
+}
 const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
 </script>
 
@@ -149,7 +153,7 @@ const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
                 <div class="li"><dt><SeedMark :seed="6" label="" class="sm" /></dt><dd>Playoff</dd><dd class="rg">1–6</dd></div>
                 <div class="li"><dt><SeedMark :seed="8" label="" class="sm" /></dt><dd>Play-in</dd><dd class="rg">7–10</dd></div>
                 <div class="li"><dt><SeedMark :seed="12" label="" class="sm" /></dt><dd>Lottery</dd><dd class="rg">11–15</dd></div>
-                <div class="li"><dt><i class="ex-cut"></i></dt><dd>Cutoff line</dd></div>
+                <div v-if="LINE_LABEL[view]" class="li"><dt><i class="ex-cut"></i></dt><dd>{{ LINE_LABEL[view] }}</dd></div>
                 <hr>
                 <div class="li"><dt class="arrows"><b class="pos">▲</b><b class="neg">▼</b></dt><dd>{{ CHANGE_LABEL[view] }}</dd></div>
                 <div class="li"><dt class="ex-tag">W1</dt><dd>Conference seed</dd></div>
