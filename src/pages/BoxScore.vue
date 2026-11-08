@@ -137,6 +137,7 @@ const allPlayers = computed(() => hasBox.value
         :tag="heading.tag"
         :tag-to="`/${game.date}`"
         :title="heading.title"
+        :title-to="`/${game.date}`"
         :sub="gameOf || 'All games'"
         :sub-to="`/${game.date}`"
         :sub-link="gameOf ? '· All games' : ''"

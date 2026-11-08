@@ -8,6 +8,7 @@ defineProps({
   tag: { type: String, required: true }, // "Last night"
   tagTo: { type: String, default: null }, // makes the eyebrow a link
   title: { type: String, required: true }, // "Sun, Nov 1"
+  titleTo: { type: String, default: null }, // makes the title a link
   sub: { type: String, default: '' },
   subTo: { type: String, default: null }, // makes the sub line a link
   subLink: { type: String, default: '' }, // trailing link text: "· All games"
@@ -35,7 +36,7 @@ defineProps({
     <div class="mid">
       <RouterLink v-if="tagTo" :to="tagTo" class="eyebrow tag-link">{{ tag }}</RouterLink>
       <div v-else class="eyebrow">{{ tag }}</div>
-      <h1 class="title">{{ title }}</h1>
+      <h1 class="title"><RouterLink v-if="titleTo" :to="titleTo" class="title-link">{{ title }}</RouterLink><template v-else>{{ title }}</template></h1>
       <!-- Always rendered so the block keeps its height while data loads. -->
       <RouterLink v-if="subTo" :to="subTo" class="sub sub-link">{{ sub }}<span v-if="subLink" class="sub-more">{{ subLink }}</span></RouterLink>
       <div v-else class="sub">{{ sub || '\u00a0' }}</div>
@@ -117,6 +118,9 @@ defineProps({
   margin: 4px 0 0;
 }
 .sub { font-size: 15px; line-height: 1.4; color: var(--mu); margin-top: 6px; }
+.title-link { border-radius: 4px; }
+.title-link:hover { color: var(--ac); }
+.title-link:focus-visible { outline: 2px solid var(--ac); outline-offset: 3px; }
 .sub-link { display: inline-flex; align-items: baseline; gap: 6px; font-size: 13px; }
 .sub-link:hover { color: var(--ac); }
 .sub-more { font-size: 11px; }
