@@ -8,6 +8,7 @@ import HelpPopover from '../components/HelpPopover.vue'
 import { getStandings, getGames } from '../api/index.js'
 import { prepare, withPrev, groupStandings } from '../composables/useStandings.js'
 import { favorite, isFav, favStyle } from '../composables/useFavorite.js'
+import { usePageTitle } from '../composables/usePageTitle.js'
 import { todayNY, addDays, dateLong, STAT_NAMES } from '../utils.js'
 import { team } from '../data/teams.js'
 import { CUP, cupGames, cupTables } from '../data/nbaCup.js'
@@ -29,6 +30,8 @@ const view = computed({
   get: () => (VIEWS.some(v => v.value === route.query.view) ? route.query.view : 'conference'),
   set: v => router.replace({ query: v === 'conference' ? {} : { view: v } }),
 })
+
+usePageTitle(() => `NBA standings: ${VIEWS.find(v => v.value === view.value).label}`)
 
 const yesterday = addDays(today, -1)
 const through = dateLong(yesterday)
@@ -150,7 +153,7 @@ const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
 
 
     <div class="wrap groups">
-      <section v-for="g in groups" :key="g.key" class="group" :class="{ 'conf-start': g.confHead }">
+      <section v-for="g in groups" :key="g.key" class="group" :class="{ 'conf-start': g.confHead, 'no-title': view === 'league' }">
         <h2 v-if="g.confHead" class="conf-head">{{ g.confHead }}</h2>
         <!-- League view: one table, so its "League" heading is for screen readers only. -->
         <div class="ghead" :class="{ 'sr-only': view === 'league' }">
@@ -252,6 +255,9 @@ h1 {
 /* Conference headings: same size in the Conference view as above the divisions. */
 .conf-head, .ghead .gtitle.big { font: 800 22px/1.1 var(--sans); letter-spacing: -.02em; margin: 0 0 14px; }
 .ghead .gtitle.big { margin: 0; }
+/* League view has no visible heading: keep the same space above its table
+   as a conference heading takes (line height + .ghead margin). */
+.group.no-title { padding-top: calc(22px * 1.1 + 10px); }
 .group.conf-start:not(:first-child) { margin-top: 22px; }
 .sub { font: 400 11px var(--mono); color: var(--mu); }
 
@@ -301,6 +307,7 @@ table.stats {
   .ghead .gtitle { font-size: 15px; }
   .conf-head { font-size: 19px; padding: 0 var(--gutter); margin-bottom: 10px; }
   .ghead .gtitle.big { font-size: 19px; }
+  .group.no-title { padding-top: calc(16px + 19px * 1.1 + 8px); }
   .group.conf-start:not(:first-child) { margin-top: 18px; }
   .sub { font-size: 10px; }
   table.stats tbody tr.fav > td { background: color-mix(in oklch, var(--tc) var(--fav-mix), var(--bg)); }
