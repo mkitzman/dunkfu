@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useSort } from '../composables/useSort.js'
 import { team } from '../data/teams.js'
-import { favorite, isFav, favStyle } from '../composables/useFavorite.js'
+import { isFav, favStyle } from '../composables/useFavorite.js'
 import { shortName, signed, STAT_NAMES } from '../utils.js'
 
 const props = defineProps({
@@ -28,13 +28,6 @@ const rows = computed(() => props.players.map(p => {
 
 const { sort, setSort, sorted } = useSort(rows, (r, k) => r.s[k])
 
-// Favourite team's players stay at the top (in the current sort order).
-const ordered = computed(() => {
-  if (!favorite.value) return sorted.value
-  const mine = sorted.value.filter(r => isFav(r.abbr))
-  return mine.length ? mine.concat(sorted.value.filter(r => !isFav(r.abbr))) : sorted.value
-})
-
 const ariaSort = key => (sort.value.key === key ? (sort.value.dir < 0 ? 'descending' : 'ascending') : 'none')
 </script>
 
@@ -58,7 +51,7 @@ const ariaSort = key => (sort.value.key === key ? (sort.value.dir < 0 ? 'descend
         </tr>
       </thead>
       <tbody>
-        <tr v-for="r in ordered" :key="r.key" :class="{ fav: isFav(r.abbr) }" :style="isFav(r.abbr) ? favStyle(r.abbr) : null">
+        <tr v-for="r in sorted" :key="r.key" :class="{ fav: isFav(r.abbr) }" :style="isFav(r.abbr) ? favStyle(r.abbr) : null">
           <th scope="row" class="player">
             <span class="bar" :style="{ background: r.color }"></span>
             <span class="who">
