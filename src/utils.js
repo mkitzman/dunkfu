@@ -49,6 +49,6 @@ export const STAT_NAMES = {
   '+/-': 'Plus/minus (point differential while on the court)',
   W: 'Wins', L: 'Losses', PCT: 'Winning percentage', GB: 'Games behind the leader',
   HOME: 'Home record', AWAY: 'Road record', CONF: 'Conference record',
-  PPG: 'Points per game', OPP: 'Opponent points per game', DIFF: 'Average point differential',
+  PPG: 'Points per game', PF: 'Points for', PA: 'Points against', OPP: 'Opponent points per game', DIFF: 'Average point differential',
   STRK: 'Current streak', L10: 'Record in the last 10 games',
 }
