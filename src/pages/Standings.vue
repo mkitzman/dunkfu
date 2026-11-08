@@ -148,7 +148,8 @@ const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
               <template v-else>
                 <div class="li"><dt><SeedMark :seed="6" label="" class="sm" /></dt><dd>Playoff</dd><dd class="rg">1–6</dd></div>
                 <div class="li"><dt><SeedMark :seed="8" label="" class="sm" /></dt><dd>Play-in</dd><dd class="rg">7–10</dd></div>
-                <div class="li"><dt><i class="ex-cut"></i></dt><dd>Lottery</dd><dd class="rg">11–15</dd></div>
+                <div class="li"><dt><SeedMark :seed="12" label="" class="sm" /></dt><dd>Lottery</dd><dd class="rg">11–15</dd></div>
+                <div class="li"><dt><i class="ex-cut"></i></dt><dd>Cutoff line</dd></div>
                 <hr>
                 <div class="li"><dt class="arrows"><b class="pos">▲</b><b class="neg">▼</b></dt><dd>{{ CHANGE_LABEL[view] }}</dd></div>
                 <div class="li"><dt class="ex-tag">W1</dt><dd>Conference seed</dd></div>
