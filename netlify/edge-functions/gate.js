@@ -22,15 +22,23 @@ const page = (title, body, status = 200) =>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>${title}</title>
+<meta name="theme-color" content="#1f2227">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@500&family=Sora:wght@400;600;800&display=swap">
 <style>
-  :root { --bg:#faf9f7; --sf:#fff; --fg:#15171a; --mu:#646a72; --ln:rgba(20,23,26,.12); --ac:oklch(0.58 0.14 215); --dn:oklch(0.58 0.16 25); color-scheme: light dark; }
-  @media (prefers-color-scheme: dark) { :root { --bg:#121416; --sf:#1a1d21; --fg:#eceef0; --mu:#8f959d; --ln:rgba(255,255,255,.12); --ac:oklch(0.8 0.12 215); --dn:oklch(0.76 0.14 25); } }
+  /* Charcoal, like the site's default theme; brand orange never changes. */
+  :root { --bg:#1f2227; --sf:#272b31; --fg:#eceef0; --mu:#8f959d; --ln:rgba(255,255,255,.12); --brand:#F26B21; --dn:oklch(0.76 0.14 25); color-scheme: dark; }
   * { box-sizing: border-box; }
   body { margin:0; min-height:100vh; display:grid; place-items:center; background:var(--bg); color:var(--fg); font-family:Sora,system-ui,sans-serif; padding:24px; text-align:center; }
-  .mark { font:800 56px/1 Sora,sans-serif; letter-spacing:-.03em; }
-  .mark span { font-weight:400; color:var(--ac); }
-  .eyebrow { font:500 11px 'DM Mono',monospace; letter-spacing:.12em; text-transform:uppercase; color:var(--ac); margin-top:22px; }
+  /* Lockup (T2), sized in em so it scales down on phones. */
+  .lockup { display:inline-flex; align-items:center; font-size:clamp(34px, 11vw, 64px); white-space:nowrap; }
+  .lockup img { width:.8em; height:.8em; margin-right:.3em; }
+  .word { font:800 1em/1 Sora,sans-serif; letter-spacing:-.045em; }
+  .word span { color:var(--brand); }
+  .tag { font:500 .29em/1.5 'DM Mono',monospace; letter-spacing:.16em; text-transform:uppercase; text-align:left; margin-left:1.15em; padding-left:1.15em; border-left:1px solid var(--ln); }
+  .eyebrow { font:500 13px 'DM Mono',monospace; letter-spacing:.2em; text-transform:uppercase; color:var(--mu); margin-top:32px; }
   p { color:var(--mu); font-size:14px; line-height:1.6; margin:8px 0 0; }
   form { display:flex; gap:8px; margin-top:22px; justify-content:center; }
   input, button { font:inherit; font-size:14px; border-radius:999px; border:1px solid var(--ln); padding:10px 16px; }
@@ -43,12 +51,11 @@ const page = (title, body, status = 200) =>
 </html>`, { status, headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' } })
 
 const comingSoon = () => page('dunkfu', `
-  <div class="mark">dunk<span>fu</span></div>
-  <div class="eyebrow">Coming soon</div>
-  <p>A new dunkfu is on the way: last night's scores, box scores and standings.</p>`)
+  <div class="lockup" role="img" aria-label="dunkfu: last night in the NBA"><img src="/brand/ball-orange.png" alt=""><span class="word">dunk<span>fu</span></span><span class="tag">Last night<br>in the NBA</span></div>
+  <div class="eyebrow">Coming soon</div>`)
 
 const login = (error, unset) => page('dunkfu · preview', `
-  <div class="mark">dunk<span>fu</span></div>
+  <div class="lockup" role="img" aria-label="dunkfu: last night in the NBA"><img src="/brand/ball-orange.png" alt=""><span class="word">dunk<span>fu</span></span><span class="tag">Last night<br>in the NBA</span></div>
   <div class="eyebrow">Preview</div>
   <form method="post" action="/login">
     <input type="password" name="password" placeholder="Password" aria-label="Password" autofocus required>
@@ -85,7 +92,8 @@ export default async (req, context) => {
     return res
   }
 
-  if (url.pathname === '/favicon.ico') return context.next()
+  // Icons and the logo image the gate pages themselves use.
+  if (/^\/(favicon[\w.-]*|apple-touch-icon\.png|brand\/.*)$/.test(url.pathname)) return context.next()
   return comingSoon()
 }
 
