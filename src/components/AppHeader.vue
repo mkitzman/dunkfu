@@ -9,8 +9,6 @@ const open = ref(false)
 
 const links = [
   { to: '/', label: 'Scores', section: 'scores' },
-  { to: '/players', label: 'Players', section: 'players' },
-  { to: '/teams', label: 'Teams', section: 'teams' },
   { to: '/standings', label: 'Standings', section: 'standings' },
 ]
 const section = computed(() => route.meta.section)
@@ -65,16 +63,17 @@ watch(() => route.fullPath, () => { open.value = false })
   background: var(--bg);
 }
 .bar {
-  display: flex;
+  /* Equal side columns keep the nav centred on the page, not between the ends. */
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   gap: 20px;
   height: 72px;
   padding: 0 var(--gutter);
   max-width: var(--max);
   margin: 0 auto;
 }
-.home { display: flex; border-radius: 4px; }
+.home { display: flex; justify-self: start; border-radius: 4px; }
 .home:focus-visible { outline: 2px solid var(--ac); outline-offset: 4px; }
 .nav {
   display: flex;
@@ -84,11 +83,11 @@ watch(() => route.fullPath, () => { open.value = false })
 
   & a:hover, & a.active { color: var(--fg); }
 }
-.end { display: flex; align-items: center; gap: 8px; }
+.end { display: flex; align-items: center; gap: 8px; justify-self: end; }
 .menu-btn, .mobile-nav { display: none; }
 
 @media (max-width: 720px) {
-  .bar { height: 60px; }
+  .bar { height: 60px; grid-template-columns: 1fr auto; }
   .nav { display: none; }
   .menu-btn {
     display: grid;
