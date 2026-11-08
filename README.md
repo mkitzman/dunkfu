@@ -30,7 +30,7 @@ Copy `.env.example` to `.env` and add a Highlightly API key, then:
 npm run fetch-data
 ```
 
-This writes games, box scores, player lines, season averages and standings to `public/data/` (override with `DATA_DIR`). Raw API responses for finished games are cached in `data/cache/`, and daily standings snapshots in `data/history/` power the 7-day seed change. The free plan allows 100 requests a day; the script stops before the limit and resumes on the next run.
+This writes games, box scores, player lines, season averages and standings to `public/data/` (override with `DATA_DIR`). Raw API responses for finished games are cached in `data/cache/`, and daily standings snapshots in `data/history/` power last night's seed change. The free plan allows 100 requests a day; the script stops before the limit and resumes on the next run.
 
 Set `VITE_TODAY=YYYY-MM-DD` to pin "today" (useful with the mock data, which covers Oct 30 – Nov 2, 2026).
 

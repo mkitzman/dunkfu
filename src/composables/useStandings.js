@@ -10,7 +10,7 @@ export function prepare(rows) {
     ...team(r.abbr),
     pct: pctOf(r),
     diff: Math.round((r.ppg - r.opp) * 10) / 10,
-    move: r.seed7dAgo == null ? 0 : r.seed7dAgo - r.seed,
+    move: r.seedPrev == null ? 0 : r.seedPrev - r.seed, // + = moved up last night
   }))
 }
 

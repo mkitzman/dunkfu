@@ -16,7 +16,7 @@ export function rng(s) {
   }
 }
 
-// [abbr, w, l, seed change over the last 7 days]
+// [abbr, w, l, seed change last night]
 export const RECORDS = [
   ['PHI', 6, 1, 2], ['DET', 5, 1, 3], ['BOS', 4, 1, -1], ['CLE', 4, 2, -2], ['TOR', 3, 2, 1],
   ['WAS', 3, 3, 4], ['NYK', 3, 3, -3], ['MIA', 3, 3, 0], ['ATL', 3, 4, -1], ['CHA', 3, 4, 2],

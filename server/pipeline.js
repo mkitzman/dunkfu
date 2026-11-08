@@ -7,7 +7,7 @@
 // Keys:
 //   data/...     what the site reads (games/DATE, box/ID, lines/DATE, awards/DATE, averages, standings, meta)
 //   cache/...    raw API responses that can't change (settled days, box scores, lineups)
-//   history/...  daily standings snapshots for the 7-day seed change
+//   history/...  daily standings snapshots for last night's seed change
 //
 // The free plan allows 100 requests a day. A run stops before the limit (or a
 // time budget) and the next run picks up where it left off; finished games are
@@ -126,7 +126,11 @@ export async function refresh({ store, key, deadline = Infinity, log = console.l
   if (!groups) throw new Error('Out of requests before standings could be fetched')
   const seasonStart = nyDate(new Date(groups[0].startDate))
 
-  // Save standings right away (plus today's snapshot for the 7-day seed change).
+  // Save standings right away, plus today's snapshot. The run is in the
+  // morning, so today's snapshot already includes last night's games and
+  // yesterday's is the standings before them: the difference is last night's
+  // seed change. If yesterday's run was missed there's no change to show
+  // (seedPrev null) rather than a two-day change passed off as one night.
   const rows = groups.flatMap(g => g.data.map(r => {
     const s = Object.fromEntries(r.statistics.map(x => [x.displayName, x.value]))
     return {
@@ -136,10 +140,9 @@ export async function refresh({ store, key, deadline = Infinity, log = console.l
     }
   }))
   await store.set(`history/standings-${today}.json`, rows.map(r => ({ abbr: r.abbr, seed: r.seed })))
-  const weekAgo = (await store.list('history/standings-'))
-    .filter(k => k.slice(-15, -5) <= addDays(today, -7)).sort().pop()
-  const past = weekAgo ? Object.fromEntries((await store.get(weekAgo)).map(r => [r.abbr, r.seed])) : {}
-  await store.set('data/standings.json', { asOf: yesterday, rows: rows.map(r => ({ ...r, seed7dAgo: past[r.abbr] ?? null })) })
+  const before = await store.get(`history/standings-${yesterday}.json`)
+  const past = before ? Object.fromEntries(before.map(r => [r.abbr, r.seed])) : {}
+  await store.set('data/standings.json', { asOf: yesterday, rows: rows.map(r => ({ ...r, seedPrev: past[r.abbr] ?? null })) })
 
 
   // 2. Games for every day of the season. Settled past days come from cache.

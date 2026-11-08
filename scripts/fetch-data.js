@@ -5,7 +5,7 @@
 //
 //   public/data/   what the site reads (override with DATA_DIR)
 //   data/cache/    raw API responses that can't change
-//   data/history/  daily standings snapshots
+//   data/history/  daily standings snapshots (last night's seed change)
 
 import fs from 'node:fs'
 import path from 'node:path'

@@ -129,7 +129,7 @@ export async function getStandings() {
       .sort((a, b) => b.w / (b.w + b.l) - a.w / (a.w + a.l) || b.w - a.w || (b.ppg - b.opp) - (a.ppg - a.opp))
       .forEach((r, i) => { r.seed = i + 1 })
   }
-  return rows.map(({ seedChange, ...r }) => ({ ...r, seed7dAgo: r.seed + seedChange }))
+  return rows.map(({ seedChange, ...r }) => ({ ...r, seedPrev: r.seed + seedChange }))
 }
 
 export async function getAwards() {
