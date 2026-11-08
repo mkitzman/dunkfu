@@ -131,7 +131,8 @@ const { prep, frame, status, share: onShare } = useShareImage(
 .rule { width: 1px; height: 16px; background: rgba(255, 255, 255, .3); flex: none; }
 .label {
   margin: 0;
-  font: 600 11px var(--mono);
+  /* Fixed line-height: centres the same in the share image (Safari) as on the page. */
+  font: 600 11px/1 var(--mono);
   letter-spacing: .16em;
   text-transform: uppercase;
   color: var(--sec);
@@ -141,7 +142,7 @@ const { prep, frame, status, share: onShare } = useShareImage(
 }
 .site {
   flex: none;
-  font: 500 12px var(--mono);
+  font: 500 12px/1 var(--mono);
   letter-spacing: .08em;
   color: rgba(255, 255, 255, .85);
 }
