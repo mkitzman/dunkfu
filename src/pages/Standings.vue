@@ -50,28 +50,28 @@ const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
       <div class="title">
         <div class="eyebrow">{{ season }}</div>
         <h1>Standings</h1>
-        <div class="through">Through {{ through }}</div>
+        <div class="through">
+          Through {{ through }}
+          <HelpPopover label="Standings key" class="key">
+            <dl class="legend">
+              <div class="li"><dt><SeedMark :seed="6" label="" class="sm" /></dt><dd>Playoff</dd><dd class="rg">1–6</dd></div>
+              <div class="li"><dt><SeedMark :seed="8" label="" class="sm" /></dt><dd>Play-in</dd><dd class="rg">7–10</dd></div>
+              <div v-if="view !== 'division'" class="li"><dt><i class="ex-cut"></i></dt><dd>Lottery</dd><dd class="rg">11–15</dd></div>
+              <hr>
+              <div class="li"><dt class="arrows"><b class="pos">▲</b><b class="neg">▼</b></dt><dd>Seed change since last night</dd></div>
+              <div v-if="view === 'league'" class="li"><dt class="ex-tag">W1</dt><dd>Conference seed</dd></div>
+            </dl>
+          </HelpPopover>
+        </div>
       </div>
       <SegmentedControl v-model="view" :options="VIEWS" label="Standings view" />
     </div>
 
 
     <div class="wrap groups">
-      <section v-for="(g, gi) in groups" :key="g.key" class="group">
+      <section v-for="g in groups" :key="g.key" class="group">
         <div class="ghead">
-          <h2>
-            {{ g.title }}
-            <HelpPopover v-if="gi === 0" label="Standings key" class="key">
-              <dl class="legend">
-                <div class="li"><dt><SeedMark :seed="6" label="" class="sm" /></dt><dd>Playoff</dd><dd class="rg">1–6</dd></div>
-                <div class="li"><dt><SeedMark :seed="8" label="" class="sm" /></dt><dd>Play-in</dd><dd class="rg">7–10</dd></div>
-                <div v-if="view !== 'division'" class="li"><dt><i class="ex-cut"></i></dt><dd>Lottery</dd><dd class="rg">11–15</dd></div>
-                <hr>
-                <div class="li"><dt class="arrows"><b class="pos">▲</b><b class="neg">▼</b></dt><dd>Seed change since last night</dd></div>
-                <div v-if="view === 'league'" class="li"><dt class="ex-tag">W1</dt><dd>Conference seed</dd></div>
-              </dl>
-            </HelpPopover>
-          </h2>
+          <h2>{{ g.title }}</h2>
           <span v-if="g.sub" class="sub">{{ g.sub }}</span>
         </div>
         <div class="table-wrap card">
@@ -142,7 +142,7 @@ h1 {
 }
 .through { font-size: 12px; color: var(--mu); margin-top: 4px; }
 
-.key { margin-left: 6px; }
+.through { display: flex; align-items: center; gap: 8px; }
 /* Key inside the "?" popover: symbol column, label, seed range on the right. */
 .legend {
   display: grid;
@@ -183,7 +183,7 @@ h1 {
 
 table.stats {
   table-layout: fixed;
-  min-width: 860px; /* team column never narrower than ~130px; scrolls on phones */
+  min-width: 920px; /* team column never narrower than ~190px; scrolls on phones */
   /* Favourite team's row, tinted in its colour (sticky first cell too). */
   & tbody tr.fav > td { background: color-mix(in oklch, var(--tc) var(--fav-mix), var(--sf)); }
   & .c { text-align: center; }
