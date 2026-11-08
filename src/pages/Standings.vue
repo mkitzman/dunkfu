@@ -5,8 +5,8 @@ import SegmentedControl from '../components/SegmentedControl.vue'
 import SeedMark from '../components/SeedMark.vue'
 import TeamMark from '../components/TeamMark.vue'
 import HelpPopover from '../components/HelpPopover.vue'
-import { getStandings } from '../api/index.js'
-import { prepare, groupStandings } from '../composables/useStandings.js'
+import { getStandings, getGames } from '../api/index.js'
+import { prepare, withPrev, groupStandings } from '../composables/useStandings.js'
 import { favorite, isFav, favStyle } from '../composables/useFavorite.js'
 import { todayNY, addDays, dateLong, STAT_NAMES } from '../utils.js'
 
@@ -32,7 +32,11 @@ const season = (() => {
 })()
 
 const rows = ref([])
-onMounted(async () => { rows.value = prepare(await getStandings()) })
+// Last night's games let each view show the change in its own ranking.
+onMounted(async () => {
+  const [st, games] = await Promise.all([getStandings(), getGames(addDays(today, -1))])
+  rows.value = withPrev(prepare(st), games)
+})
 
 const groups = computed(() => (rows.value.length ? groupStandings(rows.value, view.value, favorite.value) : []))
 
@@ -41,6 +45,12 @@ const COLS = ['W', 'L', 'PCT', 'GB', 'HOME', 'AWAY', 'CONF', 'PPG', 'OPP', 'DIFF
 const WIDTHS = { CHG: 72, W: 40, L: 40, PCT: 60, GB: 50, HOME: 60, AWAY: 60, CONF: 60, PPG: 60, OPP: 60, DIFF: 60, STRK: 52, L10: 52 }
 const fmtPct = p => p.toFixed(3).replace(/^0/, '')
 const move = m => (m > 0 ? `▲${m}` : m < 0 ? `▼${-m}` : '—')
+// What the CHG arrows measure in each view.
+const CHANGE_LABEL = {
+  conference: 'Seed change since last night',
+  division: 'Division rank change since last night',
+  league: 'League rank change since last night',
+}
 const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
 </script>
 
@@ -58,7 +68,7 @@ const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
               <div class="li"><dt><SeedMark :seed="8" label="" class="sm" /></dt><dd>Play-in</dd><dd class="rg">7–10</dd></div>
               <div v-if="view !== 'division'" class="li"><dt><i class="ex-cut"></i></dt><dd>Lottery</dd><dd class="rg">11–15</dd></div>
               <hr>
-              <div class="li"><dt class="arrows"><b class="pos">▲</b><b class="neg">▼</b></dt><dd>Seed change since last night</dd></div>
+              <div class="li"><dt class="arrows"><b class="pos">▲</b><b class="neg">▼</b></dt><dd>{{ CHANGE_LABEL[view] }}</dd></div>
               <div v-if="view === 'league'" class="li"><dt class="ex-tag">W1</dt><dd>Conference seed</dd></div>
             </dl>
           </HelpPopover>

@@ -47,7 +47,7 @@ export const STAT_NAMES = {
   FG: 'Field goals made-attempted', '3P': '3-pointers made-attempted', '3PT': '3-pointers made-attempted', FT: 'Free throws made-attempted',
   'FG%': 'Field goal percentage', '3P%': '3-point percentage', 'FT%': 'Free throw percentage',
   '+/-': 'Plus/minus (point differential while on the court)',
-  CHG: "Change in conference seed from last night's games",
+  CHG: "Change in position in this table from last night's games",
   W: 'Wins', L: 'Losses', PCT: 'Winning percentage', GB: 'Games behind the leader',
   HOME: 'Home record', AWAY: 'Road record', CONF: 'Conference record',
   PPG: 'Points per game', OPP: 'Opponent points per game', DIFF: 'Average point differential',
