@@ -14,7 +14,7 @@ const props = defineProps({
 const tov = p => p.to ?? p.tov
 const CATS = [
   ['Points', 'pts', p => `${p.fgm}/${p.fga} FG, ${p.ftm}/${p.fta} FT`],
-  ['Rebounds', 'reb', p => `${p.dreb} DREB, ${p.oreb} OREB`],
+  ['Rebounds', 'reb', p => (p.dreb != null ? `${p.dreb} DREB, ${p.oreb} OREB` : `${p.min} MIN`)],
   ['Assists', 'ast', p => `${tov(p)} TO, ${p.min} MIN`],
 ]
 

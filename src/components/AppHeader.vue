@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import ThemeToggle from './ThemeToggle.vue'
+import SettingsMenu from './SettingsMenu.vue'
 import BrandLockup from './BrandLockup.vue'
 
 const route = useRoute()
@@ -30,7 +30,7 @@ watch(() => route.fullPath, () => { open.value = false })
         >{{ l.label }}</RouterLink>
       </nav>
       <div class="end">
-        <ThemeToggle />
+        <SettingsMenu />
         <button
           type="button"
           class="menu-btn"

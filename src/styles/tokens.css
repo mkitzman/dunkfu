@@ -202,3 +202,14 @@ table.stats {
     & th.sortable button { padding-top: 15px; padding-bottom: 15px; }
   }
 }
+
+/* Favourite team: tinted rows/entries and a star in the team's colour.
+   Rows set --tc (team colour) and --team/--team-dark via favStyle(). */
+.fav-star {
+  font-size: .85em;
+  margin-left: 5px;
+  color: var(--team-dark, var(--mu));
+}
+[data-theme="light"] .fav-star { color: var(--team, var(--mu)); }
+:root { --fav-mix: 16%; }
+[data-theme="light"] { --fav-mix: 10%; }

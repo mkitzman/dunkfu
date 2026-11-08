@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useSort } from '../composables/useSort.js'
 import { team } from '../data/teams.js'
+import { favorite, isFav, favStyle } from '../composables/useFavorite.js'
 import { shortName, signed, STAT_NAMES } from '../utils.js'
 
 const props = defineProps({
@@ -27,6 +28,13 @@ const rows = computed(() => props.players.map(p => {
 
 const { sort, setSort, sorted } = useSort(rows, (r, k) => r.s[k])
 
+// Favourite team's players stay at the top (in the current sort order).
+const ordered = computed(() => {
+  if (!favorite.value) return sorted.value
+  const mine = sorted.value.filter(r => isFav(r.abbr))
+  return mine.length ? mine.concat(sorted.value.filter(r => !isFav(r.abbr))) : sorted.value
+})
+
 const ariaSort = key => (sort.value.key === key ? (sort.value.dir < 0 ? 'descending' : 'ascending') : 'none')
 </script>
 
@@ -50,11 +58,11 @@ const ariaSort = key => (sort.value.key === key ? (sort.value.dir < 0 ? 'descend
         </tr>
       </thead>
       <tbody>
-        <tr v-for="r in sorted" :key="r.key">
+        <tr v-for="r in ordered" :key="r.key" :class="{ fav: isFav(r.abbr) }" :style="isFav(r.abbr) ? favStyle(r.abbr) : null">
           <th scope="row" class="player">
             <span class="bar" :style="{ background: r.color }"></span>
             <span class="who">
-              <span class="name"><span class="full">{{ r.name }}</span><span class="abbrv">{{ r.short }}</span></span>
+              <span class="name"><span class="full">{{ r.name }}</span><span class="abbrv">{{ r.short }}</span><span v-if="isFav(r.abbr)" class="fav-star" aria-label="Your team">★</span></span>
               <span class="sub">{{ r.abbr }}<template v-if="r.pos"> · {{ r.pos }}</template></span>
             </span>
           </th>
@@ -85,6 +93,10 @@ table.stats tbody th.player {
   left: 0;
   z-index: 1;
 }
+/* Favourite team's rows: tinted in the team colour (sticky cell included). */
+table.stats tbody tr.fav > *,
+table.stats tbody tr.fav th.player { background: color-mix(in oklch, var(--tc) var(--fav-mix), var(--sf)); }
+table.stats tbody tr.fav > td.sorted { background: linear-gradient(var(--hi), var(--hi)), color-mix(in oklch, var(--tc) var(--fav-mix), var(--sf)); }
 .player { white-space: nowrap; }
 .player > * { vertical-align: middle; }
 .bar {
@@ -115,6 +127,9 @@ thead th:first-child { padding: 11px 14px; font-size: 11px; letter-spacing: .08e
   .full { display: none; }
   .abbrv { display: inline; }
   .sub { font-size: 10px; }
+  table.stats tbody tr.fav > *,
+  table.stats tbody tr.fav th.player { background: color-mix(in oklch, var(--tc) var(--fav-mix), var(--bg)); }
+  table.stats tbody tr.fav > td.sorted { background: linear-gradient(var(--hi), var(--hi)), color-mix(in oklch, var(--tc) var(--fav-mix), var(--bg)); }
   td { padding: 7px 10px; font-size: 12px; }
   :deep(th.sortable button) { padding: 15px 10px; font-size: 10px; }
   thead th:first-child { padding: 9px 10px 9px var(--gutter); font-size: 10px; }

@@ -24,20 +24,26 @@ export function rankGroup(list) {
 const DIVISIONS = [['W', 'Pacific'], ['W', 'Northwest'], ['W', 'Southwest'], ['E', 'Atlantic'], ['E', 'Central'], ['E', 'Southeast']]
 const CONF_NAME = { E: 'Eastern', W: 'Western' }
 
-export function groupStandings(rows, view) {
+// fav: favourite team abbr or null. Its conference (conference view) or its
+// division (division view, then the rest of its conference) comes first.
+export function groupStandings(rows, view, fav = null) {
+  const favTeam = fav && rows.find(r => r.abbr === fav)
   if (view === 'league') {
     // The 14 non-playoff teams go to the draft lottery: line above the bottom 14.
     return [{ key: 'league', title: 'League', sub: '', rows: rankGroup(rows), tag: t => `${t.conference}${t.seed}`, cutAfter: t => t.rank === rows.length - 14 }]
   }
   if (view === 'division') {
-    return DIVISIONS.map(([c, d]) => ({
+    const divs = !favTeam ? DIVISIONS : DIVISIONS.slice().sort((a, b) =>
+      (b[1] === favTeam.division) - (a[1] === favTeam.division) || (b[0] === favTeam.conference) - (a[0] === favTeam.conference))
+    return divs.map(([c, d]) => ({
       key: d, title: d,
       sub: `${CONF_NAME[c]} Conference`,
       rows: rankGroup(rows.filter(t => t.division === d)),
       tag: t => `${t.conference} · ${t.seed}`,
     }))
   }
-  return ['W', 'E'].map(c => ({
+  const confs = favTeam?.conference === 'E' ? ['E', 'W'] : ['W', 'E']
+  return confs.map(c => ({
     key: c, title: `${CONF_NAME[c]} Conference`, sub: '',
     rows: rankGroup(rows.filter(t => t.conference === c)).map(t => ({ ...t, rank: t.seed })).sort((a, b) => a.seed - b.seed),
     cutAfter: t => t.seed === 6 || t.seed === 10,

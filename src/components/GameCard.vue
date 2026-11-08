@@ -1,7 +1,8 @@
 <script setup>
 import { computed } from 'vue'
 import TeamMark from './TeamMark.vue'
-import { team } from '../data/teams.js'
+import { team, accent } from '../data/teams.js'
+import { favorite } from '../composables/useFavorite.js'
 
 const props = defineProps({
   game: { type: Object, required: true },
@@ -23,6 +24,10 @@ const status = computed(() => {
   return props.game.network ? `On ${props.game.network}` : `${props.game.tip} ET`
 })
 
+// Favourite team in this game: tint the card in its colours.
+const fav = computed(() => [props.game.away.abbr, props.game.home.abbr].includes(favorite.value) ? favorite.value : null)
+const favStyle = computed(() => fav.value && { '--tc': team(fav.value).color, '--ta': accent(fav.value) })
+
 const sides = computed(() => {
   const g = props.game
   const awayWon = final.value && g.away.score > g.home.score
@@ -38,15 +43,17 @@ const sides = computed(() => {
     v-if="final"
     :to="`/game/${game.id}`"
     class="game card"
+    :class="{ fav }"
+    :style="favStyle"
     :aria-label="`${sides[0].name} ${sides[0].score}, ${sides[1].name} ${sides[1].score}. Box score`"
   >
-    <div class="top"><span>{{ status }}</span></div>
+    <div class="top"><span>{{ status }}</span><span v-if="fav" class="yours"><span aria-hidden="true">★</span> Your team</span></div>
     <div class="grid" :style="{ '--nq': nq, '--qw': nq > 4 ? '26px' : null }">
       <span></span>
       <span v-for="l in qLabels" :key="l" class="ql">{{ l }}</span>
       <template v-for="s in sides" :key="s.abbr">
         <div class="team" :class="{ won: s.won }">
-          <TeamMark :abbr="s.abbr" round :size="30" :font-size="8" />
+          <span class="mk" :class="{ 'is-fav': s.abbr === fav }"><TeamMark :abbr="s.abbr" round :size="30" :font-size="8" /></span>
           <div class="tn">
             <div class="nick"><span class="full">{{ s.nick }}</span><span class="ab">{{ s.abbr }}</span></div>
           </div>
@@ -57,11 +64,14 @@ const sides = computed(() => {
     </div>
   </RouterLink>
 
-  <div v-else class="game card">
-    <div class="top"><span :class="{ net: game.network }">{{ status }}</span><span v-if="game.network">{{ game.tip }} ET</span></div>
+  <div v-else class="game card" :class="{ fav }" :style="favStyle">
+    <div class="top">
+      <span :class="{ net: game.network }">{{ status }}</span>
+      <span class="right"><span v-if="fav" class="yours"><span aria-hidden="true">★</span> Your team</span><span v-if="game.network">{{ game.tip }} ET</span></span>
+    </div>
     <div class="sched">
       <div v-for="s in sides" :key="s.abbr" class="srow">
-        <TeamMark :abbr="s.abbr" round :size="30" :font-size="8" />
+        <span class="mk" :class="{ 'is-fav': s.abbr === fav }"><TeamMark :abbr="s.abbr" round :size="30" :font-size="8" /></span>
         <div class="tn">
           <div class="nick">{{ s.nick }}</div>
           <div class="ctx">{{ s.ctx }}</div>
@@ -99,6 +109,31 @@ a.game:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
   text-transform: uppercase;
 
   & .net { color: var(--ac); }
+}
+
+/* Favourite team's game: card tinted in its colours, accent border + label. */
+.game.fav {
+  background: color-mix(in oklch, var(--tc) 40%, var(--sf));
+  border-color: color-mix(in oklch, var(--ta) 80%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in oklch, var(--ta) 25%, transparent), 0 8px 24px rgba(0, 0, 0, .25);
+}
+a.game.fav:hover { border-color: var(--ta); }
+.right { display: flex; gap: 12px; }
+.yours { color: var(--ta); font-weight: 600; letter-spacing: .12em; }
+.mk { position: relative; display: inline-flex; flex: none; border-radius: 50%; }
+.mk.is-fav { box-shadow: 0 0 0 2px var(--ta); }
+.mk.is-fav::after {
+  content: '★';
+  position: absolute;
+  top: -5px;
+  right: -6px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--ta);
+  color: var(--tc);
+  font: 700 9px/15px var(--sans);
+  text-align: center;
 }
 
 .grid {
@@ -142,7 +177,32 @@ a.game:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
 @media (max-width: 720px) {
   .game { padding: 12px 14px; gap: 8px; --mark-size: 24px; --mark-fs: 0; }
   .top { font-size: 10px; }
-  .grid { grid-template-columns: 1fr repeat(var(--nq), 26px) 38px; row-gap: 6px; column-gap: 2px; }
+  /* Favourite team's game: card tinted in its colours, accent border + label. */
+.game.fav {
+  background: color-mix(in oklch, var(--tc) 40%, var(--sf));
+  border-color: color-mix(in oklch, var(--ta) 80%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in oklch, var(--ta) 25%, transparent), 0 8px 24px rgba(0, 0, 0, .25);
+}
+a.game.fav:hover { border-color: var(--ta); }
+.right { display: flex; gap: 12px; }
+.yours { color: var(--ta); font-weight: 600; letter-spacing: .12em; }
+.mk { position: relative; display: inline-flex; flex: none; border-radius: 50%; }
+.mk.is-fav { box-shadow: 0 0 0 2px var(--ta); }
+.mk.is-fav::after {
+  content: '★';
+  position: absolute;
+  top: -5px;
+  right: -6px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--ta);
+  color: var(--tc);
+  font: 700 9px/15px var(--sans);
+  text-align: center;
+}
+
+.grid { grid-template-columns: 1fr repeat(var(--nq), 26px) 38px; row-gap: 6px; column-gap: 2px; }
   .ql { font-size: 10px; }
   .q { font-size: 12px; }
   .total { font-size: 17px; }

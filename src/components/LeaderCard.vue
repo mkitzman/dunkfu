@@ -1,5 +1,6 @@
 <script setup>
 import { chipStyle } from '../data/teams.js'
+import { isFav, favStyle } from '../composables/useFavorite.js'
 defineProps({
   label: { type: String, required: true },
   leaders: { type: Array, required: true }, // [{ key, name, short, num, abbr, color, value, sub }]
@@ -10,11 +11,11 @@ defineProps({
   <div class="leader-card">
     <h2>{{ label }}</h2>
     <ol>
-      <li v-for="(p, i) in leaders" :key="p.key" :class="{ first: i === 0 }">
+      <li v-for="(p, i) in leaders" :key="p.key" :class="{ first: i === 0, fav: isFav(p.abbr) }" :style="isFav(p.abbr) ? favStyle(p.abbr) : null">
         <span class="rank">{{ i + 1 }}</span>
         <div class="who">
           <div class="name">
-            <span class="full">{{ p.name }}</span><span class="abbrv">{{ p.short }}</span><span class="team-chip" :style="chipStyle(p.color)">{{ p.abbr }}</span><span class="num">#{{ p.num }}</span>
+            <span class="full">{{ p.name }}</span><span class="abbrv">{{ p.short }}</span><span class="team-chip" :style="chipStyle(p.color)">{{ p.abbr }}</span><span class="num">#{{ p.num }}</span><span v-if="isFav(p.abbr)" class="fav-star" aria-label="Your team">★</span>
           </div>
           <div class="sub">{{ p.sub }}</div>
           <div class="track"><div :style="{ width: `${leaders[0].value ? (100 * p.value) / leaders[0].value : 0}%`, background: p.color }"></div></div>
@@ -48,6 +49,16 @@ li {
   padding: 8px 0;
   border-top: 1px solid var(--ln2);
 }
+/* Favourite team's player: tinted entry bleeding slightly past the card padding. */
+li.fav {
+  margin: 0 -10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 8px;
+  border-top-color: transparent;
+  background: color-mix(in oklch, var(--tc) var(--fav-mix), var(--sf));
+}
+li.fav + li { border-top-color: transparent; }
 .rank { font: 500 13px var(--mono); color: var(--mu); width: 16px; }
 .who { min-width: 0; }
 .name {
@@ -81,7 +92,17 @@ li {
   .leader-card { padding: 12px 14px 6px; }
   h2 { font-size: 10px; margin-bottom: 8px; }
   li { gap: 10px; padding: 7px 0; }
-  .rank { font-size: 12px; width: 14px; }
+  /* Favourite team's player: tinted entry bleeding slightly past the card padding. */
+li.fav {
+  margin: 0 -10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 8px;
+  border-top-color: transparent;
+  background: color-mix(in oklch, var(--tc) var(--fav-mix), var(--sf));
+}
+li.fav + li { border-top-color: transparent; }
+.rank { font-size: 12px; width: 14px; }
   .name { font-size: 13px; }
     .num { display: none; }
   .full { display: none; }

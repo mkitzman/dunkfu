@@ -7,6 +7,7 @@ import TeamMark from '../components/TeamMark.vue'
 import HelpPopover from '../components/HelpPopover.vue'
 import { getStandings } from '../api/index.js'
 import { prepare, groupStandings } from '../composables/useStandings.js'
+import { favorite, isFav, favStyle } from '../composables/useFavorite.js'
 import { todayNY, addDays, dateLong, STAT_NAMES } from '../utils.js'
 
 const route = useRoute()
@@ -33,7 +34,7 @@ const season = (() => {
 const rows = ref([])
 onMounted(async () => { rows.value = prepare(await getStandings()) })
 
-const groups = computed(() => (rows.value.length ? groupStandings(rows.value, view.value) : []))
+const groups = computed(() => (rows.value.length ? groupStandings(rows.value, view.value, favorite.value) : []))
 
 const COLS = ['W', 'L', 'PCT', 'GB', 'HOME', 'AWAY', 'CONF', 'PPG', 'OPP', 'DIFF', 'STRK', 'L10']
 const fmtPct = p => p.toFixed(3).replace(/^0/, '')
@@ -83,12 +84,12 @@ const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
             </thead>
             <tbody>
               <template v-for="t in g.rows" :key="t.abbr">
-                <tr>
+                <tr :class="{ fav: isFav(t.abbr) }" :style="isFav(t.abbr) ? favStyle(t.abbr) : null">
                   <td>
                     <div class="team">
                       <SeedMark :seed="t.seed" :label="t.rank" />
                       <TeamMark :abbr="t.abbr" :size="26" :radius="6" :font-size="9" />
-                      <span class="name"><span class="full">{{ t.name }}</span><span class="nick">{{ t.nick }}</span></span>
+                      <span class="name"><span class="full">{{ t.name }}</span><span class="nick">{{ t.nick }}</span><span v-if="isFav(t.abbr)" class="fav-star" aria-label="Your team">★</span></span>
                       <span v-if="g.tag" class="tag">{{ g.tag(t) }}</span>
                     </div>
                   </td>
@@ -167,6 +168,8 @@ h1 {
 .tag { font: 400 10px var(--mono); color: var(--mu); }
 
 table.stats {
+  /* Favourite team's row, tinted in its colour (sticky first cell too). */
+  & tbody tr.fav > td { background: color-mix(in oklch, var(--tc) var(--fav-mix), var(--sf)); }
   & .c { text-align: center; }
   & td.mv { font-weight: 500; }
   & td.pos { color: var(--ac); }
@@ -201,6 +204,7 @@ table.stats {
   .ghead { padding: 0 var(--gutter); margin-bottom: 8px; }
   .ghead h2 { font-size: 15px; }
   .sub { font-size: 10px; }
+  table.stats tbody tr.fav > td { background: color-mix(in oklch, var(--tc) var(--fav-mix), var(--bg)); }
   .card { border-left: 0; border-right: 0; border-bottom: 0; border-radius: 0; background: transparent; }
 
   .team { gap: 8px; --mark-size: 24px; --mark-r: 5px; --mark-fs: 8px; }
