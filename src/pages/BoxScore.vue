@@ -9,6 +9,7 @@ import SpotlightDud from '../components/SpotlightDud.vue'
 import PageNav from '../components/PageNav.vue'
 import { getGame, getGames, getAwards } from '../api/index.js'
 import { announce } from '../composables/useAnnounce.js'
+import { usePageTitle } from '../composables/usePageTitle.js'
 import { team } from '../data/teams.js'
 import ARENAS from '../data/arenas.json'
 import ARENA_MAPS from '../data/arenaMaps.js'
@@ -68,6 +69,12 @@ const sides = computed(() => {
     { ...g.away, ...team(g.away.abbr), won: awayWon, ctx: `${g.away.record}, ${g.away.split} Away` },
     { ...g.home, ...team(g.home.abbr), won: !awayWon, ctx: `${g.home.record}, ${g.home.split} Home` },
   ]
+})
+
+// "Celtics 108, Magic 97 · Nov 1"
+usePageTitle(() => {
+  const [a, h] = sides.value
+  return a ? `${a.nick} ${a.score}, ${h.nick} ${h.score} · ${dateLong(game.value.date)}` : 'Box score'
 })
 
 // Arena and map art come from config by home team (neutral-site games will
@@ -172,7 +179,7 @@ const allPlayers = computed(() => hasBox.value
             <div v-for="s in sides" :key="s.abbr" class="trow" :class="{ won: s.won }">
               <TeamMark :abbr="s.abbr" :size="60" :radius="10" :font-size="16" />
               <div class="tn">
-                <h1 class="name"><span class="full">{{ s.name }}</span><span class="nick">{{ s.nick }}</span></h1>
+                <h2 class="name"><span class="full">{{ s.name }}</span><span class="nick">{{ s.nick }}</span></h2>
                 <div class="ctx">{{ s.ctx }}</div>
               </div>
               <div class="score">{{ s.score }}</div>

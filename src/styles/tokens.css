@@ -213,3 +213,20 @@ table.stats {
 [data-theme="light"] .fav-star { color: var(--team, var(--mu)); }
 :root { --fav-mix: 16%; }
 [data-theme="light"] { --fav-mix: 10%; }
+
+/* Skip link: hidden until focused by keyboard. */
+.skip {
+  position: absolute;
+  left: 12px;
+  top: -100px;
+  z-index: 100;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: var(--fg);
+  color: var(--bg);
+  font: 600 14px var(--sans);
+}
+.skip:focus { top: 12px; outline: 2px solid var(--ac); outline-offset: 2px; }
+
+/* Elements focused by script (page headings, <main>) don't need a ring. */
+[tabindex="-1"]:focus { outline: none; }

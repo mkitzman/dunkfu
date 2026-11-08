@@ -1,5 +1,7 @@
 <script setup>
-defineProps({ title: { type: String, required: true } })
+import { usePageTitle } from '../composables/usePageTitle.js'
+const props = defineProps({ title: { type: String, required: true } })
+usePageTitle(() => props.title)
 </script>
 
 <template>

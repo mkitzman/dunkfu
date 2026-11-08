@@ -11,6 +11,7 @@ import LeadersRow from '../components/LeadersRow.vue'
 import DaySkeleton from '../components/DaySkeleton.vue'
 import { getGames, getBoxscores, getAverages, getAwards } from '../api/index.js'
 import { announce } from '../composables/useAnnounce.js'
+import { usePageTitle } from '../composables/usePageTitle.js'
 import { todayNY, addDays, dateLong, dateShort, dayHeading } from '../utils.js'
 
 const route = useRoute()
@@ -47,6 +48,7 @@ watch(date, async (d, old) => {
 }, { immediate: true })
 
 const heading = computed(() => dayHeading(date.value, today))
+usePageTitle(() => `NBA scores, ${dateLong(date.value)}`)
 
 const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`
 
