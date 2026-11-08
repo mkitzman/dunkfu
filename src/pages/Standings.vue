@@ -83,8 +83,7 @@ const grouped = computed(() => view.value === 'division' || view.value === 'cup'
 const sections = computed(() => {
   const out = []
   for (const g of groups.value) {
-    if (view.value === 'league') out.push({ key: g.key, h2: null, tables: [g] })
-    else if (view.value === 'conference') out.push({ key: g.key, h2: g.title, meta: `${g.rows.length} teams`, tables: [g] })
+    if (view.value === 'league' || view.value === 'conference') out.push({ key: g.key, h2: g.title, meta: `${g.rows.length} teams`, tables: [g] })
     else if (g.confHead || !out.length) out.push({ key: g.key, h2: g.confHead, tables: [g] })
     else out.at(-1).tables.push(g)
   }
@@ -163,9 +162,9 @@ const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
 
 
     <div class="wrap sections">
-      <!-- One H2 per conference (none in the League view); divisions and Cup
+      <!-- One H2 per section (League, or each conference); divisions and Cup
            groups label their table's first header cell instead of a heading. -->
-      <section v-for="sec in sections" :key="sec.key" class="sec" :aria-label="sec.h2 ? undefined : 'League standings'">
+      <section v-for="sec in sections" :key="sec.key" class="sec">
         <div v-if="sec.h2" class="h2row">
           <h2>{{ sec.h2 }}</h2>
           <span class="hair" aria-hidden="true"></span>
