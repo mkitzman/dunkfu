@@ -61,10 +61,6 @@ const cupGroups = computed(() => {
   const fav = favorite.value && team(favorite.value)
   const confs = fav?.conference === 'E' ? ['E', 'W'] : ['W', 'E']
   return confs.flatMap(c => {
-    // Wild card: best second-place team in the conference (record, diff, points).
-    const seconds = ['A', 'B', 'C'].map(g => cup.value.now[c + g][1])
-    const p = r => r.pct ?? 0.5
-    const wild = seconds.slice().sort((a, b) => p(b) - p(a) || b.diff - a.diff || b.pf - a.pf)[0].abbr
     const letters = ['A', 'B', 'C'].sort((a, b) =>
       fav?.conference === c ? CUP.groups[c][b].includes(fav.abbr) - CUP.groups[c][a].includes(fav.abbr) : 0)
     return letters.map((g, i) => {
@@ -74,13 +70,28 @@ const cupGroups = computed(() => {
         confHead: i === 0 ? CONF_NAME[c] : null,
         rows: cup.value.now[c + g].map(r => ({
           ...team(r.abbr), ...r,
-          seed: r.rank === 1 ? 1 : r.abbr === wild ? 8 : 15, // leader filled, wild card hollow
+          seed: r.rank === 1 ? 1 : 15, // group leader filled, others neutral
           move: before[r.abbr] - r.rank,
         })),
       }
     })
   })
 })
+
+// Tables grouped into conference sections for the headings.
+const grouped = computed(() => view.value === 'division' || view.value === 'cup')
+const sections = computed(() => {
+  const out = []
+  for (const g of groups.value) {
+    if (view.value === 'league') out.push({ key: g.key, h2: null, tables: [g] })
+    else if (view.value === 'conference') out.push({ key: g.key, h2: g.title, meta: `${g.rows.length} teams`, tables: [g] })
+    else if (g.confHead || !out.length) out.push({ key: g.key, h2: g.confHead, tables: [g] })
+    else out.at(-1).tables.push(g)
+  }
+  if (grouped.value) for (const s of out) s.meta = `${s.tables.length} ${view.value === 'cup' ? 'groups' : 'divisions'}`
+  return out
+})
+const captionLong = g => (view.value === 'division' ? `${g.title} Division` : g.title)
 
 const groups = computed(() => {
   if (view.value === 'cup') return cupGroups.value
@@ -131,7 +142,6 @@ const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
             <dl class="legend">
               <template v-if="view === 'cup'">
                 <div class="li"><dt><SeedMark :seed="1" label="" class="sm" /></dt><dd>Group leader</dd></div>
-                <div class="li"><dt><SeedMark :seed="8" label="" class="sm" /></dt><dd>Wild card leader</dd></div>
                 <hr>
                 <div class="li"><dt class="arrows"><b class="pos">▲</b><b class="neg">▼</b></dt><dd>{{ CHANGE_LABEL[view] }}</dd></div>
                 <div class="li"><dd class="note">Group winners and one wild card per conference reach the knockout rounds. Cup games count toward the regular season.</dd></div>
@@ -152,24 +162,27 @@ const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
     </div>
 
 
-    <div class="wrap groups">
-      <section v-for="g in groups" :key="g.key" class="group" :class="{ 'conf-start': g.confHead, 'no-title': view === 'league' }">
-        <h2 v-if="g.confHead" class="conf-head">{{ g.confHead }}</h2>
-        <!-- League view: one table, so its "League" heading is for screen readers only. -->
-        <div class="ghead" :class="{ 'sr-only': view === 'league' }">
-          <component :is="g.confHead !== undefined ? 'h3' : 'h2'" class="gtitle" :class="{ big: view === 'conference' }">{{ g.title }}</component>
-          <span v-if="g.sub" class="sub">{{ g.sub }}</span>
+    <div class="wrap sections">
+      <!-- One H2 per conference (none in the League view); divisions and Cup
+           groups label their table's first header cell instead of a heading. -->
+      <section v-for="sec in sections" :key="sec.key" class="sec" :aria-label="sec.h2 ? undefined : 'League standings'">
+        <div v-if="sec.h2" class="h2row">
+          <h2>{{ sec.h2 }}</h2>
+          <span class="hair" aria-hidden="true"></span>
+          <span class="count">{{ sec.meta }}</span>
         </div>
-        <div class="table-wrap card">
+        <div class="tables">
+        <div v-for="g in sec.tables" :key="g.key" class="table-wrap card">
           <table class="stats edge" :style="{ minWidth: `${minWidth}px` }">
             <colgroup>
               <col>
               <col :style="{ width: `${WIDTHS.CHG}px` }">
               <col v-for="c in COLS" :key="c" :style="{ width: `${WIDTHS[c]}px` }">
             </colgroup>
+            <caption class="sr-only">{{ captionLong(g) }}</caption>
             <thead>
               <tr>
-                <th scope="col">TEAM</th>
+                <th scope="col" :class="{ grp: grouped }">{{ grouped ? g.title : 'TEAM' }}</th>
                 <th scope="col" class="c" :title="CHANGE_LABEL[view]">CHG</th>
                 <th v-for="c in COLS" :key="c" scope="col" :title="STAT_NAMES[c]">{{ c }}</th>
               </tr>
@@ -195,6 +208,7 @@ const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
             </tbody>
           </table>
         </div>
+        </div>
       </section>
     </div>
   </div>
@@ -208,16 +222,14 @@ const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
   gap: 20px;
   flex-wrap: wrap;
   padding-top: 26px;
-  padding-bottom: 18px;
 }
+.title .eyebrow { letter-spacing: .14em; }
 h1 {
-  font: 600 28px/1.1 var(--sans);
-  letter-spacing: -.02em;
-  margin: 4px 0 0;
+  font: 700 32px/1.1 var(--sans);
+  letter-spacing: -.025em;
+  margin: 6px 0 0;
 }
-.through { font-size: 12px; color: var(--mu); margin-top: 4px; }
-
-.through { display: flex; align-items: center; gap: 8px; }
+.through { display: flex; align-items: center; gap: 8px; margin-top: 6px; font: 400 13px var(--sans); color: var(--mu); }
 /* Key inside the "?" popover: symbol column, label, seed range on the right. */
 .legend {
   display: grid;
@@ -241,25 +253,16 @@ h1 {
   & .ex-cut { display: block; width: 26px; border-top: 1.5px dashed var(--ac); }
 }
 
-.groups { display: grid; gap: 26px; padding-bottom: 32px; }
-.group { min-width: 0; } /* let the table scroll instead of widening the page */
-.ghead {
-  display: grid;
-  gap: 8px;
-  margin-bottom: 10px;
-
-  & .gtitle { font: 600 16px var(--sans); margin: 0; }
-}
-/* Division view: conference heading above its first division; extra space
-   before the second conference. */
-/* Conference headings: same size in the Conference view as above the divisions. */
-.conf-head, .ghead .gtitle.big { font: 800 22px/1.1 var(--sans); letter-spacing: -.02em; margin: 0 0 14px; }
-.ghead .gtitle.big { margin: 0; }
-/* League view has no visible heading: keep the same space above its table
-   as a conference heading takes (line height + .ghead margin). */
-.group.no-title { padding-top: calc(22px * 1.1 + 10px); }
-.group.conf-start:not(:first-child) { margin-top: 22px; }
-.sub { font: 400 11px var(--mono); color: var(--mu); }
+.sections { display: grid; gap: 32px; padding-top: 28px; padding-bottom: 32px; }
+.sec { min-width: 0; } /* let tables scroll instead of widening the page */
+/* H2: conference, then a hairline and a count. Lighter than the H1. */
+.h2row { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.h2row h2 { font: 600 18px/1.2 var(--sans); letter-spacing: -.01em; margin: 0; white-space: nowrap; }
+.hair { flex: 1; height: 1px; background: var(--ln); }
+.count { font: 400 11px var(--mono); color: var(--mu); white-space: nowrap; }
+.tables { display: grid; gap: 20px; }
+/* Division / Cup group name in place of "TEAM". */
+table.stats thead th.grp { font: 600 10px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--fg); }
 
 .team { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .name { font: 600 13px var(--sans); color: var(--fg); min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -301,15 +304,10 @@ table.stats {
   .through { font-size: 10px; margin: 0; }
 
 
-  .groups { gap: 0; padding-left: 0; padding-right: 0; padding-bottom: 24px; }
-  .group { padding-top: 16px; }
-  .ghead { padding: 0 var(--gutter); margin-bottom: 8px; }
-  .ghead .gtitle { font-size: 15px; }
-  .conf-head { font-size: 19px; padding: 0 var(--gutter); margin-bottom: 10px; }
-  .ghead .gtitle.big { font-size: 19px; }
-  .group.no-title { padding-top: calc(16px + 19px * 1.1 + 8px); }
-  .group.conf-start:not(:first-child) { margin-top: 18px; }
-  .sub { font-size: 10px; }
+  .sections { gap: 24px; padding: 20px 0 24px; }
+  .h2row { padding: 0 var(--gutter); margin-bottom: 10px; gap: 10px; }
+  .h2row h2 { font-size: 16px; }
+  .tables { gap: 16px; }
   table.stats tbody tr.fav > td { background: color-mix(in oklch, var(--tc) var(--fav-mix), var(--bg)); }
   .card { border-left: 0; border-right: 0; border-bottom: 0; border-radius: 0; background: transparent; }
 

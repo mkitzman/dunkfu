@@ -58,8 +58,8 @@ onBeforeUnmount(close)
 <style scoped>
 .help { position: relative; display: inline-flex; vertical-align: middle; }
 .q {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   padding: 0;
   border-radius: 50%;
   border: 1px solid var(--ln);
@@ -97,7 +97,7 @@ onBeforeUnmount(close)
     content: '';
     position: absolute;
     top: -6px;
-    left: calc(9px - 5px + var(--shift, 0px));
+    left: calc(10px - 5px + var(--shift, 0px));
     width: 10px;
     height: 10px;
     background: var(--sf);

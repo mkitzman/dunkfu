@@ -89,7 +89,7 @@ button {
   border: 0;
   cursor: pointer;
   border-radius: 999px;
-  padding: 8px 18px;
+  padding: 7px 14px;
   font: 600 13px var(--sans);
   background: transparent;
   color: var(--mu);
