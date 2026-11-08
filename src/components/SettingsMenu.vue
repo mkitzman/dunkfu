@@ -54,10 +54,11 @@ async function toggleList() {
   optionEls.value[i]?.scrollIntoView({ block: 'center' })
   optionEls.value[i]?.focus()
 }
+// Changes apply immediately, so picking a team closes the whole menu.
 function pick(t) {
   setFavorite(t.abbr)
-  listOpen.value = false
-  listBtn.value?.focus()
+  close()
+  btn.value?.focus()
 }
 function onListKey(e, i) {
   const step = { ArrowDown: 1, ArrowUp: -1, Home: -Infinity, End: Infinity }[e.key]
