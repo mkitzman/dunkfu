@@ -58,7 +58,7 @@ export default {
   MIA: { src: mia, aspect, baseColor: '#3a0011', focal, pin: '#F9A01B' },
   MIL: { src: mil, aspect, baseColor: '#001b0a', focal, pin: '#EEE1C6' },
   MIN: { src: min, aspect, baseColor: '#0d2537', focal, pin: '#78BE20' },
-  NOP: { src: nop, aspect, baseColor: '#050d18', focal, pin: '#85714D' },
+  NOP: { src: nop, aspect, baseColor: '#050d18', focal, pin: '#B4975A' },
   NYK: { src: nyk, aspect, baseColor: '#002945', focal, pin: '#F58426' },
   OKC: { src: okc, aspect, baseColor: '#002e49', focal, pin: '#EF3B24' },
   ORL: { src: orl, aspect, baseColor: '#002d49', focal, pin: '#C4CED4' },

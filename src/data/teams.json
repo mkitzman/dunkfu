@@ -304,8 +304,9 @@
     "nickname": "Pelicans",
     "conference": "W",
     "division": "Southwest",
-    "seedColor": "#B4975A",
-    "secondary": "#0C2340",
+    "seedColor": "#0C2340",
+    "secondary": "#B4975A",
+    "jersey": { "text": "#FFFFFF" },
     "note": "verify primary/secondary at nbacolors.com"
   }
 ]
