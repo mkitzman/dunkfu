@@ -67,7 +67,7 @@ export default {
   POR: { src: por, aspect, baseColor: '#4c0611', focal, pin: '#FFFFFF' },
   SAC: { src: sac, aspect, baseColor: '#221131', focal, pin: '#C4CED4' },
   SAS: { src: sas, aspect, baseColor: '#000000', focal, pin: '#C4CED4' },
-  TOR: { src: tor, aspect, baseColor: '#4e0619', focal, pin: '#B4975A' },
+  TOR: { src: tor, aspect, baseColor: '#4e0619', focal, pin: '#A1A1A4' },
   UTA: { src: uta, aspect, baseColor: '#1e0036', focal, pin: '#79A3DB' },
   WAS: { src: was, aspect, baseColor: '#001023', focal, pin: '#E31837' },
 }
