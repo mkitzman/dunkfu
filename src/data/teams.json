@@ -7,6 +7,7 @@
     "division": "Atlantic",
     "seedColor": "#006BB6",
     "secondary": "#ED174C",
+    "jersey": { "body": "#1F3A8A", "trim": "#ED174C", "text": "#FFFFFF" },
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -108,6 +109,7 @@
     "division": "Southeast",
     "seedColor": "#0077C0",
     "secondary": "#C4CED4",
+    "jersey": { "trim": "#FFFFFF", "text": "#FFFFFF" },
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
