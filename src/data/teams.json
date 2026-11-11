@@ -79,6 +79,7 @@
     "division": "Southeast",
     "seedColor": "#98002E",
     "secondary": "#F9A01B",
+    "jersey": { "body": "#000000", "trim": "#98002E", "text": "#FFFFFF" },
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
