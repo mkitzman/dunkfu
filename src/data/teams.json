@@ -178,8 +178,9 @@
     "nickname": "Trail Blazers",
     "conference": "W",
     "division": "Northwest",
-    "seedColor": "#E03A3E",
+    "seedColor": "#C8102E",
     "secondary": "#000000",
+    "jersey": { "body": "#000000", "trim": "#C8102E", "text": "#FFFFFF" },
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
