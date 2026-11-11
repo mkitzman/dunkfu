@@ -112,7 +112,7 @@ const summary = computed(() => {
   if (!a) return ''
   const w = a.won ? a : h, margin = Math.abs(a.score - h.score)
   const ot = nq.value > 5 ? ` in ${nq.value - 4}OT` : nq.value > 4 ? ' in OT' : ''
-  const players = hasBox.value ? sides.value.flatMap(s => s.players) : []
+  const players = hasBox.value ? sides.value.flatMap(s => s.players.filter(p => !p.dnp)) : []
   const top = players.reduce((x, p) => (p.pts > (x?.pts ?? -1) ? p : x), null)
   return `${w.nick} win by ${margin}${ot}` + (top ? ` · top scorer ${top.name}` : '')
 })
@@ -131,7 +131,7 @@ const benchPad = computed(() => {
 
 // Both teams' lines for the leader cards.
 const allPlayers = computed(() => hasBox.value
-  ? sides.value.flatMap(s => s.players.map(p => ({ ...p, abbr: s.abbr, color: s.color })))
+  ? sides.value.flatMap(s => s.players.filter(p => !p.dnp).map(p => ({ ...p, abbr: s.abbr, color: s.color })))
   : [])
 </script>
 

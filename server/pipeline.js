@@ -16,6 +16,11 @@
 import TEAMS from '../src/data/teams.json' with { type: 'json' }
 import { computeAwards, VERSION as AWARDS_VERSION } from './awards.js'
 
+// Bump when the published box score format changes; finished games are then
+// rebuilt from the cached raw responses (no API requests).
+//   2: players who were active but didn't play are kept, as { dnp: true }
+const BOX_VERSION = 2
+
 const API = 'https://nba.highlightly.net'
 const TZ = 'America/New_York'
 const RESERVE = 5 // requests left untouched at the end of a run
@@ -189,9 +194,16 @@ export async function refresh({ store, key, deadline = Infinity, log = console.l
   // 4. Box scores for finished games not yet published, newest first. Each needs
   //    the box score plus the lineups (for positions): two requests per game.
   const published = new Set((await store.list('data/box/')).map(k => k.split('/').pop().replace('.json', '')))
-  const todo = games.filter(g => g.status === 'final' && !published.has(g.id)).reverse()
+  // Format change: rebuild already-published games too (from cache), across
+  // runs if needed; `done` tracks progress until the version is recorded.
+  const boxVer = (await store.get('cache/box-version.json')) ?? { v: 1 }
+  const redone = new Set(boxVer.v === BOX_VERSION ? [] : boxVer.done ?? [])
+  const stale = id => boxVer.v !== BOX_VERSION && published.has(id) && !redone.has(id)
+  const todo = games.filter(g => g.status === 'final' && (!published.has(g.id) || stale(g.id))).reverse()
   const fetched = new Set()
   await pool(todo, 4, g => attempt(async () => {
+    const rebuild = published.has(g.id)
+    if (rebuild && Date.now() > deadline) return // finish next run
     const [box, lineups] = await Promise.all([
       cached(`box/${g.id}.json`, `/box-score/${g.id}`, b => b.some(t => t.boxScores?.length)),
       cached(`lineups/${g.id}.json`, `/lineups/${g.id}`, l => l?.home?.lineup?.length > 0),
@@ -202,17 +214,25 @@ export async function refresh({ store, key, deadline = Infinity, log = console.l
     const lines = teamId => {
       const t = box.find(x => x.team.id === teamId)
       return (t?.boxScores ?? []).flatMap((b, i) => {
-        if (!b.statistics.length) return [] // DNP
+        const who = { id: b.player.id, name: b.player.name, num: String(b.player.jersey ?? ''), pos: pos[b.player.id] ?? '' }
+        // Active but didn't play: no stats (the API gives no reason).
+        if (!b.statistics.length) return [{ ...who, starter: false, dnp: true }]
         const s = Object.fromEntries(Object.values(STAT).map(k => [k, 0]))
         for (const { name, value } of b.statistics) if (STAT[name]) s[STAT[name]] = Number(value) || 0
-        return [{ id: b.player.id, name: b.player.name, num: String(b.player.jersey ?? ''), pos: pos[b.player.id] ?? '', starter: i < 5, ...s }]
+        return [{ ...who, starter: i < 5, ...s }]
       })
     }
     const away = lines(g.awayTeamId), home = lines(g.homeTeamId)
     const out = strip(g)
     await store.set(`data/box/${g.id}.json`, { ...out, away: { ...out.away, players: away }, home: { ...out.home, players: home } })
-    fetched.add(g.id)
+    if (rebuild) redone.add(g.id)
+    else fetched.add(g.id)
   }, `box score ${g.id}`))
+  if (boxVer.v !== BOX_VERSION) {
+    const left = [...published].filter(id => !redone.has(id) && games.some(g => g.id === id && g.status === 'final'))
+    await store.set('cache/box-version.json', left.length ? { v: boxVer.v, done: [...redone] } : { v: BOX_VERSION })
+    log(`Box scores rebuilt for format v${BOX_VERSION}: ${redone.size} done, ${left.length} left`)
+  }
 
   // 5. lines/DATE.json: every player line for a date, built from published box
   //    scores. Any published game missing from its day's file gets added, so an
@@ -226,7 +246,7 @@ export async function refresh({ store, key, deadline = Infinity, log = console.l
     const missing = ids.filter(id => !have.has(id))
     if (!missing.length) return
     const add = (await pool(missing, 6, id => store.get(`data/box/${id}.json`))).flatMap(b =>
-      b ? [b.away, b.home].flatMap(t => t.players.map(p => ({ ...p, abbr: t.abbr, gameId: b.id }))) : [])
+      b ? [b.away, b.home].flatMap(t => t.players.filter(p => !p.dnp).map(p => ({ ...p, abbr: t.abbr, gameId: b.id }))) : [])
     await store.set(`data/lines/${d}.json`, prev.concat(add))
     linesChanged = true
   })

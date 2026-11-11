@@ -5,7 +5,7 @@ import { shortName, signed, pct, STAT_NAMES } from '../utils.js'
 
 const props = defineProps({
   team: { type: Object, required: true }, // { abbr, name, color }
-  players: { type: Array, required: true },
+  players: { type: Array, required: true }, // { dnp: true } = active, didn't play
   pad: { type: Number, default: 0 }, // empty bench rows so paired tables line up
 })
 
@@ -13,12 +13,14 @@ const COLS = ['MIN', 'PTS', 'FG', '3PT', 'FT', 'REB', 'AST', 'STL', 'BLK', 'TO',
 
 const cells = p => [p.min, p.pts, `${p.fgm}-${p.fga}`, `${p.tpm}-${p.tpa}`, `${p.ftm}-${p.fta}`, p.reb, p.ast, p.stl, p.blk, p.to, signed(p.pm)]
 
+const played = computed(() => props.players.filter(p => !p.dnp))
+// Bench: players who played, then those who didn't (listed like ESPN's DNP rows).
 const sections = computed(() => [
-  { label: 'STARTERS', rows: props.players.filter(p => p.starter) },
-  { label: 'BENCH', rows: props.players.filter(p => !p.starter) },
+  { label: 'STARTERS', rows: played.value.filter(p => p.starter) },
+  { label: 'BENCH', rows: played.value.filter(p => !p.starter).concat(props.players.filter(p => p.dnp)) },
 ])
 
-const sum = k => props.players.reduce((s, p) => s + p[k], 0)
+const sum = k => played.value.reduce((s, p) => s + p[k], 0)
 const totals = computed(() => ['', sum('pts'), `${sum('fgm')}-${sum('fga')}`, `${sum('tpm')}-${sum('tpa')}`, `${sum('ftm')}-${sum('fta')}`, sum('reb'), sum('ast'), sum('stl'), sum('blk'), sum('to'), ''])
 const pcts = computed(() => ['', '', pct(sum('fgm'), sum('fga')), pct(sum('tpm'), sum('tpa')), pct(sum('ftm'), sum('fta')), '', '', '', '', '', ''])
 </script>
@@ -39,9 +41,10 @@ const pcts = computed(() => ['', '', pct(sum('fgm'), sum('fga')), pct(sum('tpm')
             <tr v-if="si > 0" class="sec">
               <th scope="colgroup">{{ s.label }}</th><th v-for="c in COLS" :key="c" aria-hidden="true" :title="STAT_NAMES[c]">{{ c }}</th>
             </tr>
-            <tr v-for="p in s.rows" :key="p.name">
-              <td class="name" :title="p.name">{{ shortName(p.name) }} <span class="num">#{{ p.num }}</span></td>
-              <td v-for="(v, i) in cells(p)" :key="i" :class="{ em: i === 1 }">{{ v }}</td>
+            <tr v-for="p in s.rows" :key="p.name" :class="{ dnp: p.dnp }">
+              <td class="name" :title="p.name">{{ shortName(p.name) }} <span v-if="p.num" class="num">#{{ p.num }}</span></td>
+              <td v-if="p.dnp" colspan="11" class="dnp-note">DNP</td>
+              <td v-for="(v, i) in cells(p)" v-else :key="i" :class="{ em: i === 1 }">{{ v }}</td>
             </tr>
             <template v-if="si === sections.length - 1">
               <tr v-for="n in pad" :key="`pad${n}`" class="pad" aria-hidden="true">
@@ -62,6 +65,9 @@ const pcts = computed(() => ['', '', pct(sum('fgm'), sum('fga')), pct(sum('tpm')
 </template>
 
 <style scoped>
+/* Active but didn't play: muted name, "DNP" across the stat columns. */
+tr.dnp td.name { color: var(--mu); font-weight: 500; }
+td.dnp-note { text-align: center; font: 500 10px var(--mono); letter-spacing: .12em; color: var(--mu); }
 .tbox {
   background: var(--sf);
   border: 1px solid var(--ln);
