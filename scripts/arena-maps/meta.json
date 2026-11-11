@@ -28,8 +28,8 @@
   "pin": "#B8C4CA"
  },
  "DEN": {
-  "baseColor": "#0b1934",
-  "pin": "#FEC524"
+  "baseColor": "#050d18",
+  "pin": "#FFC72C"
  },
  "DET": {
   "baseColor": "#0b1947",
@@ -104,8 +104,8 @@
   "pin": "#C4CED4"
  },
  "SAS": {
-  "baseColor": "#34383b",
-  "pin": "#FFFFFF"
+  "baseColor": "#000000",
+  "pin": "#C4CED4"
  },
  "TOR": {
   "baseColor": "#4e0619",

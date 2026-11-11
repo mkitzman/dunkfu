@@ -53,8 +53,8 @@
   "arena": "Ball Arena",
   "lat": 39.748684,
   "lon": -105.007544,
-  "base": "#1D428A",
-  "accent": "#FEC524"
+  "base": "#0C2340",
+  "accent": "#FFC72C"
  },
  "DET": {
   "arena": "Little Caesars Arena",
@@ -186,8 +186,8 @@
   "arena": "Frost Bank Center",
   "lat": 29.426921,
   "lon": -98.437506,
-  "base": "#8A949B",
-  "accent": "#FFFFFF"
+  "base": "#000000",
+  "accent": "#C4CED4"
  },
  "TOR": {
   "arena": "Scotiabank Arena",

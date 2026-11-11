@@ -170,8 +170,9 @@
     "nickname": "Spurs",
     "conference": "W",
     "division": "Southwest",
-    "seedColor": "#7F8C99",
-    "secondary": "#000000",
+    "seedColor": "#000000",
+    "secondary": "#C4CED4",
+    "jersey": { "text": "#FFFFFF" },
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -191,8 +192,9 @@
     "nickname": "Nuggets",
     "conference": "W",
     "division": "Northwest",
-    "seedColor": "#E0B020",
-    "secondary": "#0E2240",
+    "seedColor": "#0C2340",
+    "secondary": "#FFC72C",
+    "jersey": { "trim": "#FFFFFF", "text": "#FFFFFF" },
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
