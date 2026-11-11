@@ -33,10 +33,14 @@ watch(date, async (d, old) => {
   const id = ++req
   loading.value = true
   const prevD = addDays(d, -1), nextD = addDays(d, 1)
-  const [g, gp, gn] = await Promise.all([getGames(d), getGames(prevD), nextD <= addDays(today, 1) ? getGames(nextD) : null])
-  const [p, a] = d < today
-    ? await Promise.all([getBoxscores(d), getAwards(d)])
-    : [await getAverages(g.flatMap(x => [x.away.abbr, x.home.abbr])), null]
+  // Results days know up front they need player lines and awards, so fetch
+  // them alongside the games; schedule days need the games' teams first.
+  const results = d < today
+  const [g, gp, gn, lines, aw] = await Promise.all([
+    getGames(d), getGames(prevD), nextD <= addDays(today, 1) ? getGames(nextD) : null,
+    results ? getBoxscores(d) : null, results ? getAwards(d) : null,
+  ])
+  const [p, a] = results ? [lines, aw] : [await getAverages(g.flatMap(x => [x.away.abbr, x.home.abbr])), null]
   if (id !== req) return
   games.value = g
   neighbours.value = { [prevD]: gp.length, ...(gn ? { [nextD]: gn.length } : {}) }

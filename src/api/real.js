@@ -1,10 +1,11 @@
 // Reads the JSON files written by scripts/fetch-data.js (served from /data).
 
 // Every data URL carries the last refresh time (?v=), so a new morning's data
-// never comes from an old cached copy. meta.json itself is never cached.
+// never comes from an old cached copy. meta.json is always revalidated with
+// the CDN (no-cache), which the data-refresh run purges.
 let version
 function dataVersion() {
-  version ??= fetch('/data/meta.json', { cache: 'no-store' })
+  version ??= fetch('/data/meta.json', { cache: 'no-cache' })
     .then(r => (r.ok && r.headers.get('content-type')?.includes('json') ? r.json() : null))
     .then(m => m?.updatedAt ?? '')
     .catch(() => '')
