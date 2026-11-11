@@ -1,16 +1,18 @@
-import { ref, watch, nextTick, onMounted, onBeforeUnmount } from 'vue'
+import { ref, watch, nextTick, onBeforeUnmount } from 'vue'
 import { announce } from './useAnnounce.js'
 
 const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
 const touch = matchMedia('(pointer: coarse)').matches
-const idle = () => new Promise(r => (window.requestIdleCallback ?? setTimeout)(r, { timeout: 1500 }))
 
 // Share a spotlight card as an image.
 //
 // The card renders an off-screen copy of itself (`prep` true → its <Teleport>
-// mounts, `frame` points at it), which is captured to a PNG ahead of time:
-// Safari only allows navigator.share() straight from a tap, so there's no
-// time to render after the click.
+// mounts, `frame` points at it), which is captured to a PNG. Capturing costs
+// a few hundred ms of main thread and most visitors never share, so it only
+// happens once someone heads for the card: `prime()` on pointer enter, focus
+// or touch. Safari only allows navigator.share() straight from a tap, so the
+// image should be ready by the click; if a quick tap beats it, the click
+// waits for it and, if Safari then refuses, asks for a second tap.
 //
 //   key()   changes when the card shows someone else (re-render)
 //   meta()  { title, text, filename }
@@ -20,14 +22,19 @@ export function useShareImage(key, meta, enabled = true) {
   const frame = ref(null)
   const status = ref('') // '', 'Copied image', 'Copied link'
   let file = null
+  let pending = null // render in progress (or done) for the current card
   let run = 0
   let timer
+
+  function prime() {
+    if (enabled && !pending) pending = render()
+    return pending
+  }
 
   async function render() {
     const id = ++run
     file = null
     await document.fonts?.ready
-    await idle()
     if (id !== run) return
     prep.value = true
     await nextTick()
@@ -45,10 +52,8 @@ export function useShareImage(key, meta, enabled = true) {
     }
   }
 
-  if (enabled) {
-    onMounted(render)
-    watch(key, render)
-  }
+  // Someone else on the card: drop the old image; the next prime() renders.
+  watch(key, () => { run++; file = null; pending = null; prep.value = false })
   onBeforeUnmount(() => { run++; clearTimeout(timer) })
 
   function flash(msg) {
@@ -59,11 +64,17 @@ export function useShareImage(key, meta, enabled = true) {
   }
 
   async function share() {
+    if (!file) await prime()
     const { title, text } = meta()
     const url = location.href
     const canShareFile = file && navigator.canShare?.({ files: [file] })
     const shareFile = async () => {
-      try { await navigator.share({ files: [file], title, text: `${text} ${url}` }) } catch { /* dismissed */ }
+      try {
+        await navigator.share({ files: [file], title, text: `${text} ${url}` })
+      } catch (e) {
+        // The wait for the image outlasted the tap; it's ready now.
+        if (e?.name === 'NotAllowedError') flash('Tap again to share')
+      }
     }
     // 1. Phones: share sheet with the image.
     if (canShareFile && touch) return shareFile()
@@ -87,5 +98,5 @@ export function useShareImage(key, meta, enabled = true) {
     } catch { /* nothing more to try */ }
   }
 
-  return { prep, frame, status, share }
+  return { prep, frame, status, share, prime }
 }

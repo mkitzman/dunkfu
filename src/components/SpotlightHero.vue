@@ -33,7 +33,7 @@ const style = computed(() => {
 const line = computed(() => `${statLine(props.player)} · ${props.player.min} MIN`)
 
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-const { prep, frame, status, share: onShare } = useShareImage(
+const { prep, frame, status, share: onShare, prime } = useShareImage(
   () => `${props.label}|${props.player.id}|${props.player.gameId}`,
   () => {
     const p = props.player
@@ -48,7 +48,7 @@ const { prep, frame, status, share: onShare } = useShareImage(
 </script>
 
 <template>
-  <section class="hero" :style="style" :aria-label="label" :title="`Game Score ${player.gs}`">
+  <section class="hero" :style="style" :aria-label="label" :title="`Game Score ${player.gs}`" @pointerenter="prime" @focusin="prime" @touchstart.passive="prime">
     <span class="wm wm-a" aria-hidden="true"></span>
     <span class="wm wm-b" aria-hidden="true"></span>
 

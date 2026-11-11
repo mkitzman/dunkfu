@@ -22,7 +22,7 @@ const tip = computed(() => {
 })
 
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-const { prep, frame, status, share: onShare } = useShareImage(
+const { prep, frame, status, share: onShare, prime } = useShareImage(
   () => `${props.label}|${props.player.id}|${props.player.gameId}`,
   () => {
     const p = props.player
@@ -37,7 +37,7 @@ const { prep, frame, status, share: onShare } = useShareImage(
 </script>
 
 <template>
-  <section class="dud-c" :aria-label="label" :title="tip">
+  <section class="dud-c" :aria-label="label" :title="tip" @pointerenter="prime" @focusin="prime" @touchstart.passive="prime">
     <div class="dud">
       <h2 class="badge"><span aria-hidden="true">▼</span>{{ label }}</h2>
       <div class="who">
