@@ -71,6 +71,7 @@ const cupGroups = computed(() => {
         rows: cup.value.now[c + g].map(r => ({
           ...team(r.abbr), ...r,
           seed: r.rank === 1 ? 1 : 15, // group leader filled, others neutral
+          seedStatus: r.rank === 1 ? 'group leader' : '',
           move: before[r.abbr] - r.rank,
         })),
       }
@@ -196,7 +197,7 @@ const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
                 <tr :class="{ fav: isFav(t.abbr) }" :style="isFav(t.abbr) ? favStyle(t.abbr) : null">
                   <td>
                     <div class="team">
-                      <SeedMark :seed="t.seed" :label="t.rank" />
+                      <SeedMark :seed="t.seed" :label="t.rank" :status="t.seedStatus" />
                       <TeamMark :abbr="t.abbr" :size="26" :radius="6" :font-size="9" />
                       <span class="name"><span class="full">{{ t.name }}</span><span class="nick">{{ t.nick }}</span><span v-if="isFav(t.abbr)" class="fav-star" aria-label="Your team">★</span></span>
                       <span v-if="g.tag" class="tag">{{ g.tag(t) }}</span>
