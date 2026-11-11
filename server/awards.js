@@ -5,19 +5,21 @@
 //   average (so a big night from a role player can edge a routine star game).
 // Dud: biggest shortfall against expectation, where expectation is the
 //   player's Game Score per minute this season times tonight's minutes. Only
-//   real contributors qualify (avg Game Score 10+, 3+ prior games, 20+ minutes
-//   tonight, so early exits and bench players aren't picked), and only for a
+//   real contributors qualify: tonight's starters, or anyone averaging a Game
+//   Score of 10+ (so a starter on a weak team still counts), with 3+ prior
+//   games and 20+ minutes tonight (so early exits and deep-bench players
+//   aren't picked), and only for a
 //   genuinely poor night: Game Score under 15 and at least 5 points or 25%
 //   below expectation (so a 22/9/11 night just under a high bar isn't a dud).
 //   If nobody qualifies there is no dud.
 //
 // Bump VERSION whenever the formulas change so stored awards are recomputed.
 
-export const VERSION = 3
+export const VERSION = 4
 
 const MIN_MINUTES = 20
 const MIN_PRIOR_GAMES = 3
-const MIN_AVG_GAME_SCORE = 10
+const MIN_AVG_GAME_SCORE = 10 // ...unless they started
 const BEAT_AVG_WEIGHT = 0.25
 const DUD_MAX_GAME_SCORE = 15 // a 15+ Game Score is a good night, never a dud
 const DUD_MIN_SHORTFALL = 5 // Game Score points below expectation...
@@ -70,7 +72,8 @@ function performer(rows) {
 
 function dud(rows) {
   const eligible = rows.filter(r => {
-    if (r.exp == null || r.avg < MIN_AVG_GAME_SCORE || r.p.min < MIN_MINUTES) return false
+    if (r.exp == null || r.p.min < MIN_MINUTES) return false
+    if (!r.p.starter && r.avg < MIN_AVG_GAME_SCORE) return false
     if (r.gs >= DUD_MAX_GAME_SCORE) return false
     const short = r.exp - r.gs
     return short >= DUD_MIN_SHORTFALL || short >= DUD_MIN_SHORTFALL_PCT * r.exp
