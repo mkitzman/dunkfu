@@ -3,7 +3,7 @@
   --bg:  #1f2227;
   --sf:  #272b31;
   --fg:  #eceef0;
-  --mu:  #8f959d;
+  --mu:  #9da3ac; /* 4.5:1+ on --sf and table headers */
   --ln:  rgba(255, 255, 255, .12);
   --ln2: rgba(255, 255, 255, .05);
   --ac:  oklch(0.78 0.12 255);
@@ -20,15 +20,15 @@
   --bg:  #f4efe6;
   --sf:  #fbf8f2;
   --fg:  #15171a;
-  --mu:  #646a72;
+  --mu:  #5c626a; /* 4.5:1+ incl. favourite-row tints */
   --ln:  rgba(43, 37, 32, .14);
   --ln2: rgba(43, 37, 32, .06);
   --ac:  oklch(0.52 0.17 255);
   --up:  oklch(0.55 0.15 150);
-  --dn:  oklch(0.58 0.16 25);
+  --dn:  #b23c39; /* 4.5:1+ incl. the dud badge tint */
   --hi:  oklch(0.52 0.17 255 / .09);
   --tie: rgba(43, 37, 32, .06);
-  --dn-bg: oklch(0.58 0.16 25 / .12);
+  --dn-bg: rgb(178 60 57 / .12);
 
   color-scheme: light;
 }

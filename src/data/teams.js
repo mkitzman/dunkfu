@@ -47,8 +47,11 @@ function readable(hex, bg, toward) {
 }
 
 // CSS variables for a .team-chip: light (paper --sf) and dark theme versions.
+// Dark: the team colour lifted toward white (about the 55% mix the design
+// asks for), then further until it reads at 4.5:1 on a dark card (#272b31 +
+// a header/hover tint), so very dark colours like PHX purple still pass.
 export function chipStyle(hex) {
-  return { '--team': readable(hex, '#fbf8f2', '#000000'), '--team-dark': `color-mix(in oklch, ${hex} 55%, #fff)` }
+  return { '--team': readable(hex, '#fbf8f2', '#000000'), '--team-dark': readable(mix(hex, '#ffffff', 0.45), '#32363b', '#ffffff') }
 }
 
 // Accent for text and trim on a team-colour background (spotlight hero,
