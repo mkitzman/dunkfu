@@ -4,7 +4,8 @@ defineProps({
   abbr: { type: String, required: true },
   num: { type: String, default: '' },
   color: { type: String, required: true }, // fill (team primary)
-  trim: { type: String, required: true }, // trim + text (team secondary or white)
+  trim: { type: String, required: true }, // trim (team secondary or white)
+  text: { type: String, default: null }, // abbr + number; defaults to trim
 })
 </script>
 
@@ -20,7 +21,7 @@ defineProps({
       <path d="M53.5 7 Q54 24 67 36" stroke="#fff" stroke-width="1.6" opacity=".9" />
       <path d="M12 40 V96 M68 40 V96" :stroke="trim" stroke-width="1.6" opacity=".8" />
     </svg>
-    <span class="txt" :style="{ color: trim }">
+    <span class="txt" :style="{ color: text ?? trim }">
       <span class="ab">{{ abbr }}</span>
       <span class="num">{{ num }}</span>
     </span>

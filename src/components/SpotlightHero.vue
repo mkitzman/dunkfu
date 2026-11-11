@@ -25,7 +25,7 @@ const style = computed(() => {
     '--team': c,
     '--sec': sec.value,
     '--bg': `linear-gradient(120deg, ${darken(c, .55)} 0%, ${c} 55%, ${darken(c, .85)} 100%)`,
-    '--glow': alpha(sec.value, .28),
+    '--glow': alpha(sec.value, .12),
     '--wm': alpha(sec.value, .1),
   }
 })
@@ -63,7 +63,12 @@ const { prep, frame, status, share: onShare, prime } = useShareImage(
     </header>
 
     <div class="body">
-      <JerseyMark class="jersey" :abbr="player.abbr" :num="player.num" :color="t?.color ?? '#646a72'" :trim="sec" />
+      <JerseyMark
+        class="jersey" :abbr="player.abbr" :num="player.num"
+        :color="t?.jersey?.body ?? t?.color ?? '#646a72'"
+        :trim="t?.jersey?.trim ?? sec"
+        :text="t?.jersey?.text ?? null"
+      />
       <div class="who">
         <component :is="to ? 'RouterLink' : 'div'" :to="to ?? undefined" class="name">{{ player.name }}</component>
         <div class="team">{{ t?.name ?? player.abbr }}</div>
@@ -99,7 +104,7 @@ const { prep, frame, status, share: onShare, prime } = useShareImage(
   color: #fff;
   background:
     repeating-linear-gradient(135deg, rgba(255, 255, 255, .03) 0 1px, transparent 1px 14px),
-    radial-gradient(60% 80% at 0% 0%, rgba(255, 255, 255, .08), transparent 60%),
+    radial-gradient(60% 80% at 0% 0%, rgba(255, 255, 255, .04), transparent 60%),
     radial-gradient(90% 120% at 85% 110%, var(--glow), transparent 60%),
     var(--bg);
   container: spot / inline-size;

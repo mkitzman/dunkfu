@@ -27,6 +27,7 @@
     "division": "Atlantic",
     "seedColor": "#007A33",
     "secondary": "#BA9653",
+    "jersey": { "body": "#007A33", "trim": "#FFFFFF", "text": "#FFFFFF" },
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
