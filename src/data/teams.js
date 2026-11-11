@@ -5,6 +5,7 @@ const byAbbr = Object.fromEntries(
     abbr: t.abbr, city: t.city, nick: t.nickname, name: `${t.city} ${t.nickname}`,
     conference: t.conference, division: t.division, color: t.seedColor, secondary: t.secondary,
     jersey: t.jersey ?? null, // optional { body, trim, text } when the uniform differs from the brand colours
+    accentOverride: t.accent ?? null, // optional: use instead of the secondary as the site's accent
   }]),
 )
 
@@ -51,10 +52,13 @@ export function chipStyle(hex) {
 }
 
 // Accent for text and trim on a team-colour background (spotlight hero,
-// jersey): the team's secondary, or white when that is near-black or
-// near-navy (POR, HOU, UTA, PHX...).
+// jersey, favourite highlight): the team's `accent` override if set (e.g.
+// MIA white: yellow is a brand colour they rarely wear), else the secondary,
+// or white when that is near-black or near-navy (POR, HOU, UTA, PHX...).
 export function accent(abbr) {
-  const s = team(abbr)?.secondary
+  const t = team(abbr)
+  if (t?.accentOverride) return t.accentOverride
+  const s = t?.secondary
   return s && lum(s) >= 0.04 ? s : '#ffffff'
 }
 
