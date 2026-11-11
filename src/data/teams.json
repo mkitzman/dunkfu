@@ -65,8 +65,8 @@
     "nickname": "Knicks",
     "conference": "E",
     "division": "Atlantic",
-    "seedColor": "#F58426",
-    "secondary": "#006BB6",
+    "seedColor": "#006BB6",
+    "secondary": "#F58426",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -285,9 +285,9 @@
     "nickname": "Jazz",
     "conference": "W",
     "division": "Northwest",
-    "seedColor": "#F9A01B",
-    "secondary": "#002B5C",
-    "note": "verify primary/secondary at nbacolors.com"
+    "seedColor": "#4E008E",
+    "secondary": "#79A3DB",
+    "note": "Mountain Purple / Sky Blue (Midnight Black #000 is the third colour)"
   },
   {
     "abbr": "NOP",
