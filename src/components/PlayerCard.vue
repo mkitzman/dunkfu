@@ -45,6 +45,7 @@ watch(cardPlayer, async (pl, old) => {
   }
   const n = ++req
   tab.value = 'log'
+  side.value = 'awards'
   compact.value = false
   log.value = null
   bio.value = null
@@ -123,6 +124,17 @@ watch([mobile, () => heroName.value], () => {
 }, { flush: 'post' })
 
 const TABS = [['log', 'Game log'], ['awards', 'Awards'], ['bio', 'Bio']]
+// Desktop team column: Awards | Bio.
+const SIDE = [['awards', 'Awards'], ['bio', 'Bio']]
+const side = ref('awards')
+function onSideKey(e, i) {
+  const step = { ArrowRight: 1, ArrowLeft: -1 }[e.key]
+  if (!step) return
+  e.preventDefault()
+  const j = (i + step + SIDE.length) % SIDE.length
+  side.value = SIDE[j][0]
+  e.currentTarget.parentElement.children[j].focus()
+}
 function onTabKey(e, i) {
   const step = { ArrowRight: 1, ArrowLeft: -1 }[e.key]
   if (!step) return
@@ -172,14 +184,31 @@ onBeforeUnmount(() => { mq.removeEventListener('change', onMq); io?.disconnect()
             <StatTrio class="trio" hero :pts="s.avg.pts.toFixed(1)" :reb="s.avg.reb.toFixed(1)" :ast="s.avg.ast.toFixed(1)" labels="ppg" />
           </section>
 
-          <VitalsList class="vit" :rows="rows" :loading="bioStatus === 'loading'" :unavailable="bioStatus === 'failed'" />
-
-          <section class="aw" :aria-labelledby="`${id}-aw`">
+          <!-- Awards first; the bio (fetched separately) waits behind its tab,
+               so it can't shift the column when it arrives. -->
+          <div class="seg-t" role="tablist" aria-label="Profile">
+            <button
+              v-for="([k, l], i) in SIDE"
+              :key="k"
+              type="button"
+              role="tab"
+              :id="`${id}-s-${k}`"
+              :aria-selected="side === k"
+              :aria-controls="`${id}-sp-${k}`"
+              :tabindex="side === k ? 0 : -1"
+              @click="side = k"
+              @keydown="onSideKey($event, i)"
+            >{{ l }}</button>
+          </div>
+          <section v-if="side === 'awards'" :id="`${id}-sp-awards`" class="aw" role="tabpanel" :aria-labelledby="`${id}-s-awards`">
             <div class="aw-head">
-              <h3 :id="`${id}-aw`">Awards · {{ season }}</h3>
+              <h3>Awards · {{ season }}</h3>
               <span>{{ s.totalAwards }} total</span>
             </div>
             <AwardsList :awards="s.awards" surface="team" />
+          </section>
+          <section v-else :id="`${id}-sp-bio`" class="bio-t" role="tabpanel" :aria-labelledby="`${id}-s-bio`">
+            <VitalsList class="vit" :rows="rows" :loading="bioStatus === 'loading'" :unavailable="bioStatus === 'failed'" />
           </section>
         </aside>
 
@@ -320,6 +349,30 @@ onBeforeUnmount(() => { mq.removeEventListener('change', onMq); io?.disconnect()
 .tname { font: 500 11px var(--mono); opacity: .85; margin-top: 6px; letter-spacing: .04em; }
 .eyebrow-t { font: 500 10px var(--mono); letter-spacing: .12em; text-transform: uppercase; opacity: .75; margin-bottom: 10px; }
 .season .trio, .hero-stats .trio { --trio-size: 32px; justify-content: flex-start; }
+/* Awards | Bio switch on the team colours */
+.seg-t {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, .18);
+  border: 1px solid rgba(255, 255, 255, .16);
+}
+.seg-t button {
+  all: unset;
+  text-align: center;
+  padding: 7px 0;
+  border-radius: 999px;
+  font: 600 13px var(--sans);
+  color: rgba(255, 255, 255, .8);
+  cursor: pointer;
+
+  &:hover { color: #fff; }
+  &[aria-selected="true"] { background: #fff; color: #15171a; }
+  &:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+}
+.bio-t .vit :deep(.row:first-child) { border-top: 0; }
 .aw-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
 .aw-head h3 { margin: 0; font: 600 10px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--sec); }
 .aw-head span { font: 400 10px var(--mono); opacity: .7; }
