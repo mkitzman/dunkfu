@@ -4,6 +4,7 @@
 import { computed } from 'vue'
 import AwardStack from './AwardStack.vue'
 import { heat, shortDate, weekdayShort } from './playerCard.js'
+import { team } from '../data/teams.js'
 
 const props = defineProps({
   games: { type: Array, required: true }, // all entries (played / dnp / inj), any order
@@ -17,6 +18,10 @@ const STAT_COLS = [['fpts', 'FPTS'], ['min', 'MIN'], ['pts', 'PTS'], ['reb', 'RE
 const SHOOT = [['fg', 'FG', 'fgm', 'fga', 'fgPct'], ['3pt', '3PT', 'tpm', 'tpa', 'tpPct'], ['ft', 'FT', 'ftm', 'fta', 'ftPct']]
 
 const rows = computed(() => props.games.slice().sort((a, b) => b.date.localeCompare(a.date)))
+// Traded / signed mid-season: a heading row starts each stretch with a team.
+const multiTeam = computed(() => new Set(props.games.map(g => g.team).filter(Boolean)).size > 1)
+const stintStart = (g, i) => multiTeam.value && g.team && (i === 0 || rows.value[i - 1].team !== g.team)
+const COLS_TOTAL = computed(() => (props.compact ? 2 : 4) + STAT_COLS.length + SHOOT.length + 1)
 const opp = g => `${g.home ? 'vs' : '@'} ${g.opp}`
 const signed = v => (v > 0 ? '+' : '') + v
 const cellHeat = (g, k) => {
@@ -61,7 +66,11 @@ const fmtStat = (g, k) => (k === 'fpts' ? g.fpts.toFixed(1) : g[k])
             <td :colspan="1 + STAT_COLS.length + SHOOT.length + 1"><span class="sr-only">Upcoming</span></td>
           </tr>
 
-          <tr v-for="g in rows" :key="g.gameId">
+          <template v-for="(g, i) in rows" :key="g.gameId">
+          <tr v-if="stintStart(g, i)" class="stint">
+            <th scope="colgroup" :colspan="COLS_TOTAL" class="l">With {{ team(g.team)?.name ?? g.team }}</th>
+          </tr>
+          <tr>
             <template v-if="compact">
               <th scope="row" class="game">
                 <span class="d">{{ shortDate(g.date) }}</span> <span class="o">{{ opp(g) }}</span>
@@ -81,6 +90,7 @@ const fmtStat = (g, k) => (k === 'fpts' ? g.fpts.toFixed(1) : g[k])
             </template>
             <td v-else :colspan="STAT_COLS.length + SHOOT.length + 1" class="l absent">{{ g.awards.includes('inj') ? 'Out (not on the box score)' : 'Did not play' }}</td>
           </tr>
+          </template>
         </tbody>
         <tfoot>
           <tr>
@@ -115,6 +125,8 @@ b.lo { color: var(--dn); font-weight: 600; }
 .up td, .up th { color: var(--mu); }
 .awd { padding-top: 6px; padding-bottom: 6px; }
 .absent { font-size: 11px; letter-spacing: .04em; }
+tr.stint th { font: 600 10px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--fg); background: var(--ln2); padding-top: 7px; padding-bottom: 7px; }
+.compact tr.stint th { position: sticky; left: 0; }
 th:first-child, td:first-child { padding-left: 12px; }
 th:last-child, td:last-child { padding-right: 12px; }
 tfoot th, tfoot td { background: var(--ln2); border-top: 1px solid var(--ln); border-bottom: 0; font-weight: 600; color: var(--fg); }

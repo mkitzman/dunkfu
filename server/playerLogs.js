@@ -79,7 +79,7 @@ function entry(p, g, aw, high) {
   const home = g.home.abbr === p.abbr
   const us = home ? g.home : g.away, them = home ? g.away : g.home
   const e = {
-    date: p.date, gameId: g.id, home, opp: them.abbr,
+    date: p.date, gameId: g.id, team: p.abbr, home, opp: them.abbr,
     result: us.score > them.score ? 'W' : 'L', score: `${us.score}-${them.score}`,
   }
   const awardKeys = []
