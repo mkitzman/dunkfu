@@ -23,7 +23,7 @@ const style = computed(() => (a.value.bg ? { '--b': a.value.bg, '--f': a.value.f
     :role="decorative ? undefined : 'img'"
     :aria-label="decorative ? undefined : a.label"
     :aria-hidden="decorative ? 'true' : undefined"
-    :title="a.label"
+    :title="`${a.label}: ${a.rule}`"
   ><svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="0" aria-hidden="true" v-html="a.glyph"></svg></span>
 </template>
 

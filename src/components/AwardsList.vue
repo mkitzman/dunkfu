@@ -12,7 +12,7 @@ defineProps({
 
 <template>
   <ul class="awards" :class="{ withDates: dates }">
-    <li v-for="a in awards" :key="a.key" class="row" :class="{ zero: !a.count }">
+    <li v-for="a in awards" :key="a.key" class="row" :class="{ zero: !a.count }" :title="a.rule">
       <AwardBadge :award="a.key" size="L" :surface="surface" decorative />
       <span class="what">
         <span class="label">{{ a.label }}</span>
