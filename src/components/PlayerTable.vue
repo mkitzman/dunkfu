@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useSort } from '../composables/useSort.js'
 import { team } from '../data/teams.js'
+import PlayerButton from './PlayerButton.vue'
 import { isFav, favStyle } from '../composables/useFavorite.js'
 import { shortName, signed, STAT_NAMES } from '../utils.js'
 
@@ -23,7 +24,7 @@ const rows = computed(() => props.players.map(p => {
   const d = props.averages
     ? { ...Object.fromEntries(Object.entries(s).map(([k, v]) => [k, f1(v)])), pm: signed(p.pm, 1) }
     : { ...s, fg: `${p.fgm}-${p.fga}`, tp: `${p.tpm}-${p.tpa}`, ft: `${p.ftm}-${p.fta}`, pm: signed(p.pm) }
-  return { key: `${p.abbr}-${p.name}`, name: p.name, short: shortName(p.name), abbr: p.abbr, pos: p.pos, color: team(p.abbr)?.color, s, d }
+  return { key: `${p.abbr}-${p.name}`, id: p.id, num: p.num, name: p.name, short: shortName(p.name), abbr: p.abbr, pos: p.pos, color: team(p.abbr)?.color, s, d }
 }))
 
 const { sort, setSort, sorted } = useSort(rows, (r, k) => r.s[k])
@@ -55,7 +56,7 @@ const ariaSort = key => (sort.value.key === key ? (sort.value.dir < 0 ? 'descend
           <th scope="row" class="player">
             <span class="bar" :style="{ background: r.color }"></span>
             <span class="who">
-              <span class="name"><span class="full">{{ r.name }}</span><span class="abbrv">{{ r.short }}</span><span v-if="isFav(r.abbr)" class="fav-star" aria-label="Your team">★</span></span>
+              <span class="name"><PlayerButton v-if="r.id" :id="r.id" :abbr="r.abbr" :name="r.name" :num="r.num" :pos="r.pos"><span class="full">{{ r.name }}</span><span class="abbrv">{{ r.short }}</span></PlayerButton><template v-else><span class="full">{{ r.name }}</span><span class="abbrv">{{ r.short }}</span></template><span v-if="isFav(r.abbr)" class="fav-star" aria-label="Your team">★</span></span>
               <span class="sub">{{ r.abbr }}<template v-if="r.pos"> · {{ r.pos }}</template></span>
             </span>
           </th>

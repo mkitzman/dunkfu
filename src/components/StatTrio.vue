@@ -2,16 +2,17 @@
 // PTS / REB / AST in big numbers. `hero` is the white-on-team-colour version;
 // the default sits on --sf.
 defineProps({
-  pts: { type: Number, required: true },
-  reb: { type: Number, required: true },
-  ast: { type: Number, required: true },
+  pts: { type: [Number, String], required: true }, // strings for formatted averages ("3.0")
+  reb: { type: [Number, String], required: true },
+  ast: { type: [Number, String], required: true },
   hero: Boolean,
+  labels: { type: String, default: 'totals' }, // 'ppg' → PPG / RPG / APG (season averages)
 })
 </script>
 
 <template>
   <div class="trio" :class="{ onteam: hero }">
-    <template v-for="([l, v], i) in [['PTS', pts], ['REB', reb], ['AST', ast]]" :key="l">
+    <template v-for="([l, v], i) in (labels === 'ppg' ? [['PPG', pts], ['RPG', reb], ['APG', ast]] : [['PTS', pts], ['REB', reb], ['AST', ast]])" :key="l">
       <span v-if="i" class="sep" aria-hidden="true">/</span>
       <span class="stat">
         <span class="v">{{ v }}</span>

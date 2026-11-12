@@ -135,3 +135,7 @@ export async function getStandings() {
 export async function getAwards() {
   return null
 }
+
+// Player card data isn't mocked: the card shows what it can without it.
+export async function getTeamLog() { return null }
+export async function getPlayerBio() { return null }

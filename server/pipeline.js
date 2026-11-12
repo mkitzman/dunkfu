@@ -15,11 +15,20 @@
 
 import TEAMS from '../src/data/teams.json' with { type: 'json' }
 import { computeAwards, VERSION as AWARDS_VERSION } from './awards.js'
+import { buildTeamLogs } from './playerLogs.js'
 
 // Bump when the published box score format changes; finished games are then
 // rebuilt from the cached raw responses (no API requests).
 //   2: players who were active but didn't play are kept, as { dnp: true }
 const BOX_VERSION = 2
+
+// Bump when the per-night player lines format changes; every night's lines
+// are then rebuilt from the published box scores.
+//   2: DNP rows ({ dnp: true }) included (for the player card's game log)
+const LINES_VERSION = 2
+
+// Days of schedule to fetch beyond tomorrow (player card: upcoming games).
+const AHEAD_DAYS = 6
 
 const API = 'https://nba.highlightly.net'
 const TZ = 'America/New_York'
@@ -152,6 +161,7 @@ export async function refresh({ store, key, deadline = Infinity, log = console.l
 
   // 2. Games for every day of the season. Settled past days come from cache.
   const dates = [tomorrow, today]
+  for (let i = 2; i <= AHEAD_DAYS + 1; i++) dates.push(addDays(today, i))
   for (let d = yesterday; d >= seasonStart; d = addDays(d, -1)) dates.push(d)
   const matchesByDate = {}
   await pool(dates, 6, d => attempt(async () => {
@@ -198,6 +208,7 @@ export async function refresh({ store, key, deadline = Infinity, log = console.l
   // runs if needed; `done` tracks progress until the version is recorded.
   const boxVer = (await store.get('cache/box-version.json')) ?? { v: 1 }
   const redone = new Set(boxVer.v === BOX_VERSION ? [] : boxVer.done ?? [])
+  const redoneNow = new Set() // rebuilt this run: their nights' lines get regenerated
   const stale = id => boxVer.v !== BOX_VERSION && published.has(id) && !redone.has(id)
   const todo = games.filter(g => g.status === 'final' && (!published.has(g.id) || stale(g.id))).reverse()
   const fetched = new Set()
@@ -225,8 +236,7 @@ export async function refresh({ store, key, deadline = Infinity, log = console.l
     const away = lines(g.awayTeamId), home = lines(g.homeTeamId)
     const out = strip(g)
     await store.set(`data/box/${g.id}.json`, { ...out, away: { ...out.away, players: away }, home: { ...out.home, players: home } })
-    if (rebuild) redone.add(g.id)
-    else fetched.add(g.id)
+    if (rebuild) { redone.add(g.id); redoneNow.add(g.id) } else fetched.add(g.id)
   }, `box score ${g.id}`))
   if (boxVer.v !== BOX_VERSION) {
     const left = [...published].filter(id => !redone.has(id) && games.some(g => g.id === id && g.status === 'final'))
@@ -234,22 +244,27 @@ export async function refresh({ store, key, deadline = Infinity, log = console.l
     log(`Box scores rebuilt for format v${BOX_VERSION}: ${redone.size} done, ${left.length} left`)
   }
 
-  // 5. lines/DATE.json: every player line for a date, built from published box
-  //    scores. Any published game missing from its day's file gets added, so an
-  //    interrupted run repairs itself next time.
+  // 5. lines/DATE.json: every player line for a date (DNP rows included, as
+  //    { dnp: true } with no stats), built from published box scores. Games
+  //    missing from their day's file are added and rebuilt box scores replace
+  //    their rows, so an interrupted run repairs itself next time. A format
+  //    change (LINES_VERSION) regenerates every night once.
   const finalsByDate = {}
   for (const g of games) if (g.status === 'final' && (published.has(g.id) || fetched.has(g.id))) (finalsByDate[g.date] ??= []).push(g.id)
+  const linesStale = (await store.get('cache/lines-version.json'))?.v !== LINES_VERSION
   let linesChanged = false
   await pool(Object.entries(finalsByDate), 6, async ([d, ids]) => {
     const prev = (await store.get(`data/lines/${d}.json`)) ?? []
     const have = new Set(prev.map(p => p.gameId))
-    const missing = ids.filter(id => !have.has(id))
-    if (!missing.length) return
-    const add = (await pool(missing, 6, id => store.get(`data/box/${id}.json`))).flatMap(b =>
-      b ? [b.away, b.home].flatMap(t => t.players.filter(p => !p.dnp).map(p => ({ ...p, abbr: t.abbr, gameId: b.id }))) : [])
-    await store.set(`data/lines/${d}.json`, prev.concat(add))
+    const redo = linesStale ? ids : ids.filter(id => !have.has(id) || redoneNow.has(id))
+    if (!redo.length) return
+    const boxes = await pool(redo, 6, id => store.get(`data/box/${id}.json`))
+    const add = boxes.flatMap(b => (b ? [b.away, b.home].flatMap(t => t.players.map(p => ({ ...p, abbr: t.abbr, gameId: b.id }))) : []))
+    const replaced = new Set(boxes.filter(Boolean).map(b => b.id))
+    await store.set(`data/lines/${d}.json`, prev.filter(p => !replaced.has(p.gameId)).concat(add))
     linesChanged = true
   })
+  if (linesStale) await store.set('cache/lines-version.json', { v: LINES_VERSION })
 
   // 6. Season averages and awards from every published player line. Only
   //    recomputed when lines changed or the awards formula version changed.
@@ -259,10 +274,16 @@ export async function refresh({ store, key, deadline = Infinity, log = console.l
   // Any day with player lines but no awards file (e.g. a run cut off mid-save)?
   const haveAwards = new Set((await store.list('data/awards/')).map(k => k.slice(-15, -5)))
   const awardsMissing = lineKeys.some(k => !haveAwards.has(k.slice(-15, -5)))
-  if (linesChanged || awardsStale || awardsMissing || !(await store.get('data/averages.json'))) {
-    const days = await pool(lineKeys, 20, k => store.get(k))
+  // Every run: player lines and awards feed the player card's team game logs
+  // (upcoming games change daily). Awards are cheap to compute; they're only
+  // saved when something changed.
+  const days = await pool(lineKeys, 20, k => store.get(k))
+  const awards = computeAwards(lineKeys.map((k, i) => ({ date: k.slice(-15, -5), lines: days[i] })))
+  const dayLines = Object.fromEntries(lineKeys.map((k, i) => [k.slice(-15, -5), days[i] ?? []]))
+  const teamLogs = buildTeamLogs({ dayLines, awards, games: games.map(strip), today })
+  await pool(Object.values(teamLogs), 10, t => store.set(`data/teams/${t.abbr}.json`, t))
 
-    const awards = computeAwards(lineKeys.map((k, i) => ({ date: k.slice(-15, -5), lines: days[i] })))
+  if (linesChanged || awardsStale || awardsMissing || !(await store.get('data/averages.json'))) {
     // Don't save an empty day (lines not readable yet); the next run sees it as missing.
     const filled = Object.entries(awards).filter(([, a]) => a.night.performer)
     await pool(filled, 10, ([d, a]) => store.set(`data/awards/${d}.json`, a))

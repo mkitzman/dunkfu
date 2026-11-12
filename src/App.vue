@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import AppHeader from './components/AppHeader.vue'
 import AppFooter from './components/AppFooter.vue'
+import PlayerCard from './components/PlayerCard.vue'
 import { announcement } from './composables/useAnnounce.js'
 
 const main = ref(null)
@@ -44,5 +45,6 @@ router.afterEach(async (to, from, failure) => {
     <RouterView />
   </main>
   <AppFooter />
+  <PlayerCard />
   <div class="sr-only" aria-live="polite" aria-atomic="true">{{ announcement }}</div>
 </template>

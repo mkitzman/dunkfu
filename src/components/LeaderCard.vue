@@ -1,5 +1,6 @@
 <script setup>
 import { chipStyle } from '../data/teams.js'
+import PlayerButton from './PlayerButton.vue'
 import { isFav, favStyle } from '../composables/useFavorite.js'
 defineProps({
   label: { type: String, required: true },
@@ -15,7 +16,7 @@ defineProps({
         <span class="rank">{{ i + 1 }}</span>
         <div class="who">
           <div class="name">
-            <span class="full">{{ p.name }}</span><span class="abbrv">{{ p.short }}</span><span class="team-chip" :style="chipStyle(p.color)">{{ p.abbr }}</span><span class="num">#{{ p.num }}</span><span v-if="isFav(p.abbr)" class="fav-star" aria-label="Your team">★</span>
+            <PlayerButton v-if="p.id" :id="p.id" :abbr="p.abbr" :name="p.name" :num="p.num" :pos="p.pos"><span class="full">{{ p.name }}</span><span class="abbrv">{{ p.short }}</span></PlayerButton><template v-else><span class="full">{{ p.name }}</span><span class="abbrv">{{ p.short }}</span></template><span class="team-chip" :style="chipStyle(p.color)">{{ p.abbr }}</span><span class="num">#{{ p.num }}</span><span v-if="isFav(p.abbr)" class="fav-star" aria-label="Your team">★</span>
           </div>
           <div class="sub">{{ p.sub }}</div>
           <div class="track"><div :style="{ width: `${leaders[0].value ? (100 * p.value) / leaders[0].value : 0}%`, background: p.color }"></div></div>

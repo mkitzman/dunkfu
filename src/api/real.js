@@ -27,7 +27,8 @@ export async function getGames(date) {
 
 export async function getBoxscores(date) {
   const lines = (await load(`lines/${date}.json`)) ?? []
-  return lines.map(({ to, ...p }) => ({ ...p, tov: to }))
+  // DNP rows (no stats) are only for the player card's game log.
+  return lines.filter(p => !p.dnp).map(({ to, ...p }) => ({ ...p, tov: to }))
 }
 
 let averages
@@ -47,4 +48,20 @@ export async function getAwards(date) {
 
 export async function getStandings() {
   return (await load('standings.json'))?.rows ?? []
+}
+
+// Player card: every game log for a team's players (data/teams/ABBR.json).
+export async function getTeamLog(abbr) {
+  return load(`teams/${abbr}.json`)
+}
+
+// Player card: bio from the API (via /api/player, cached server-side until
+// the player's next game: `gp` is his games played, so a new game refetches).
+export async function getPlayerBio(id, gp) {
+  try {
+    const res = await fetch(`/api/player/${id}?gp=${gp}`)
+    return res.ok && res.headers.get('content-type')?.includes('json') ? await res.json() : null
+  } catch {
+    return null
+  }
 }

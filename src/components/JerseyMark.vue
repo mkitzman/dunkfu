@@ -7,6 +7,7 @@ defineProps({
   trim: { type: String, required: true }, // trim (team secondary or white)
   text: { type: String, default: null }, // abbr + number; defaults to trim
   abbrColor: { type: String, default: null }, // just the abbr (e.g. DEN gold over a white number)
+  numberOnly: Boolean, // player card: just the number
 })
 </script>
 
@@ -23,7 +24,7 @@ defineProps({
       <path d="M12 40 V96 M68 40 V96" :stroke="trim" stroke-width="1.6" opacity=".8" />
     </svg>
     <span class="txt" :style="{ color: text ?? trim }">
-      <span class="ab" :style="abbrColor ? { color: abbrColor } : null">{{ abbr }}</span>
+      <span v-if="!numberOnly" class="ab" :style="abbrColor ? { color: abbrColor } : null">{{ abbr }}</span>
       <span class="num">{{ num }}</span>
     </span>
   </span>
@@ -34,8 +35,9 @@ defineProps({
   position: relative;
   display: block;
   flex: none;
-  width: 68px;
-  height: 85px;
+  /* Size via --jw (width; height keeps the 4:5 shape), number via --jn. */
+  width: var(--jw, 68px);
+  height: calc(var(--jw, 68px) * 1.25);
   filter: drop-shadow(0 8px 18px rgba(0, 0, 0, .35));
 }
 svg { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -49,5 +51,5 @@ svg { position: absolute; inset: 0; width: 100%; height: 100%; }
   padding-top: 14px;
 }
 .ab { font: 700 10px var(--mono); letter-spacing: .16em; margin-right: -.16em; }
-.num { font: 800 24px/1 var(--sans); letter-spacing: -.04em; }
+.num { font: 800 var(--jn, 24px)/1 var(--sans); letter-spacing: -.04em; }
 </style>

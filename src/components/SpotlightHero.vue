@@ -4,6 +4,7 @@
 import { computed } from 'vue'
 import BrandLockup from './BrandLockup.vue'
 import JerseyMark from './JerseyMark.vue'
+import PlayerButton from './PlayerButton.vue'
 import StatTrio from './StatTrio.vue'
 import { team, accent, darken, alpha } from '../data/teams.js'
 import { useShareImage } from '../composables/useShare.js'
@@ -71,7 +72,8 @@ const { prep, frame, status, share: onShare, prime } = useShareImage(
         :abbr-color="t?.jersey?.abbr ?? null"
       />
       <div class="who">
-        <component :is="to ? 'RouterLink' : 'div'" :to="to ?? undefined" class="name">{{ player.name }}</component>
+        <div v-if="capture" class="name">{{ player.name }}</div>
+        <div v-else class="name"><PlayerButton :id="player.id" :abbr="player.abbr" :name="player.name" :num="player.num" :pos="player.pos" /></div>
         <div class="team">{{ t?.name ?? player.abbr }}</div>
         <div class="line">{{ line }}</div>
       </div>

@@ -23,7 +23,7 @@ const cards = computed(() => CATS.map(([label, key, sub]) => ({
   label,
   list: props.players.slice().sort((a, b) => b[key] - a[key] || b.min - a.min).slice(0, 3).map(p => {
     const color = p.color ?? team(p.abbr)?.color ?? '#646a72'
-    return { key: `${p.abbr}-${p.name}`, name: p.name, short: shortName(p.name), num: p.num, abbr: p.abbr, color, value: p[key], sub: sub(p) }
+    return { key: `${p.abbr}-${p.name}`, id: p.id, pos: p.pos, name: p.name, short: shortName(p.name), num: p.num, abbr: p.abbr, color, value: p[key], sub: sub(p) }
   }),
 })))
 </script>

@@ -2,6 +2,7 @@
 // Dud / Dud of the Night: the quiet counterpart to SpotlightHero.
 import { computed } from 'vue'
 import StatTrio from './StatTrio.vue'
+import PlayerButton from './PlayerButton.vue'
 import BrandLockup from './BrandLockup.vue'
 import { team, chipStyle } from '../data/teams.js'
 import { useShareImage } from '../composables/useShare.js'
@@ -42,7 +43,7 @@ const { prep, frame, status, share: onShare, prime } = useShareImage(
       <h2 class="badge"><span aria-hidden="true">▼</span>{{ label }}</h2>
       <div class="who">
         <div class="name">
-          <component :is="to ? 'RouterLink' : 'span'" :to="to ?? undefined" class="nm">{{ player.name }}</component><span
+          <span v-if="capture" class="nm">{{ player.name }}</span><PlayerButton v-else class="nm" :id="player.id" :abbr="player.abbr" :name="player.name" :num="player.num" :pos="player.pos" /><span
             class="team-chip" :style="chipStyle(color)">{{ player.abbr }}</span><span class="num">#{{ player.num }}</span>
         </div>
         <div class="line">{{ line }}</div>

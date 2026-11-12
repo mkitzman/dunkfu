@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import TeamMark from './TeamMark.vue'
+import PlayerButton from './PlayerButton.vue'
 import { shortName, signed, pct, STAT_NAMES } from '../utils.js'
 
 const props = defineProps({
@@ -42,7 +43,7 @@ const pcts = computed(() => ['', '', pct(sum('fgm'), sum('fga')), pct(sum('tpm')
               <th scope="colgroup">{{ s.label }}</th><th v-for="c in COLS" :key="c" aria-hidden="true" :title="STAT_NAMES[c]">{{ c }}</th>
             </tr>
             <tr v-for="p in s.rows" :key="p.name" :class="{ dnp: p.dnp }">
-              <td class="name" :title="p.name">{{ shortName(p.name) }} <span v-if="p.num" class="num">#{{ p.num }}</span></td>
+              <td class="name"><PlayerButton v-if="p.id" :id="p.id" :abbr="team.abbr" :name="p.name" :num="p.num" :pos="p.pos">{{ shortName(p.name) }}</PlayerButton><template v-else>{{ shortName(p.name) }}</template> <span v-if="p.num" class="num">#{{ p.num }}</span></td>
               <td v-if="p.dnp" colspan="11" class="dnp-note">DNP</td>
               <td v-for="(v, i) in cells(p)" v-else :key="i" :class="{ em: i === 1 }">{{ v }}</td>
             </tr>
