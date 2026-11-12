@@ -17,6 +17,7 @@
 //         doesn't say why, so this also covers suspensions and personal leave
 
 const STATS = ['min', 'pts', 'reb', 'oreb', 'dreb', 'ast', 'stl', 'blk', 'to', 'pf', 'pm', 'fgm', 'fga', 'tpm', 'tpa', 'ftm', 'fta']
+const MAX_TRAILING_MISSED = 15
 export const AWARD_ORDER = ['potn', 'potg', 'pts', 'reb', 'ast', 'stl', 'blk', 'dud', 'dnp', 'inj']
 
 // dayLines: { [date]: line[] }  awards: { [date]: { night, games } }
@@ -50,15 +51,18 @@ export function buildTeamLogs({ dayLines, awards, games, today }) {
     const entries = lines.map(p => entry(p, gameById[p.gameId], awards[p.date], highs[p.date]))
 
     // Injured: games of a team he was on (from his first game with them to his
-    // last, or to now for his current team) where he isn't listed at all.
+    // last, or to now for his current team) where he isn't listed at all. The
+    // API has no rosters, so after MAX_TRAILING_MISSED straight missed games
+    // since his last line we assume he was released and stop counting.
     const seen = new Set(lines.map(p => p.gameId))
     const spans = {}
     for (const p of lines) (spans[p.abbr] ??= { from: p.date, to: p.date }).to = p.date
     for (const [abbr, s] of Object.entries(spans)) {
-      const to = abbr === last.abbr ? '9999-12-31' : s.to
+      let trailing = 0
       for (const g of finals) {
-        if (g.date < s.from || g.date > to || seen.has(g.id)) continue
+        if (g.date < s.from || seen.has(g.id)) continue
         if (g.away.abbr !== abbr && g.home.abbr !== abbr) continue
+        if (g.date > s.to && (abbr !== last.abbr || ++trailing > MAX_TRAILING_MISSED)) break
         entries.push(entry({ abbr, date: g.date, gameId: g.id, inj: true }, g, null, null))
       }
     }

@@ -5,6 +5,7 @@ import { computed } from 'vue'
 import AwardStack from './AwardStack.vue'
 import { heat, shortDate, weekdayShort } from './playerCard.js'
 import { team } from '../data/teams.js'
+import { signed } from '../utils.js'
 
 const props = defineProps({
   games: { type: Array, required: true }, // all entries (played / dnp / inj), any order
@@ -23,7 +24,6 @@ const multiTeam = computed(() => new Set(props.games.map(g => g.team).filter(Boo
 const stintStart = (g, i) => multiTeam.value && g.team && (i === 0 || rows.value[i - 1].team !== g.team)
 const COLS_TOTAL = computed(() => (props.compact ? 2 : 4) + STAT_COLS.length + SHOOT.length + 1)
 const opp = g => `${g.home ? 'vs' : '@'} ${g.opp}`
-const signed = v => (v > 0 ? '+' : '') + v
 const cellHeat = (g, k) => {
   if (!HEAT.includes(k) || !(g.min > 0)) return null
   const x = heat(g[k], props.avg[k], k === 'to')

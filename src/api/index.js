@@ -10,7 +10,7 @@
 //   getStandings()      30 rows with splits, seed, seedPrev (seed before last night)
 //   getAwards(date)     high performer + dud for the night and for each game
 //   getTeamLog(abbr)    player card: game logs + awards for a team's players
-//   getPlayerBio(id,gp) player card: bio (height, weight, born, draft…)
+//   getPlayerBio(id)    player card: bio (height, weight, born, draft…)
 import * as real from './real.js'
 import * as mock from './mock/index.js'
 

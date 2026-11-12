@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "fetch-data": "node --env-file=.env scripts/fetch-data.js",
-    "arena-maps": "node scripts/arena-maps/render.mjs"
+    "arena-maps": "node scripts/arena-maps/render.mjs",
+    "test": "node --test 'server/*.test.js'"
   },
   "dependencies": {
     "@netlify/blobs": "^11.1.7",

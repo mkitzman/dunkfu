@@ -9,7 +9,7 @@ import { getStandings, getGames } from '../api/index.js'
 import { prepare, withPrev, groupStandings } from '../composables/useStandings.js'
 import { favorite, isFav, favStyle } from '../composables/useFavorite.js'
 import { usePageTitle } from '../composables/usePageTitle.js'
-import { todayNY, addDays, dateLong, STAT_NAMES } from '../utils.js'
+import { todayNY, addDays, dateLong, signed, STAT_NAMES } from '../utils.js'
 import { team } from '../data/teams.js'
 import { CUP, cupGames, cupTables } from '../data/nbaCup.js'
 
@@ -107,7 +107,6 @@ const COLS = computed(() => COLS_BY_VIEW[view.value] ?? COLS_BY_VIEW.default)
 const WIDTHS = { CHG: 72, W: 40, L: 40, PCT: 60, GB: 50, HOME: 60, AWAY: 60, CONF: 60, PPG: 60, OPP: 60, PF: 60, PA: 60, DIFF: 60, STRK: 52, L10: 52 }
 // Team column never narrower than ~190px; on phones the table scrolls.
 const minWidth = computed(() => 190 + WIDTHS.CHG + COLS.value.reduce((s, c) => s + WIDTHS[c], 0))
-const signed = (v, d) => (v > 0 ? '+' : '') + v.toFixed(d)
 // Cell text and class per column.
 const CELL = {
   W: t => [t.w, 'em'], L: t => [t.l, 'em'],

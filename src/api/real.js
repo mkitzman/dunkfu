@@ -55,11 +55,10 @@ export async function getTeamLog(abbr) {
   return load(`teams/${abbr}.json`)
 }
 
-// Player card: bio from the API (via /api/player, cached server-side until
-// the player's next game: `gp` is his games played, so a new game refetches).
-export async function getPlayerBio(id, gp) {
+// Player card: bio from the API (via /api/player, cached server-side).
+export async function getPlayerBio(id) {
   try {
-    const res = await fetch(`/api/player/${id}?gp=${gp}`)
+    const res = await fetch(`/api/player/${id}`)
     return res.ok && res.headers.get('content-type')?.includes('json') ? await res.json() : null
   } catch {
     return null

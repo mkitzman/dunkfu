@@ -13,10 +13,6 @@ export function addDays(iso, n) {
   return d.toISOString().slice(0, 10)
 }
 
-export function isIsoDate(s) {
-  return /^\d{4}-\d{2}-\d{2}$/.test(s) && !Number.isNaN(Date.parse(s + 'T12:00:00Z'))
-}
-
 const fmt = (iso, opts) => new Date(iso + 'T12:00:00Z').toLocaleDateString('en-US', { timeZone: 'UTC', ...opts })
 
 export const dateLong = iso => fmt(iso, { weekday: 'short', month: 'short', day: 'numeric' }) // Sat, Oct 31

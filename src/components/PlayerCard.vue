@@ -62,7 +62,7 @@ watch(cardPlayer, async (pl, old) => {
   log.value = player ? { player, upcoming: file.upcoming ?? [] } : null
   status.value = player ? 'ready' : 'missing'
 
-  const b = await getPlayerBio(pl.id, player?.gp ?? 0)
+  const b = await getPlayerBio(pl.id)
   if (n !== req) return
   bio.value = b && !b.error ? b : null
   bioStatus.value = bio.value ? 'ready' : 'failed'
