@@ -85,6 +85,13 @@ function onKey(e, i) {
 /* Bars cap at 58px wide so a short season doesn't draw giant bars. */
 .col { flex: 1; min-width: 0; max-width: 58px; height: 100%; display: flex; align-items: flex-end; }
 .bar { position: relative; width: 100%; min-height: 2px; border-radius: 4px 4px 1px 1px; background: var(--ln); }
+/* Switching PTS / REB / AST: bars grow or shrink into place, colour follows,
+   and the average line glides to its new height. */
+.bar { transition: height .45s cubic-bezier(.3, .7, .2, 1), background-color .3s ease; }
+.avg { transition: bottom .45s cubic-bezier(.3, .7, .2, 1); }
+@media (prefers-reduced-motion: reduce) {
+  .bar, .avg { transition: none; }
+}
 .bar.hi { background: var(--bar); }
 .val {
   position: absolute;
