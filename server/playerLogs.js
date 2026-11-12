@@ -9,7 +9,8 @@
 //   potn  Player of the Night       awards[date].night.performer
 //   potg  Player of the Game        awards[date].games[gameId].performer
 //   pts / reb / ast                 nightly league high (ties all count)
-//   stl   5+ steals      blk  3+ blocks
+//   stl   Ball Hawk, 5+ steals   blk  Rim Protector, 5+ blocks (each happens
+//         about once every night or two league-wide)
 //   dud   Dud of the Night          awards[date].night.dud
 //   dnp   on the box score but didn't play (the API gives no reason)
 //   inj   missed one of his team's games entirely while on the team; the API
@@ -93,7 +94,7 @@ function entry(p, g, aw, high) {
     if (is(aw?.games?.[g.id]?.performer)) awardKeys.push('potg')
     for (const k of ['pts', 'reb', 'ast']) if (high && p.min > 0 && p[k] > 0 && p[k] === high[k]) awardKeys.push(k)
     if (p.stl >= 5) awardKeys.push('stl')
-    if (p.blk >= 3) awardKeys.push('blk')
+    if (p.blk >= 5) awardKeys.push('blk')
     if (is(aw?.night?.dud)) awardKeys.push('dud')
   }
   e.awards = AWARD_ORDER.filter(k => awardKeys.includes(k))

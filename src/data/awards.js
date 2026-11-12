@@ -16,10 +16,10 @@ export const AWARD_TYPES = [
     glyph: '<circle cx="12" cy="4.4" r="3.1"/><path d="M3 10h18" stroke-width="2.4" stroke-linecap="round"/><path d="M5 10l2.2 11h9.6L19 10" fill="none" stroke-width="2" stroke-linejoin="round"/><path d="M9.2 10l1 11M14.8 10l-1 11M6.1 14.5h11.8M6.9 18h10.2" stroke-width="1.5"/>' },
   { key: 'ast', label: 'Top Playmaker', rule: 'Most assists in the NBA that night', tone: 'lead',
     glyph: '<circle cx="5" cy="18" r="3"/><circle cx="19" cy="18" r="3"/><path d="M6 13.5C8 6 15.5 5 18 11.5" fill="none" stroke-width="2.2" stroke-linecap="round"/><path d="M14.6 10.6l3.6 1.6 1.2-3.8" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>' },
-  { key: 'stl', label: 'Stealer (5+ STL)', rule: '5+ steals', bg: '#4C7DFF', fg: '#ffffff',
-    glyph: '<path fill-rule="evenodd" d="M1.5 10c2.3-3.6 18.7-3.6 21 0 0 4.5-3.2 7-6.8 5.9-1.7-.5-2.5-1.4-3.7-1.4s-2 .9-3.7 1.4C4.7 17 1.5 14.5 1.5 10zM5.6 10.6a2.6 1.7 0 1 0 5.2 0 2.6 1.7 0 1 0-5.2 0zM13.2 10.6a2.6 1.7 0 1 0 5.2 0 2.6 1.7 0 1 0-5.2 0z"/>' },
-  { key: 'blk', label: 'Blocker (3+ BLK)', rule: '3+ blocks', bg: '#4C7DFF', fg: '#ffffff',
-    glyph: '<rect x="2" y="3.5" width="9.2" height="5" rx=".9"/><rect x="12.8" y="3.5" width="9.2" height="5" rx=".9"/><rect x="2" y="10" width="4.2" height="5" rx=".9"/><rect x="7.8" y="10" width="8.4" height="5" rx=".9"/><rect x="17.8" y="10" width="4.2" height="5" rx=".9"/><rect x="2" y="16.5" width="9.2" height="5" rx=".9"/><rect x="12.8" y="16.5" width="9.2" height="5" rx=".9"/>' },
+  { key: 'stl', label: 'Ball Hawk', rule: '5+ steals in a game', bg: '#4C7DFF', fg: '#ffffff',
+    glyph: '<path d="M12 5.2c-1 0-1.7.8-1.8 1.7l-.5 3.4C7.1 8.4 4.3 7.4 1.2 7.7c2 1.5 3.6 3.2 4.6 5.2l-2.2.7c2.3.5 4.3.4 6-.3l.8 4.3-1.8 3.2h6.8l-1.8-3.2.8-4.3c1.7.7 3.7.8 6 .3l-2.2-.7c1-2 2.6-3.7 4.6-5.2-3.1-.3-5.9.7-8.5 2.6l-.5-3.4c-.1-.9-.8-1.7-1.8-1.7z"/>' }, // hawk
+  { key: 'blk', label: 'Rim Protector', rule: '5+ blocks in a game', bg: '#4C7DFF', fg: '#ffffff',
+    glyph: '<path fill-rule="evenodd" d="M3.4 2.6Q12 5 20.6 2.6V10.4C20.6 16.2 16.9 20 12 22.6 7.1 20 3.4 16.2 3.4 10.4ZM6.4 11.6a5.6 5.6 0 1 0 11.2 0 5.6 5.6 0 1 0-11.2 0zM8.1 11.6a3.9 3.9 0 1 0 7.8 0 3.9 3.9 0 1 0-7.8 0zM9.95 8.42L15.18 13.65 14.05 14.78 8.82 9.55z"/>' }, // shield
   { key: 'dud', label: 'Dud of the Night', rule: 'Furthest below his usual, starters / 20+ MIN', bg: '#e5484d', fg: '#ffffff',
     glyph: '<path fill-rule="evenodd" d="M2 6.5h20v11H2zM2 11.3h20v1.4H2zM8.3 6.5h1.4v4.8H8.3zM14.3 12.7h1.4v4.8h-1.4z"/>' },
   { key: 'dnp', label: 'Did not play', rule: 'On the box score, no minutes', tone: 'absent',
