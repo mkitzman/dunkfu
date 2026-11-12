@@ -68,6 +68,7 @@ const { prep, frame, status, share: onShare, prime } = useShareImage(
         :color="t?.jersey?.body ?? t?.color ?? '#646a72'"
         :trim="t?.jersey?.trim ?? sec"
         :text="t?.jersey?.text ?? null"
+        :abbr-color="t?.jersey?.abbr ?? null"
       />
       <div class="who">
         <component :is="to ? 'RouterLink' : 'div'" :to="to ?? undefined" class="name">{{ player.name }}</component>

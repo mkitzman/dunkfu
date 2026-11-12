@@ -6,6 +6,7 @@ defineProps({
   color: { type: String, required: true }, // fill (team primary)
   trim: { type: String, required: true }, // trim (team secondary or white)
   text: { type: String, default: null }, // abbr + number; defaults to trim
+  abbrColor: { type: String, default: null }, // just the abbr (e.g. DEN gold over a white number)
 })
 </script>
 
@@ -22,7 +23,7 @@ defineProps({
       <path d="M12 40 V96 M68 40 V96" :stroke="trim" stroke-width="1.6" opacity=".8" />
     </svg>
     <span class="txt" :style="{ color: text ?? trim }">
-      <span class="ab">{{ abbr }}</span>
+      <span class="ab" :style="abbrColor ? { color: abbrColor } : null">{{ abbr }}</span>
       <span class="num">{{ num }}</span>
     </span>
   </span>

@@ -141,8 +141,8 @@
     "nickname": "Pacers",
     "conference": "E",
     "division": "Central",
-    "seedColor": "#E0A52A",
-    "secondary": "#002D62",
+    "seedColor": "#002D62",
+    "secondary": "#FDBB30",
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
@@ -195,7 +195,7 @@
     "division": "Northwest",
     "seedColor": "#0C2340",
     "secondary": "#FFC72C",
-    "jersey": { "trim": "#FFFFFF", "text": "#FFFFFF" },
+    "jersey": { "trim": "#FFFFFF", "text": "#FFFFFF", "abbr": "#FFC72C" },
     "note": "verify primary/secondary at nbacolors.com"
   },
   {

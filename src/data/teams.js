@@ -4,7 +4,7 @@ const byAbbr = Object.fromEntries(
   TEAMS.map(t => [t.abbr, {
     abbr: t.abbr, city: t.city, nick: t.nickname, name: `${t.city} ${t.nickname}`,
     conference: t.conference, division: t.division, color: t.seedColor, secondary: t.secondary,
-    jersey: t.jersey ?? null, // optional { body, trim, text } when the uniform differs from the brand colours
+    jersey: t.jersey ?? null, // optional { body, trim, text, abbr } when the uniform differs from the brand colours
     accentOverride: t.accent ?? null, // optional: use instead of the secondary as the site's accent
   }]),
 )
