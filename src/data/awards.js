@@ -7,7 +7,7 @@
 // Glyphs are 24×24 single-colour SVG markup (fill / stroke = currentColor).
 export const AWARD_TYPES = [
   { key: 'potn', label: 'Player of the Night', rule: 'Top Game Score of the night, all games', bg: '#F26B21', fg: '#ffffff',
-    glyph: '<path d="M9 13h6v8H9zM2 16h6v5H2zM16 18h6v3h-6z"/><path d="M12 2.6l1.4 2.9 3.2.4-2.3 2.2.6 3.1L12 9.7l-2.9 1.5.6-3.1-2.3-2.2 3.2-.4z"/>' },
+    glyph: '<path d="M3.2 8.2l4.5 4L12 5.6l4.3 6.6 4.5-4-1.7 9.6H4.9z"/><rect x="4.9" y="19" width="14.2" height="2.4" rx=".9"/><circle cx="3.2" cy="7.4" r="1.7"/><circle cx="12" cy="4.4" r="1.8"/><circle cx="20.8" cy="7.4" r="1.7"/>' }, // crown
   { key: 'potg', label: 'Player of the Game', rule: 'Top Game Score in his game', bg: '#F5B83D', fg: '#2b1d00',
     glyph: '<path d="M12 2.5l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3 1.1-6.5L2.6 9.3l6.5-.9z"/>' },
   { key: 'pts', label: 'Top Scorer', rule: 'Most points in the NBA that night', tone: 'lead',
