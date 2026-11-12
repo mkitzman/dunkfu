@@ -195,7 +195,7 @@
     "division": "Northwest",
     "seedColor": "#0C2340",
     "secondary": "#FFC72C",
-    "jersey": { "trim": "#FFFFFF", "text": "#FFFFFF", "abbr": "#FFC72C" },
+    "jersey": { "trim": "#862633", "text": "#FFFFFF", "abbr": "#FFC72C" },
     "note": "verify primary/secondary at nbacolors.com"
   },
   {
