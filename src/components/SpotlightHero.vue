@@ -6,7 +6,7 @@ import BrandLockup from './BrandLockup.vue'
 import JerseyMark from './JerseyMark.vue'
 import PlayerButton from './PlayerButton.vue'
 import StatTrio from './StatTrio.vue'
-import { team, accent, darken, alpha } from '../data/teams.js'
+import { team, accent, accentText, darken, alpha } from '../data/teams.js'
 import { useShareImage } from '../composables/useShare.js'
 import { statLine } from './spotlight.js'
 
@@ -25,6 +25,8 @@ const style = computed(() => {
   return {
     '--team': c,
     '--sec': sec.value,
+    // The label sits over the dark left end of the gradient.
+    '--sec-text': accentText(props.player.abbr, darken(c, .7)),
     '--bg': `linear-gradient(120deg, ${darken(c, .55)} 0%, ${c} 55%, ${darken(c, .85)} 100%)`,
     '--glow': alpha(sec.value, .12),
     '--wm': alpha(sec.value, .1),
@@ -143,7 +145,7 @@ const { prep, frame, status, share: onShare, prime } = useShareImage(
   font: 600 11px/1 var(--mono);
   letter-spacing: .16em;
   text-transform: uppercase;
-  color: var(--sec);
+  color: var(--sec-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

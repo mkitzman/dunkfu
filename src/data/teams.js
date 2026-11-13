@@ -65,6 +65,12 @@ export function accent(abbr) {
   return s && lum(s) >= 0.04 ? s : '#ffffff'
 }
 
+// The accent as small text on a team-colour background: nudged toward white
+// until it reads at 4.5:1 on `bg` (DET blue on red, PHI red on blue...).
+export function accentText(abbr, bg) {
+  return readable(accent(abbr), bg, '#ffffff')
+}
+
 // Multiply a hex colour's channels by f (0..1).
 export function darken(hex, f) {
   return '#' + rgb(hex).map(v => Math.round(v * f).toString(16).padStart(2, '0')).join('')

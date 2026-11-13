@@ -6,7 +6,7 @@
 import { ref, computed, watch, nextTick, onMounted, onBeforeUnmount, useId } from 'vue'
 import { cardPlayer, closePlayer } from '../composables/usePlayerCard.js'
 import { getTeamLog, getPlayerBio } from '../api/index.js'
-import { team, accent, darken, alpha } from '../data/teams.js'
+import { team, accent, accentText, darken, alpha } from '../data/teams.js'
 import { useTheme } from '../composables/useTheme.js'
 import JerseyMark from './JerseyMark.vue'
 import StatTrio from './StatTrio.vue'
@@ -96,6 +96,7 @@ const teamStyle = computed(() => {
   return {
     '--tc': c,
     '--sec': sec,
+    '--sec-text': accentText(p.value?.abbr, c),
     '--tgrad': `linear-gradient(160deg, ${darken(c, 0.5)} 0%, ${c} 55%, color-mix(in srgb, ${c} 82%, #fff) 100%)`,
     '--wm': alpha(sec, 0.09),
   }
@@ -374,7 +375,7 @@ onBeforeUnmount(() => { mq.removeEventListener('change', onMq); io?.disconnect()
 }
 .bio-t .vit :deep(.row:first-child) { border-top: 0; }
 .aw-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
-.aw-head h3 { margin: 0; font: 600 10px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--sec); }
+.aw-head h3 { margin: 0; font: 600 10px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--sec-text); }
 .aw-head span { font: 400 10px var(--mono); opacity: .7; }
 
 /* ---------- game log column ---------- */
