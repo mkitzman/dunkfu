@@ -70,4 +70,6 @@ export function darken(hex, f) {
   return '#' + rgb(hex).map(v => Math.round(v * f).toString(16).padStart(2, '0')).join('')
 }
 
+export const luminance = lum
+
 export const alpha = (hex, a) => `rgb(${rgb(hex).join(' ')} / ${a})`

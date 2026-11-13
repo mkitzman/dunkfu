@@ -53,7 +53,7 @@ const sides = computed(() => {
       <span v-for="l in qLabels" :key="l" class="ql">{{ l }}</span>
       <template v-for="s in sides" :key="s.abbr">
         <div class="team" :class="{ won: s.won }">
-          <span class="mk" :class="{ 'is-fav': s.abbr === fav }"><TeamMark :abbr="s.abbr" round :size="30" :font-size="8" /></span>
+          <span class="mk" :class="{ 'is-fav': s.abbr === fav }"><TeamMark :abbr="s.abbr" :size="30" :font-size="8" /></span>
           <div class="tn">
             <div class="nick"><span class="full">{{ s.nick }}</span><span class="ab">{{ s.abbr }}</span></div>
           </div>
@@ -71,7 +71,7 @@ const sides = computed(() => {
     </div>
     <div class="sched">
       <div v-for="s in sides" :key="s.abbr" class="srow">
-        <span class="mk" :class="{ 'is-fav': s.abbr === fav }"><TeamMark :abbr="s.abbr" round :size="30" :font-size="8" /></span>
+        <span class="mk" :class="{ 'is-fav': s.abbr === fav }"><TeamMark :abbr="s.abbr" :size="30" :font-size="8" /></span>
         <div class="tn">
           <div class="nick">{{ s.nick }}</div>
           <div class="ctx">{{ s.ctx }}</div>
@@ -120,7 +120,7 @@ a.game:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
 a.game.fav:hover { border-color: var(--ta); }
 .right { display: flex; gap: 12px; }
 .yours { color: var(--ta); font-weight: 600; letter-spacing: .12em; }
-.mk { position: relative; display: inline-flex; flex: none; border-radius: 50%; }
+.mk { position: relative; display: inline-flex; flex: none; border-radius: calc(var(--mark-size, 30px) * .29); }
 .mk.is-fav { box-shadow: 0 0 0 2px var(--ta); }
 .mk.is-fav::after {
   content: '★';
@@ -186,7 +186,7 @@ a.game.fav:hover { border-color: var(--ta); }
 a.game.fav:hover { border-color: var(--ta); }
 .right { display: flex; gap: 12px; }
 .yours { color: var(--ta); font-weight: 600; letter-spacing: .12em; }
-.mk { position: relative; display: inline-flex; flex: none; border-radius: 50%; }
+.mk { position: relative; display: inline-flex; flex: none; border-radius: calc(var(--mark-size, 30px) * .29); }
 .mk.is-fav { box-shadow: 0 0 0 2px var(--ta); }
 .mk.is-fav::after {
   content: '★';

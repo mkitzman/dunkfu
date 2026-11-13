@@ -177,7 +177,7 @@ const allPlayers = computed(() => hasBox.value
         <div class="content">
           <div class="teams">
             <div v-for="s in sides" :key="s.abbr" class="trow" :class="{ won: s.won }">
-              <TeamMark :abbr="s.abbr" :size="60" :radius="10" :font-size="16" />
+              <TeamMark :abbr="s.abbr" :size="60" :font-size="16" />
               <div class="tn">
                 <h2 class="name"><span class="full">{{ s.name }}</span><span class="nick">{{ s.nick }}</span></h2>
                 <div class="ctx">{{ s.ctx }}</div>
@@ -447,7 +447,6 @@ const allPlayers = computed(() => hasBox.value
     gap: 10px;
     padding: 14px;
     --mark-size: 40px;
-    --mark-r: 8px;
     --mark-fs: 12px;
   }
   .teams { gap: 12px; }

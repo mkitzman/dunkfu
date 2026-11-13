@@ -197,7 +197,7 @@ const tone = v => (v > 0 ? 'pos' : v < 0 ? 'neg' : '')
                   <td>
                     <div class="team">
                       <SeedMark :seed="t.seed" :label="t.rank" :status="t.seedStatus" />
-                      <TeamMark :abbr="t.abbr" :size="26" :radius="6" :font-size="9" />
+                      <TeamMark :abbr="t.abbr" :size="26" :font-size="9" />
                       <span class="name"><span class="full">{{ t.name }}</span><span class="nick">{{ t.nick }}</span><span v-if="isFav(t.abbr)" class="fav-star" aria-label="Your team">★</span></span>
                       <span v-if="g.tag" class="tag">{{ g.tag(t) }}</span>
                     </div>
@@ -315,7 +315,7 @@ table.stats {
   table.stats tbody tr.fav > td { background: color-mix(in oklch, var(--tc) var(--fav-mix), var(--bg)); }
   .card { border-left: 0; border-right: 0; border-bottom: 0; border-radius: 0; background: transparent; }
 
-  .team { gap: 8px; --mark-size: 24px; --mark-r: 5px; --mark-fs: 8px; }
+  .team { gap: 8px; --mark-size: 24px; --mark-fs: 8px; }
   .name { font-size: 12px; }
   .full, .tag { display: none; }
   .nick { display: inline; }

@@ -29,7 +29,7 @@ const pcts = computed(() => ['', '', pct(sum('fgm'), sum('fga')), pct(sum('tpm')
 <template>
   <div class="tbox" :style="{ '--team': team.color }">
     <div class="head">
-      <TeamMark :abbr="team.abbr" :size="28" :radius="6" :font-size="10" />
+      <TeamMark :abbr="team.abbr" :size="28" :font-size="10" />
       <h2>{{ team.name }}</h2>
     </div>
     <div class="table-wrap">
@@ -117,7 +117,7 @@ table.stats {
 
 @media (max-width: 720px) {
   .tbox { border-left: 0; border-right: 0; border-top-width: 3px; }
-  .head { padding: 8px var(--gutter); gap: 8px; --mark-size: 24px; --mark-r: 5px; --mark-fs: 9px; }
+  .head { padding: 8px var(--gutter); gap: 8px; --mark-size: 24px; --mark-fs: 9px; }
   .head h2 { font-size: 13px; }
   table.stats {
     & th:first-child, & td:first-child { max-width: 140px; padding-left: var(--gutter); }
