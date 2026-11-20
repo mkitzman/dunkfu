@@ -58,11 +58,13 @@ watch(cardPlayer, async (pl, old) => {
 
   const file = await getTeamLog(pl.abbr)
   if (n !== req) return
-  const player = file?.players?.[pl.id] ?? null
+  // Box scores from before the API renumbered players carry old ids; the logs
+  // use the newest id, so fall back to the name.
+  const player = file?.players?.[pl.id] ?? Object.values(file?.players ?? {}).find(x => x.name === pl.name) ?? null
   log.value = player ? { player, upcoming: file.upcoming ?? [] } : null
   status.value = player ? 'ready' : 'missing'
 
-  const b = await getPlayerBio(pl.id)
+  const b = await getPlayerBio(player?.id ?? pl.id)
   if (n !== req) return
   bio.value = b && !b.error ? b : null
   bioStatus.value = bio.value ? 'ready' : 'failed'

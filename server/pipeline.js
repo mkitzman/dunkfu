@@ -278,12 +278,23 @@ export async function refresh({ store, key, deadline = Infinity, log = console.l
   // (upcoming games change daily). Awards are cheap to compute; they're only
   // saved when something changed.
   const days = await pool(lineKeys, 20, k => store.get(k))
+  // The API renumbered every player on 2026-11-18 (Wembanyama 76563422 → 377),
+  // which split each season in two. Names are unique, so every line takes the
+  // id of that player's latest line; nights whose ids change are saved back.
+  const latestId = {}
+  for (const day of days) for (const p of day ?? []) latestId[p.name] = p.id
+  let idsChanged = false
+  await pool(lineKeys, 10, async (k, i) => {
+    let changed = false
+    for (const p of days[i] ?? []) if (p.id !== latestId[p.name]) { p.id = latestId[p.name]; changed = true }
+    if (changed) { idsChanged = true; await store.set(k, days[i]) }
+  })
   const awards = computeAwards(lineKeys.map((k, i) => ({ date: k.slice(-15, -5), lines: days[i] })))
   const dayLines = Object.fromEntries(lineKeys.map((k, i) => [k.slice(-15, -5), days[i] ?? []]))
   const teamLogs = buildTeamLogs({ dayLines, awards, games: games.map(strip), today })
   await pool(Object.values(teamLogs), 10, t => store.set(`data/teams/${t.abbr}.json`, t))
 
-  if (linesChanged || awardsStale || awardsMissing || !(await store.get('data/averages.json'))) {
+  if (linesChanged || idsChanged || awardsStale || awardsMissing || !(await store.get('data/averages.json'))) {
     // Don't save an empty day (lines not readable yet); the next run sees it as missing.
     const filled = Object.entries(awards).filter(([, a]) => a.night.performer)
     await pool(filled, 10, ([d, a]) => store.set(`data/awards/${d}.json`, a))
