@@ -12,12 +12,14 @@
 //   games and 20+ minutes tonight (so early exits and deep-bench players
 //   aren't picked), and only for a
 //   genuinely poor night: Game Score under 15 and at least 5 points or 25%
-//   below expectation (so a 22/9/11 night just under a high bar isn't a dud).
+//   below expectation (so a 22/9/11 night just under a high bar isn't a dud),
+//   and never with 10+ rebounds or 10+ assists (fans read that as a good night,
+//   e.g. Naz Reid's 12/10/3 on 4-19 shooting).
 //   If nobody qualifies there is no dud.
 //
 // Bump VERSION whenever the formulas change so stored awards are recomputed.
 
-export const VERSION = 5
+export const VERSION = 6
 
 const MIN_MINUTES = 20
 const MIN_PRIOR_GAMES = 3
@@ -26,6 +28,7 @@ const BEAT_AVG_WEIGHT = 0.1
 const DUD_MAX_GAME_SCORE = 15 // a 15+ Game Score is a good night, never a dud
 const DUD_MIN_SHORTFALL = 5 // Game Score points below expectation...
 const DUD_MIN_SHORTFALL_PCT = 0.25 // ...or this fraction below it
+const DUD_SAFE_REB_AST = 10 // 10+ rebounds or assists is never a dud
 
 const r1 = n => Math.round(n * 10) / 10
 
@@ -77,6 +80,7 @@ function dud(rows) {
     if (r.exp == null || r.p.min < MIN_MINUTES) return false
     if (!r.p.starter && r.avg < MIN_AVG_GAME_SCORE) return false
     if (r.gs >= DUD_MAX_GAME_SCORE) return false
+    if (r.p.reb >= DUD_SAFE_REB_AST || r.p.ast >= DUD_SAFE_REB_AST) return false
     const short = r.exp - r.gs
     return short >= DUD_MIN_SHORTFALL || short >= DUD_MIN_SHORTFALL_PCT * r.exp
   })

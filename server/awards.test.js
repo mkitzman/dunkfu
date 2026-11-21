@@ -35,6 +35,11 @@ test('a bench player with a low average is never the dud: no dud that night', ()
   assert.equal(dudAfter(3, { ...bench, starter: false }, { ...AWFUL, starter: false }), null)
 })
 
+test('10+ rebounds is never a dud, however poor the shooting', () => {
+  // Naz Reid, Nov 20: 12/10/3 on 4-19, Game Score 0.4
+  assert.equal(dudAfter(3, SOLID, { ...AWFUL, min: 39, pts: 12, fgm: 4, fga: 19, ftm: 2, fta: 4, reb: 10, dreb: 10, ast: 3, pf: 5 }), null)
+})
+
 test('fewer than 3 earlier games: never a dud', () => {
   assert.equal(dudAfter(2, SOLID, AWFUL), null)
 })
