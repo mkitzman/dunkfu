@@ -40,7 +40,7 @@ const { prep, frame, status, share: onShare, prime } = useShareImage(
 </script>
 
 <template>
-  <section class="dud-c" :aria-label="label" :title="tip" @pointerenter="prime" @focusin="prime" @touchstart.passive="prime">
+  <section class="dud-c share-host" :aria-label="label" :title="tip" @pointerenter="prime" @focusin="prime" @touchstart.passive="prime">
     <div class="dud">
       <header class="head">
         <div class="brand">

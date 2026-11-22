@@ -1,6 +1,7 @@
 <script setup>
 // Every award type in order with his count; 0s muted but still listed
-// (a 0 Dud or 0 DNP is information).
+// (a 0 Dud or 0 DNP is information). Each rule is shown under its name, so
+// it reads on phones and with a keyboard (no hover tooltips).
 import AwardBadge from './AwardBadge.vue'
 import { shortDate } from './playerCard.js'
 defineProps({
@@ -12,10 +13,11 @@ defineProps({
 
 <template>
   <ul class="awards" :class="{ withDates: dates }">
-    <li v-for="a in awards" :key="a.key" class="row" :class="{ zero: !a.count }" :title="a.rule">
+    <li v-for="a in awards" :key="a.key" class="row" :class="{ zero: !a.count }">
       <AwardBadge :award="a.key" size="L" :surface="surface" decorative />
       <span class="what">
         <span class="label">{{ a.label }}</span>
+        <span class="rule">{{ a.rule }}</span>
         <span v-if="dates" class="when">{{ a.dates.length ? a.dates.slice().reverse().map(shortDate).join(' · ') : '—' }}</span>
       </span>
       <span class="count"><span class="sr-only">: </span>{{ a.count }}</span>
@@ -25,9 +27,10 @@ defineProps({
 
 <style scoped>
 .awards { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
-.row { display: grid; grid-template-columns: 32px 1fr auto; align-items: center; gap: 12px; cursor: help; }
+.row { display: grid; grid-template-columns: 32px 1fr auto; align-items: center; gap: 12px; }
 .what { min-width: 0; display: grid; }
 .label { font: 600 13px/1.25 var(--sans); }
+.rule { font: 400 11.5px/1.35 var(--sans); opacity: .72; margin-top: 1px; }
 .when { font: 400 10px var(--mono); color: var(--mu); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
 .count { font: 800 18px/1 var(--sans); font-variant-numeric: tabular-nums; }
 .zero .count { opacity: .5; }

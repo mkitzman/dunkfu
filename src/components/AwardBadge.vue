@@ -3,6 +3,7 @@
 //   size: XL (Dud module) 46px · L (lists) 32px · H (award card headers) 28px
 //         M (desktop game log) 24px · S (mobile game log) 22px
 //   surface: 'neutral' (follows the page theme) or 'team' (on team colours)
+// No title tooltip: rules are shown by AwardStack's panel and AwardsList.
 import { computed } from 'vue'
 import { AWARD } from '../data/awards.js'
 
@@ -24,7 +25,6 @@ const style = computed(() => (a.value.bg ? { '--b': a.value.bg, '--f': a.value.f
     :role="decorative ? undefined : 'img'"
     :aria-label="decorative ? undefined : a.label"
     :aria-hidden="decorative ? 'true' : undefined"
-    :title="`${a.label}: ${a.rule}`"
   ><svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="0" aria-hidden="true" v-html="a.glyph"></svg></span>
 </template>
 
@@ -39,7 +39,6 @@ const style = computed(() => (a.value.bg ? { '--b': a.value.bg, '--f': a.value.f
   height: var(--sz);
   border-radius: var(--r);
   background: var(--b);
-  cursor: help; /* the title explains the award */
   color: var(--f);
 
   /* Dashed "stitch" inset in the glyph colour at 55% */

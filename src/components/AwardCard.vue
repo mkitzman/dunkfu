@@ -6,6 +6,7 @@ import { computed } from 'vue'
 import AwardBadge from './AwardBadge.vue'
 import PlayerButton from './PlayerButton.vue'
 import ShareButton from './ShareButton.vue'
+import HelpPopover from './HelpPopover.vue'
 import { team, chipStyle } from '../data/teams.js'
 import { AWARD } from '../data/awards.js'
 import { useShareImage } from '../composables/useShare.js'
@@ -16,7 +17,7 @@ const props = defineProps({
   value: { type: [Number, String], required: true },
   unit: { type: String, required: true }, // PTS, TRUE SHOOTING, STL, BLK
   detail: { type: String, default: '' }, // after the unit, same line
-  unitTitle: { type: String, default: '' }, // tooltip explaining the unit
+  unitTitle: { type: String, default: '' }, // explains the unit, in a ? popup
   capture: Boolean,
 })
 
@@ -36,7 +37,7 @@ const { prep, frame, status, share: onShare, prime } = useShareImage(
 </script>
 
 <template>
-  <section class="card-c" :aria-label="title" @pointerenter="prime" @focusin="prime" @touchstart.passive="prime">
+  <section class="card-c share-host" :aria-label="title" @pointerenter="prime" @focusin="prime" @touchstart.passive="prime">
     <div class="acard">
       <header class="head">
         <AwardBadge :award="award" size="H" decorative />
@@ -53,7 +54,7 @@ const { prep, frame, status, share: onShare, prime } = useShareImage(
       </div>
       <div class="stat">
         <div class="v">{{ value }}</div>
-        <div class="l"><abbr v-if="unitTitle" class="u" :title="unitTitle">{{ unit }}</abbr><span v-else class="u">{{ unit }}</span><template v-if="detail"><span class="u-sep"> · </span>{{ detail }}</template></div>
+        <div class="l"><span class="u">{{ unit }}</span><HelpPopover v-if="unitTitle && !capture" :label="`What is ${unit.toLowerCase()}?`" class="uq">{{ unitTitle }}</HelpPopover><template v-if="detail"><span class="u-sep"> · </span>{{ detail }}</template></div>
       </div>
     </div>
 
@@ -133,7 +134,9 @@ const { prep, frame, status, share: onShare, prime } = useShareImage(
   overflow: hidden;
   text-overflow: ellipsis;
 }
-abbr.u { text-decoration: none; cursor: help; }
+.uq { margin: -4px 2px -4px 6px; }
+.uq :deep(.q) { width: 16px; height: 16px; font-size: 9.5px; letter-spacing: 0; }
+.uq :deep(.panel) { font: 400 12px/1.45 var(--sans); letter-spacing: 0; color: var(--fg); white-space: normal; max-width: 260px; }
 /* Narrow card: drop the unit word before the shooting line would wrap. */
 @container acard (max-width: 230px) {
   .l:has(.u-sep) .u, .l .u-sep { display: none; }

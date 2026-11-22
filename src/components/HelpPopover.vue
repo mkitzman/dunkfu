@@ -1,62 +1,74 @@
 <script setup>
-// "?" button that opens a small panel (slot) below it. Closes on Escape,
-// an outside click or a second press.
-import { ref, nextTick, onBeforeUnmount, useId } from 'vue'
+// Click-to-open "toggletip": a button that opens a small panel (slot).
+// Built on the native popover API, so the panel sits in the top layer (never
+// clipped by a scrolling table or the player card dialog) and closes on
+// Escape, an outside click or a second press for free. Opens on click / tap /
+// Enter only, never on hover, so it works the same with touch and keyboard.
+//
+//   default slot  panel content
+//   trigger slot  what the button shows (default: a "?" circle)
+import { ref, useId, onBeforeUnmount } from 'vue'
 
-defineProps({ label: { type: String, default: 'Help' } })
+defineProps({ label: { type: String, default: 'Help' } }) // button + panel name
 
-const open = ref(false)
-const root = ref(null)
+const id = useId()
 const btn = ref(null)
 const panel = ref(null)
-const shift = ref(0) // px left, to keep the panel on screen
-const id = useId()
+const open = ref(false)
+const pos = ref({})
 
-function onDoc(e) {
-  if (!root.value?.contains(e.target)) close()
+const GAP = 10, EDGE = 12
+
+function place() {
+  const b = btn.value.getBoundingClientRect()
+  const p = panel.value.getBoundingClientRect()
+  const vw = document.documentElement.clientWidth, vh = document.documentElement.clientHeight
+  const left = Math.max(EDGE, Math.min(b.left, vw - p.width - EDGE))
+  const below = b.bottom + GAP + p.height <= vh - EDGE || b.top - GAP - p.height < EDGE
+  pos.value = {
+    left: `${left}px`,
+    top: `${below ? b.bottom + GAP : b.top - GAP - p.height}px`,
+    '--notch': `${Math.min(Math.max(b.left + Math.min(b.width, 20) / 2 - left, 12), p.width - 12)}px`,
+  }
+  panel.value.dataset.side = below ? 'below' : 'above'
 }
-function onKey(e) {
-  if (e.key === 'Escape') { close(); btn.value?.focus() }
+
+// The panel is fixed to the viewport; close it rather than let it drift.
+const hide = () => panel.value?.hidePopover?.()
+function onToggle(e) {
+  open.value = e.newState === 'open'
+  if (open.value) {
+    place()
+    addEventListener('scroll', hide, { capture: true, passive: true })
+    addEventListener('resize', hide)
+  } else {
+    delete panel.value.dataset.side
+    removeEventListener('scroll', hide, { capture: true })
+    removeEventListener('resize', hide)
+  }
 }
-function close() {
-  open.value = false
-  document.removeEventListener('pointerdown', onDoc)
-  document.removeEventListener('keydown', onKey)
-}
-function toggle() {
-  if (open.value) return close()
-  open.value = true
-  shift.value = 0
-  nextTick(() => {
-    const r = panel.value.getBoundingClientRect()
-    const over = r.right - (document.documentElement.clientWidth - 12)
-    if (over > 0) shift.value = Math.min(over, r.left - 12)
-  })
-  document.addEventListener('pointerdown', onDoc)
-  document.addEventListener('keydown', onKey)
-}
-onBeforeUnmount(close)
+onBeforeUnmount(() => { removeEventListener('scroll', hide, { capture: true }); removeEventListener('resize', hide) })
 </script>
 
 <template>
-  <span ref="root" class="help">
+  <span class="help">
     <button
       ref="btn"
       type="button"
-      class="q"
+      :class="$slots.trigger ? 'trig' : 'q'"
       :aria-label="label"
       :aria-expanded="open"
       :aria-controls="id"
-      @click="toggle"
-    >?</button>
-    <div v-show="open" ref="panel" :id="id" class="panel" :style="{ '--shift': `${shift}px`, transform: shift ? `translateX(${-shift}px)` : null }" role="region" :aria-label="label">
+      :popovertarget="id"
+    ><slot name="trigger">?</slot></button>
+    <div :id="id" ref="panel" popover="auto" class="panel" :style="pos" role="region" :aria-label="label" @toggle="onToggle">
       <slot />
     </div>
   </span>
 </template>
 
 <style scoped>
-.help { position: relative; display: inline-flex; vertical-align: middle; }
+.help { display: inline-flex; vertical-align: middle; }
 .q {
   width: 20px;
   height: 20px;
@@ -71,39 +83,54 @@ onBeforeUnmount(close)
   cursor: pointer;
 
   &:hover, &[aria-expanded="true"] { color: var(--fg); border-color: var(--mu); }
-  &:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
 }
+/* Custom trigger (e.g. an award badge stack): no chrome of its own. */
+.trig {
+  display: inline-flex;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  border-radius: 8px;
+}
+.q:focus-visible, .trig:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
 /* Bigger tap target without a bigger circle */
 @media (pointer: coarse) {
   .q { position: relative; }
   .q::after { content: ''; position: absolute; inset: -12px; }
 }
 .panel {
-  position: absolute;
-  top: calc(100% + 10px);
-  left: 0;
-  z-index: 10;
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  overflow: visible;
   width: max-content;
-  max-width: calc(100vw - 2 * var(--gutter));
+  max-width: min(340px, calc(100vw - 24px));
   padding: 14px 16px;
   background: var(--sf);
+  color: var(--fg);
   border: 1px solid var(--ln);
   border-radius: 10px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
   text-align: left;
+  white-space: normal;
 
-  /* Notch pointing up at the button (moves with any on-screen shift). */
+  /* Hidden until placed next to the button (toggle fires after the first paint). */
+  &:not([data-side]) { visibility: hidden; }
+
+  /* Notch pointing at the button. */
   &::before {
     content: '';
     position: absolute;
-    top: -6px;
-    left: calc(10px - 5px + var(--shift, 0px));
+    left: calc(var(--notch, 16px) - 5px);
     width: 10px;
     height: 10px;
     background: var(--sf);
-    border-left: 1px solid var(--ln);
-    border-top: 1px solid var(--ln);
     transform: rotate(45deg);
   }
+  &[data-side="below"]::before { top: -6px; border-left: 1px solid var(--ln); border-top: 1px solid var(--ln); }
+  &[data-side="above"]::before { bottom: -6px; border-right: 1px solid var(--ln); border-bottom: 1px solid var(--ln); }
 }
 </style>

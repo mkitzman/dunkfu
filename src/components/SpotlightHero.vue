@@ -52,7 +52,7 @@ const { prep, frame, status, share: onShare, prime } = useShareImage(
 </script>
 
 <template>
-  <section class="hero" :style="style" :aria-label="label" :title="`Game Score ${player.gs}`" @pointerenter="prime" @focusin="prime" @touchstart.passive="prime">
+  <section class="hero share-host" :style="style" :aria-label="label" :title="`Game Score ${player.gs}`" @pointerenter="prime" @focusin="prime" @touchstart.passive="prime">
     <span class="wm wm-a" aria-hidden="true"></span>
     <span class="wm wm-b" aria-hidden="true"></span>
 

@@ -1,15 +1,39 @@
 <script setup>
+// Top 3 in one stat. Header matches the award cards (rev 6): badge, title,
+// share (the card captured as an image, like the award modules).
 import PlayerButton from './PlayerButton.vue'
+import AwardBadge from './AwardBadge.vue'
+import ShareButton from './ShareButton.vue'
 import { isFav, favStyle } from '../composables/useFavorite.js'
-defineProps({
+import { useShareImage } from '../composables/useShare.js'
+
+const props = defineProps({
   label: { type: String, required: true },
+  award: { type: String, required: true }, // pts / reb / ast
   leaders: { type: Array, required: true }, // [{ key, name, short, num, abbr, color, value, sub }]
+  capture: Boolean, // the off-screen copy rendered for the share image
 })
+
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+const { prep, frame, status, share: onShare, prime } = useShareImage(
+  () => `${props.label}|${props.leaders.map(p => p.key).join(',')}`,
+  () => ({
+    title: `${props.label} leaders`,
+    text: `${props.label} leaders: ${props.leaders.map((p, i) => `${i + 1}. ${p.name} ${p.value}`).join(', ')} · dunkfu`,
+    filename: `dunkfu-${slug(props.label)}-leaders.png`,
+  }),
+  !props.capture,
+)
 </script>
 
 <template>
-  <div class="leader-card">
-    <h2>{{ label }}</h2>
+  <div class="leader-card share-host" @pointerenter="prime" @focusin="prime" @touchstart.passive="prime">
+    <header class="head">
+      <AwardBadge :award="award" size="H" decorative />
+      <h2>{{ label }}</h2>
+      <ShareButton v-if="!capture" :label="`Share ${label.toLowerCase()} leaders`" :status="status" @click="onShare" />
+      <span v-else class="site">dunkfu.com</span>
+    </header>
     <ol>
       <li v-for="(p, i) in leaders" :key="p.key" :class="{ first: i === 0, fav: isFav(p.abbr) }" :style="isFav(p.abbr) ? favStyle(p.abbr) : null">
         <span class="rank">{{ i + 1 }}</span>
@@ -23,6 +47,12 @@ defineProps({
         <span class="value">{{ p.value }}</span>
       </li>
     </ol>
+
+    <Teleport v-if="prep" to="body">
+      <div ref="frame" class="shot" aria-hidden="true" inert>
+        <LeaderCard capture :label="label" :award="award" :leaders="leaders" />
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -31,15 +61,31 @@ defineProps({
   background: var(--sf);
   border: 1px solid var(--ln);
   border-radius: var(--radius);
-  padding: 16px 18px 10px;
+  padding: 12px 18px 10px;
 }
+.shot {
+  position: fixed;
+  left: -10000px;
+  top: 0;
+  width: 420px;
+  padding: 20px;
+  background: var(--bg);
+  pointer-events: none;
+}
+.head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; min-width: 0; }
 h2 {
-  font: 500 11px var(--mono);
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font: 600 10px/1 var(--mono);
   letter-spacing: .12em;
   text-transform: uppercase;
-  color: var(--mu);
-  margin: 0 0 12px;
+  color: var(--fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+.site { flex: none; font: 500 10px/1 var(--mono); letter-spacing: .06em; color: var(--mu); }
 ol { list-style: none; margin: 0; padding: 0; }
 li {
   display: grid;
@@ -90,7 +136,7 @@ li.fav + li { border-top-color: transparent; }
 
 @media (max-width: 720px) {
   .leader-card { padding: 12px 14px 6px; }
-  h2 { font-size: 10px; margin-bottom: 8px; }
+  .head { margin-bottom: 8px; }
   li { gap: 10px; padding: 7px 0; }
   /* Favourite team's player: tinted entry bleeding slightly past the card padding. */
 li.fav {

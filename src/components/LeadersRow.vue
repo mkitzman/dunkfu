@@ -21,6 +21,7 @@ const CATS = [
 // Ties go to more minutes.
 const cards = computed(() => CATS.map(([label, key, sub]) => ({
   label,
+  award: key, // pts / reb / ast badge
   list: props.players.slice().sort((a, b) => b[key] - a[key] || b.min - a.min).slice(0, 3).map(p => {
     const color = p.color ?? team(p.abbr)?.color ?? '#646a72'
     return { key: `${p.abbr}-${p.name}`, id: p.id, pos: p.pos, name: p.name, short: shortName(p.name), num: p.num, abbr: p.abbr, color, value: p[key], sub: sub(p) }
@@ -31,7 +32,7 @@ const cards = computed(() => CATS.map(([label, key, sub]) => ({
 <template>
   <section :aria-label="label">
     <div class="leaders">
-      <LeaderCard v-for="c in cards" :key="c.label" :label="c.label" :leaders="c.list" />
+      <LeaderCard v-for="c in cards" :key="c.label" :label="c.label" :award="c.award" :leaders="c.list" />
     </div>
   </section>
 </template>
