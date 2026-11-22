@@ -152,7 +152,7 @@ function dayPill(step) {
         <div v-if="!isResults" class="section-head">
           <h2>Season averages, players in action</h2>
         </div>
-        <PlayerTable :players="players" :averages="!isResults" />
+        <PlayerTable :players="players" :averages="!isResults" :awards="isResults ? awards?.players ?? null : null" />
       </section>
     </div>
   </div>

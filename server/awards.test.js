@@ -2,7 +2,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { computeAwards } from './awards.js'
-import { buildTeamLogs } from './playerLogs.js'
+import { buildTeamLogs, nightPlayerAwards } from './playerLogs.js'
 
 const ZERO = { min: 0, pts: 0, fgm: 0, fga: 0, tpm: 0, tpa: 0, ftm: 0, fta: 0, oreb: 0, dreb: 0, reb: 0, ast: 0, stl: 0, blk: 0, to: 0, pf: 0, pm: 0 }
 const line = (id, s) => ({ ...ZERO, id, name: `P${id}`, abbr: 'AAA', gameId: 'g', starter: true, ...s })
@@ -73,6 +73,12 @@ test('Ball Hawk needs 5+ steals; nobody qualifying means no card', () => {
   const night = l => computeAwards([{ date: '2026-11-09', lines: l }])['2026-11-09'].night
   assert.equal(night([line(1, { ...SOLID, stl: 4 })]).ballHawk, null)
   assert.equal(night([line(1, { ...SOLID, stl: 5 }), line(2, { ...SOLID, stl: 6 })]).ballHawk.id, 2)
+})
+
+test('the day table gets each player\'s awards, same rules as the game log', () => {
+  const lines = [line(1, { ...SOLID, pts: 40, fgm: 15, fga: 25, blk: 5 }), line(2, { ...SOLID, reb: 14 }), line(3, SOLID)]
+  const aw = computeAwards([{ date: '2026-11-09', lines }])['2026-11-09']
+  assert.deepEqual(nightPlayerAwards(lines, aw), { 1: ['potn', 'potg', 'pts', 'ast', 'blk', 'bricklayer'], 2: ['reb', 'ast'], 3: ['ast'] })
 })
 
 test('fewer than 3 earlier games: never a dud', () => {

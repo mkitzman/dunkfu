@@ -31,12 +31,7 @@ export function buildTeamLogs({ dayLines, awards, games, today }) {
   const finals = games.filter(g => g.status === 'final').sort((a, b) => a.tipUtc.localeCompare(b.tipUtc))
   const gameById = Object.fromEntries(finals.map(g => [g.id, g]))
 
-  // Nightly league highs (players who played).
-  const highs = {}
-  for (const [date, lines] of Object.entries(dayLines)) {
-    const played = (lines ?? []).filter(p => !p.dnp && p.min > 0)
-    highs[date] = Object.fromEntries(['pts', 'reb', 'ast'].map(k => [k, Math.max(0, ...played.map(p => p[k]))]))
-  }
+  const highs = Object.fromEntries(Object.entries(dayLines).map(([date, lines]) => [date, nightHighs(lines)]))
 
   // Every line (played or DNP) per player, in date order.
   const byPlayer = {}
@@ -91,24 +86,48 @@ function entry(p, g, aw, high) {
     date: p.date, gameId: g.id, team: p.abbr, home, opp: them.abbr,
     result: us.score > them.score ? 'W' : 'L', score: `${us.score}-${them.score}`,
   }
-  const awardKeys = []
-  if (p.inj) awardKeys.push('inj')
-  else if (p.dnp) awardKeys.push('dnp')
+  if (p.inj) e.awards = ['inj']
+  else if (p.dnp) e.awards = ['dnp']
   else {
     for (const k of STATS) e[k] = p[k] ?? 0
     e.starter = !!p.starter
-    const is = x => x && String(x.id) === String(p.id)
-    if (is(aw?.night?.performer)) awardKeys.push('potn')
-    if (is(aw?.games?.[g.id]?.performer)) awardKeys.push('potg')
-    if (is(aw?.night?.breakout)) awardKeys.push('breakout')
-    for (const k of ['pts', 'reb', 'ast']) if (high && p.min > 0 && p[k] > 0 && p[k] === high[k]) awardKeys.push(k)
-    if (p.stl >= BALL_HAWK_STL) awardKeys.push('stl')
-    if (p.blk >= RIM_PROTECTOR_BLK) awardKeys.push('blk')
-    if (is(aw?.night?.bricklayer)) awardKeys.push('bricklayer')
-    if (is(aw?.night?.dud)) awardKeys.push('dud')
+    e.awards = lineAwards(p, aw, high)
   }
-  e.awards = AWARD_ORDER.filter(k => awardKeys.includes(k))
   return e
+}
+
+// Nightly league highs among players who played.
+function nightHighs(lines) {
+  const played = (lines ?? []).filter(p => !p.dnp && p.min > 0)
+  return Object.fromEntries(['pts', 'reb', 'ast'].map(k => [k, Math.max(0, ...played.map(p => p[k]))]))
+}
+
+// Award keys (display order) one played line earned that night.
+function lineAwards(p, aw, high) {
+  const is = x => x && String(x.id) === String(p.id)
+  const keys = []
+  if (is(aw?.night?.performer)) keys.push('potn')
+  if (is(aw?.games?.[p.gameId]?.performer)) keys.push('potg')
+  if (is(aw?.night?.breakout)) keys.push('breakout')
+  for (const k of ['pts', 'reb', 'ast']) if (high && p.min > 0 && p[k] > 0 && p[k] === high[k]) keys.push(k)
+  if (p.stl >= BALL_HAWK_STL) keys.push('stl')
+  if (p.blk >= RIM_PROTECTOR_BLK) keys.push('blk')
+  if (is(aw?.night?.bricklayer)) keys.push('bricklayer')
+  if (is(aw?.night?.dud)) keys.push('dud')
+  return AWARD_ORDER.filter(k => keys.includes(k))
+}
+
+// { [playerId]: award keys } for one night's played lines that earned any
+// (the day page's player table shows them next to the name).
+export function nightPlayerAwards(lines, aw) {
+  const high = nightHighs(lines)
+  const out = {}
+  for (const p of lines ?? []) {
+    if (p.dnp || !(p.min > 0)) continue
+    const keys = lineAwards(p, aw, high)
+    if (keys.length) out[p.id] = keys
+  }
+  return out
 }
 
 // The team's next three games we have on the schedule.

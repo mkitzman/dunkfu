@@ -26,7 +26,7 @@
 //
 // Bump VERSION whenever the formulas change so stored awards are recomputed.
 
-export const VERSION = 10
+export const VERSION = 11
 
 const MIN_MINUTES = 20
 const MIN_PRIOR_GAMES = 3

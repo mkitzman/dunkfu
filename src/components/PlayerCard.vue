@@ -88,7 +88,7 @@ const season = seasonLabel()
 const name = computed(() => log.value?.player.name ?? p.value?.name ?? '')
 const num = computed(() => log.value?.player.num ?? p.value?.num ?? '')
 const pos = computed(() => bio.value?.positionAbbr || log.value?.player.pos || p.value?.pos || '')
-const rows = computed(() => vitals(bio.value, log.value?.player ?? p.value))
+const rows = computed(() => vitals(bio.value))
 const chartGames = computed(() => s.value.played.slice(-15))
 
 // Team colours: the team column / mobile header always use them.

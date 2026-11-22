@@ -25,7 +25,7 @@ defineProps({
 
 <style scoped>
 .awards { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
-.row { display: grid; grid-template-columns: 32px 1fr auto; align-items: center; gap: 12px; }
+.row { display: grid; grid-template-columns: 32px 1fr auto; align-items: center; gap: 12px; cursor: help; }
 .what { min-width: 0; display: grid; }
 .label { font: 600 13px/1.25 var(--sans); }
 .when { font: 400 10px var(--mono); color: var(--mu); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }

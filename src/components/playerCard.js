@@ -45,11 +45,13 @@ export const shortDate = iso => fmt(iso, { month: 'short', day: 'numeric' }) // 
 export const slashDate = iso => fmt(iso, { month: 'numeric', day: 'numeric' }) // 11/10
 export const weekdayShort = iso => fmt(iso, { weekday: 'short' }) // Tue
 
-// Vitals rows from the API bio (falls back to what the lines know).
-export function vitals(bio, player, today = todayNY()) {
+// Vitals rows from the API bio.
+export function vitals(bio, today = todayNY()) {
   const rows = []
-  const pos = bio?.positionAbbr || player?.pos
-  rows.push({ label: 'Position', value: bio?.position && pos ? pos : pos || '—', sub: bio?.position && bio.position !== pos ? bio.position : '' })
+  // Only the bio: the box score lineups' positions are per-game slots, not
+  // real positions (Herro listed G, F and C on different nights).
+  const pos = bio?.positionAbbr
+  rows.push({ label: 'Position', value: pos || '—', sub: bio?.position && bio.position !== pos ? bio.position : '' })
 
   const hm = /(\d+)\D+(\d+)/.exec(bio?.height ?? '')
   const lb = /(\d+)/.exec(bio?.weight ?? '')?.[1]

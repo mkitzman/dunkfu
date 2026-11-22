@@ -3,12 +3,14 @@ import { computed } from 'vue'
 import { useSort } from '../composables/useSort.js'
 import { team } from '../data/teams.js'
 import PlayerButton from './PlayerButton.vue'
+import AwardStack from './AwardStack.vue'
 import { isFav, favStyle } from '../composables/useFavorite.js'
 import { shortName, signed, STAT_NAMES } from '../utils.js'
 
 const props = defineProps({
   players: { type: Array, required: true },
   averages: Boolean, // schedule days: per-game averages + shooting percentages
+  awards: { type: Object, default: null }, // results days: { [playerId]: award keys }
 })
 
 const cols = computed(() => [
@@ -57,8 +59,11 @@ const ariaSort = key => (sort.value.key === key ? (sort.value.dir < 0 ? 'descend
             <span class="bar" :style="{ background: r.color }"></span>
             <span class="who">
               <span class="name"><PlayerButton v-if="r.id" :id="r.id" :abbr="r.abbr" :name="r.name" :num="r.num" :pos="r.pos"><span class="full">{{ r.name }}</span><span class="abbrv">{{ r.short }}</span></PlayerButton><template v-else><span class="full">{{ r.name }}</span><span class="abbrv">{{ r.short }}</span></template><span v-if="isFav(r.abbr)" class="fav-star" aria-label="Your team">★</span></span>
-              <span class="sub">{{ r.abbr }}<template v-if="r.pos"> · {{ r.pos }}</template></span>
+              <span class="sub">{{ r.abbr }}</span>
+              <AwardStack v-if="awards?.[r.id]" class="aw-sm" :awards="awards[r.id]" size="S" />
             </span>
+            <!-- Desktop: after the name, as tall as name + team line. Phones: own line under the team (above). -->
+            <AwardStack v-if="awards?.[r.id]" class="aw" :awards="awards[r.id]" size="L" />
           </th>
           <td
             v-for="c in cols"
@@ -101,6 +106,9 @@ table.stats tbody tr.fav > td.sorted { background: linear-gradient(var(--hi), va
   margin-right: 10px;
 }
 .who { display: inline-flex; flex-direction: column; }
+.aw { margin-left: 12px; }
+.aw-sm { display: none; margin-top: 5px; }
+.aw-sm :deep(.b + .b) { margin-left: -9px; }
 .name { font: 600 13px var(--sans); }
 .sub { font: 400 11px var(--sans); color: var(--mu); }
 .abbrv { display: none; }
@@ -112,6 +120,8 @@ thead th:not(:first-child) { padding: 0; }
 thead th:first-child { padding: 11px 14px; font-size: 11px; letter-spacing: .08em; }
 
 @media (max-width: 720px) {
+  .aw { display: none; }
+  .aw-sm { display: flex; }
   .player-table { border-left: 0; border-right: 0; border-radius: 0; }
   table.stats tbody tr:hover th.player { background: linear-gradient(var(--ln2), var(--ln2)), var(--bg); }
   table.stats tbody th.player { background: var(--bg); padding: 7px 10px 7px var(--gutter); max-width: 150px; overflow: hidden; text-overflow: ellipsis; }

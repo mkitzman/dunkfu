@@ -39,6 +39,7 @@ const style = computed(() => (a.value.bg ? { '--b': a.value.bg, '--f': a.value.f
   height: var(--sz);
   border-radius: var(--r);
   background: var(--b);
+  cursor: help; /* the title explains the award */
   color: var(--f);
 
   /* Dashed "stitch" inset in the glyph colour at 55% */
