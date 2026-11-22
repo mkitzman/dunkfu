@@ -83,12 +83,12 @@ const { prep, frame, status, share: onShare, prime } = useShareImage(
   gap: 12px;
   height: 100%;
   box-sizing: border-box;
-  padding: 12px 14px 16px;
+  padding: 12px 18px 16px; /* same inset as the leader cards above */
   background: var(--sf);
   border: 1px solid var(--ln);
   border-radius: 12px;
 }
-.head { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.head { display: flex; align-items: center; gap: 10px; min-width: 0; padding-bottom: 12px; border-bottom: 1px solid var(--ln2); }
 .title {
   flex: 1;
   min-width: 0;
