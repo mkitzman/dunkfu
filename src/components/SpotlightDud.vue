@@ -4,6 +4,8 @@ import { computed } from 'vue'
 import StatTrio from './StatTrio.vue'
 import PlayerButton from './PlayerButton.vue'
 import BrandLockup from './BrandLockup.vue'
+import AwardBadge from './AwardBadge.vue'
+import ShareButton from './ShareButton.vue'
 import { team, chipStyle } from '../data/teams.js'
 import { useShareImage } from '../composables/useShare.js'
 import { statLine } from './spotlight.js'
@@ -40,17 +42,26 @@ const { prep, frame, status, share: onShare, prime } = useShareImage(
 <template>
   <section class="dud-c" :aria-label="label" :title="tip" @pointerenter="prime" @focusin="prime" @touchstart.passive="prime">
     <div class="dud">
-      <h2 class="badge"><span aria-hidden="true">▼</span>{{ label }}</h2>
-      <div class="who">
-        <div class="name">
-          <span v-if="capture" class="nm">{{ player.name }}</span><PlayerButton v-else class="nm" :id="player.id" :abbr="player.abbr" :name="player.name" :num="player.num" :pos="player.pos" /><span
-            class="team-chip" :style="chipStyle(color)">{{ player.abbr }}</span><span class="num">#{{ player.num }}</span>
+      <header class="head">
+        <div class="brand">
+          <BrandLockup mini />
+          <span class="rule" aria-hidden="true"></span>
+          <h2 class="label">{{ label }}</h2>
         </div>
-        <div class="line">{{ line }}</div>
+        <ShareButton v-if="!capture" :label="`Share ${label}`" :status="status" @click="onShare" />
+        <span v-else class="site">dunkfu.com</span>
+      </header>
+      <div class="body">
+        <AwardBadge award="dud" size="XL" decorative />
+        <div class="who">
+          <div class="name">
+            <span v-if="capture" class="nm">{{ player.name }}</span><PlayerButton v-else class="nm" :id="player.id" :abbr="player.abbr" :name="player.name" :num="player.num" :pos="player.pos" /><span
+              class="team-chip" :style="chipStyle(color)">{{ player.abbr }}</span><span class="num">#{{ player.num }}</span>
+          </div>
+          <div class="line">{{ line }}</div>
+        </div>
+        <StatTrio class="trio" :pts="player.pts" :reb="player.reb" :ast="player.ast" />
       </div>
-      <StatTrio :pts="player.pts" :reb="player.reb" :ast="player.ast" />
-      <button v-if="!capture" type="button" class="share" @click="onShare"><span aria-hidden="true">↗</span>{{ status || 'Share' }}</button>
-      <BrandLockup v-if="capture" class="brand" />
     </div>
 
     <!-- Off-screen copy at a fixed desktop width, captured for Share. -->
@@ -74,42 +85,40 @@ const { prep, frame, status, share: onShare, prime } = useShareImage(
 }
 .dud-c { container: dud / inline-size; }
 .dud {
-  position: relative;
   overflow: hidden;
-  display: grid;
-  grid-template-columns: auto 1fr auto auto;
-  gap: 22px;
-  align-items: center;
-  padding: 16px 22px 16px 24px;
   background: var(--sf);
   border: 1px solid var(--ln);
   border-radius: 14px;
-
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 5px;
-    background: var(--dn);
-  }
 }
-.badge {
-  display: inline-flex;
+.head {
+  display: flex;
   align-items: center;
-  gap: 7px;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 22px;
+  border-bottom: 1px solid var(--ln);
+}
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+/* The mini lockup is drawn for dark team colours; here it sits on the page surface. */
+.brand :deep(.word) { color: var(--fg); }
+.rule { width: 1px; height: 16px; background: var(--ln); flex: none; }
+.label {
   margin: 0;
-  padding: 5px 10px;
-  border-radius: 999px;
-  background: var(--dn-bg);
-  color: var(--dn);
-  font: 600 10px var(--mono);
-  letter-spacing: .12em;
+  font: 600 11px/1 var(--mono);
+  letter-spacing: .16em;
   text-transform: uppercase;
+  color: var(--dn);
   white-space: nowrap;
-
-  & span { font-size: 11px; }
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.site { flex: none; font: 500 12px/1 var(--mono); letter-spacing: .08em; color: var(--mu); }
+.body {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 18px;
+  align-items: center;
+  padding: 16px 22px;
 }
 .who { min-width: 0; }
 .name {
@@ -123,31 +132,15 @@ a.nm:hover { text-decoration: underline; text-underline-offset: 3px; }
 a.nm:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; border-radius: 2px; }
 .num { font: 400 11px var(--mono); letter-spacing: 0; color: var(--mu); }
 .line { font: 400 12px var(--mono); color: var(--mu); margin-top: 5px; }
-.brand { transform: scale(.8); transform-origin: right center; }
-.share {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 11px;
-  border-radius: 999px;
-  border: 1px solid var(--ln);
-  background: var(--sf);
-  color: var(--fg);
-  font: 600 11px var(--sans);
-  cursor: pointer;
 
-  & span { font-size: 12px; }
-  &:hover { border-color: var(--mu); background: var(--ln2); }
-  &:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
-}
-
-@container dud (max-width: 900px) {
-  .dud { grid-template-columns: 1fr; gap: 12px; padding: 14px 16px 14px 20px; justify-items: start; }
-  .who { justify-self: stretch; }
-  .share { position: absolute; top: 12px; right: 14px; }
-}
-@container dud (max-width: 720px) {
+@container dud (max-width: 760px) {
+  .head { padding: 10px 16px; }
+  .body { grid-template-columns: auto 1fr; gap: 12px 14px; padding: 14px 16px; }
+  .trio { grid-column: 1 / -1; justify-self: start; }
   .name { font-size: 18px; }
   .line { font-size: 11px; }
+}
+@container dud (max-width: 420px) {
+  .rule, .brand :deep(.lockup) { display: none; }
 }
 </style>

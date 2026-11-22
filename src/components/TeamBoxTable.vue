@@ -29,7 +29,7 @@ const pcts = computed(() => ['', '', pct(sum('fgm'), sum('fga')), pct(sum('tpm')
 <template>
   <div class="tbox" :style="{ '--team': team.color }">
     <div class="head">
-      <TeamMark :abbr="team.abbr" :size="28" :font-size="10" />
+      <TeamMark :abbr="team.abbr" :size="28" :font-size="9" />
       <h2>{{ team.name }}</h2>
     </div>
     <div class="table-wrap">
@@ -72,17 +72,27 @@ td.dnp-note { text-align: center; font: 500 10px var(--mono); letter-spacing: .1
 .tbox {
   background: var(--sf);
   border: 1px solid var(--ln);
-  border-top: 4px solid var(--team);
   min-width: 0;
 }
+/* Team-colour header (rev 6): the hero cards' hairline texture over a
+   gradient of the team's primary; one formula for every team. */
 .head {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
+  padding: 12px 12px 13px;
   border-bottom: 1px solid var(--ln);
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, .03) 0 1px, transparent 1px 14px),
+    linear-gradient(120deg,
+      color-mix(in oklch, var(--team) 84%, #000) 0%,
+      color-mix(in oklch, var(--team) 92%, #fff) 55%,
+      color-mix(in oklch, var(--team) 80%, #fff) 100%);
+  color: #fff;
 
-  & h2 { font: 600 14px var(--sans); margin: 0; }
+  & h2 { font: 600 14px var(--sans); margin: 0; color: #fff; }
+  /* White ring keeps the mark visible on its own team colour. */
+  & :deep(.mark) { box-shadow: 0 0 0 1px rgba(255, 255, 255, .28); }
 }
 
 table.stats {
@@ -116,7 +126,7 @@ table.stats {
 }
 
 @media (max-width: 720px) {
-  .tbox { border-left: 0; border-right: 0; border-top-width: 3px; }
+  .tbox { border-left: 0; border-right: 0; }
   .head { padding: 8px var(--gutter); gap: 8px; --mark-size: 24px; --mark-fs: 9px; }
   .head h2 { font-size: 13px; }
   table.stats {

@@ -409,15 +409,15 @@ const allPlayers = computed(() => hasBox.value
   grid-template-columns: 1fr 1fr;
 
   & > * { overflow: hidden; }
-  & > :first-child { border-radius: var(--radius) 0 0 var(--radius); }
-  & > :last-child { border-radius: 0 var(--radius) var(--radius) 0; }
+  & > :first-child { border-radius: 12px 0 0 12px; }
+  & > :last-child { border-radius: 0 12px 12px 0; }
   & > * + * { margin-left: -1px; }
 }
 @container (max-width: 1040px) {
-  .pair { grid-template-columns: 1fr; }
-  .pair > :first-child { border-radius: var(--radius) var(--radius) 0 0; }
-  .pair > :last-child { border-radius: 0 0 var(--radius) var(--radius); }
-  .pair > * + * { margin-left: 0; margin-top: -1px; }
+  /* Stacked: two separate boxes, each with its own rounded team header. */
+  .pair { grid-template-columns: 1fr; gap: 14px; }
+  .pair > :first-child, .pair > :last-child { border-radius: 12px; }
+  .pair > * + * { margin-left: 0; }
 }
 
 .missing {

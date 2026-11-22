@@ -8,9 +8,11 @@
 // Awards per game line (keys in display order, see src/data/awards.js):
 //   potn  Player of the Night       awards[date].night.performer
 //   potg  Player of the Game        awards[date].games[gameId].performer
+//   breakout  Breakout              awards[date].night.breakout
 //   pts / reb / ast                 nightly league high (ties all count)
-//   stl   Ball Hawk, 5+ steals   blk  Rim Protector, 5+ blocks (each happens
+//   stl   Ball Hawk, 5+ steals   blk  Rim Protector, 5+ blocks (thresholds in awards.js; each happens
 //         about once every night or two league-wide)
+//   bricklayer  most missed shots   awards[date].night.bricklayer
 //   dud   Dud of the Night          awards[date].night.dud
 //   dnp   on the box score but didn't play (the API gives no reason)
 //   inj   missed one of his team's games entirely while on the team; the API
@@ -18,7 +20,9 @@
 
 const STATS = ['min', 'pts', 'reb', 'oreb', 'dreb', 'ast', 'stl', 'blk', 'to', 'pf', 'pm', 'fgm', 'fga', 'tpm', 'tpa', 'ftm', 'fta']
 const MAX_TRAILING_MISSED = 15
-export const AWARD_ORDER = ['potn', 'potg', 'pts', 'reb', 'ast', 'stl', 'blk', 'dud', 'dnp', 'inj']
+import { BALL_HAWK_STL, RIM_PROTECTOR_BLK } from './awards.js'
+
+export const AWARD_ORDER = ['potn', 'potg', 'breakout', 'pts', 'reb', 'ast', 'stl', 'blk', 'bricklayer', 'dud', 'dnp', 'inj']
 
 // dayLines: { [date]: line[] }  awards: { [date]: { night, games } }
 // games: [{ id, date, status, tipUtc, tip, away: { abbr, score }, home: { abbr, score } }]
@@ -96,9 +100,11 @@ function entry(p, g, aw, high) {
     const is = x => x && String(x.id) === String(p.id)
     if (is(aw?.night?.performer)) awardKeys.push('potn')
     if (is(aw?.games?.[g.id]?.performer)) awardKeys.push('potg')
+    if (is(aw?.night?.breakout)) awardKeys.push('breakout')
     for (const k of ['pts', 'reb', 'ast']) if (high && p.min > 0 && p[k] > 0 && p[k] === high[k]) awardKeys.push(k)
-    if (p.stl >= 5) awardKeys.push('stl')
-    if (p.blk >= 5) awardKeys.push('blk')
+    if (p.stl >= BALL_HAWK_STL) awardKeys.push('stl')
+    if (p.blk >= RIM_PROTECTOR_BLK) awardKeys.push('blk')
+    if (is(aw?.night?.bricklayer)) awardKeys.push('bricklayer')
     if (is(aw?.night?.dud)) awardKeys.push('dud')
   }
   e.awards = AWARD_ORDER.filter(k => awardKeys.includes(k))

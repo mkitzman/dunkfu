@@ -16,9 +16,17 @@
 //   e.g. Naz Reid's 12/10/3 on 4-19 shooting).
 //   If nobody qualifies there is no dud.
 //
+// Nightly cards (night only, all games):
+// Breakout: biggest jump in Game Score over his own season average per game
+//   (3+ prior games), skipping the Player of the Night so it's someone else.
+// Bricklayer: most missed shots, (FGA - FGM) + (FTA - FTM) (threes are inside
+//   FGA); ties go to the lower combined shooting percentage.
+// Ball Hawk / Rim Protector: most steals / blocks, if 5+ (about once every
+//   night or two league-wide); ties go to the higher Game Score.
+//
 // Bump VERSION whenever the formulas change so stored awards are recomputed.
 
-export const VERSION = 7
+export const VERSION = 8
 
 const MIN_MINUTES = 20
 const MIN_PRIOR_GAMES = 3
@@ -27,6 +35,8 @@ const DUD_MAX_GAME_SCORE = 15 // a 15+ Game Score is a good night, never a dud
 const DUD_MIN_SHORTFALL = 5 // Game Score points below expectation...
 const DUD_MIN_SHORTFALL_PCT = 0.25 // ...or this fraction below it
 const DUD_SAFE_REB_AST = 10 // 10+ rebounds or assists is never a dud
+export const BALL_HAWK_STL = 5
+export const RIM_PROTECTOR_BLK = 5
 
 const r1 = n => Math.round(n * 10) / 10
 
@@ -54,8 +64,15 @@ export function computeAwards(days) {
     const pick = list => ({ performer: performer(list), dud: dud(list) })
     const byGame = {}
     for (const r of rows) (byGame[r.p.gameId] ??= []).push(r)
+    const night = pick(rows)
     out[date] = {
-      night: pick(rows),
+      night: {
+        ...night,
+        breakout: breakout(rows, night.performer),
+        bricklayer: bricklayer(rows),
+        ballHawk: most(rows, 'stl', BALL_HAWK_STL),
+        rimProtector: most(rows, 'blk', RIM_PROTECTOR_BLK),
+      },
       games: Object.fromEntries(Object.entries(byGame).map(([id, list]) => [id, pick(list)])),
     }
 
@@ -83,6 +100,30 @@ function dud(rows) {
   })
   const worst = eligible.reduce((a, b) => (!a || b.gs - b.exp < a.gs - a.exp ? b : a), null)
   return worst ? entry(worst, 'expected') : null
+}
+
+const best = (rows, score) => {
+  const top = rows.reduce((a, b) => (!a || score(b) > score(a) ? b : a), null)
+  return top && entry(top, null)
+}
+
+function breakout(rows, performer) {
+  return best(rows.filter(r => r.avg != null && String(r.p.id) !== String(performer?.id)), r => r.gs - r.avg)
+}
+
+const misses = p => p.fga - p.fgm + p.fta - p.ftm
+const shotPct = p => (p.fgm + p.ftm) / (p.fga + p.fta || 1)
+function bricklayer(rows) {
+  const top = rows.filter(r => misses(r.p) > 0).reduce((a, b) => {
+    if (!a) return b
+    const d = misses(b.p) - misses(a.p)
+    return d > 0 || (d === 0 && shotPct(b.p) < shotPct(a.p)) ? b : a
+  }, null)
+  return top && { ...entry(top, null), missed: misses(top.p) }
+}
+
+function most(rows, k, min) {
+  return best(rows.filter(r => r.p[k] >= min), r => r.p[k] * 1000 + r.gs)
 }
 
 function entry({ p, gs, exp }, basis) {

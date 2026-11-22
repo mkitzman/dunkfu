@@ -46,6 +46,33 @@ test('Player of the Night is the highest Game Score, whoever usually plays bette
   assert.equal(computeAwards(days)['2026-11-09'].night.performer.id, 1)
 })
 
+test('Breakout is the biggest jump over his usual, never the Player of the Night', () => {
+  const star = { ...SOLID, pts: 40, fgm: 15, fga: 25 }, role = { ...SOLID, pts: 6, fgm: 2, fga: 8 }
+  const days = [1, 2, 3].map(i => ({ date: `2026-11-0${i}`, lines: [line(1, star), line(2, role), line(3, role)] }))
+  // Star jumps most but is Player of the Night; player 2's jump beats player 3's.
+  days.push({ date: '2026-11-09', lines: [line(1, { ...star, pts: 70, fgm: 27 }), line(2, { ...role, pts: 30, fgm: 12, fga: 18 }), line(3, { ...role, pts: 16, fgm: 6, fga: 12 })] })
+  const night = computeAwards(days)['2026-11-09'].night
+  assert.equal(night.performer.id, 1)
+  assert.equal(night.breakout.id, 2)
+})
+
+test('Bricklayer counts field goal and free throw misses; ties go to the worse shooter', () => {
+  const lines = [
+    line(1, { ...SOLID, fgm: 5, fga: 15, ftm: 0, fta: 2 }), // 12 misses, 5/17
+    line(2, { ...SOLID, fgm: 8, fga: 18, ftm: 3, fta: 5 }), // 12 misses, 11/23
+    line(3, { ...SOLID, fgm: 2, fga: 12, ftm: 4, fta: 4 }), // 10 misses
+  ]
+  const b = computeAwards([{ date: '2026-11-09', lines }])['2026-11-09'].night.bricklayer
+  assert.equal(b.id, 1)
+  assert.equal(b.missed, 12)
+})
+
+test('Ball Hawk needs 5+ steals; nobody qualifying means no card', () => {
+  const night = l => computeAwards([{ date: '2026-11-09', lines: l }])['2026-11-09'].night
+  assert.equal(night([line(1, { ...SOLID, stl: 4 })]).ballHawk, null)
+  assert.equal(night([line(1, { ...SOLID, stl: 5 }), line(2, { ...SOLID, stl: 6 })]).ballHawk.id, 2)
+})
+
 test('fewer than 3 earlier games: never a dud', () => {
   assert.equal(dudAfter(2, SOLID, AWFUL), null)
 })

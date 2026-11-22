@@ -1,6 +1,7 @@
 <script setup>
 // "Patch" award badge: solid tile, dashed stitch inset, centred glyph.
-//   size: L (lists) 32px · M (desktop game log) 24px · S (mobile game log) 22px
+//   size: XL (Dud module) 46px · L (lists) 32px · H (award card headers) 28px
+//         M (desktop game log) 24px · S (mobile game log) 22px
 //   surface: 'neutral' (follows the page theme) or 'team' (on team colours)
 import { computed } from 'vue'
 import { AWARD } from '../data/awards.js'
@@ -51,6 +52,8 @@ const style = computed(() => (a.value.bg ? { '--b': a.value.bg, '--f': a.value.f
   }
   & svg { width: var(--g); height: var(--g); }
 }
+.s-XL { --sz: 46px; --r: 13px; --in: 3px; --sw: 1.5px; --sr: 10px; --g: 24px; }
+.s-H { --sz: 28px; --r: 8px; --in: 2px; --sw: 1px; --sr: 6px; --g: 15px; }
 .s-L { --sz: 32px; --r: 9px; --in: 2.5px; --sw: 1.3px; --sr: 6.5px; --g: 17px; }
 .s-S { --sz: 22px; --r: 6px; --in: 2px; --sw: 1px; --sr: 4.5px; --g: 12px; }
 

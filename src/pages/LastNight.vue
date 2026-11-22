@@ -8,6 +8,7 @@ import SpotlightHero from '../components/SpotlightHero.vue'
 import SpotlightDud from '../components/SpotlightDud.vue'
 import ScoresPanel from '../components/ScoresPanel.vue'
 import LeadersRow from '../components/LeadersRow.vue'
+import AwardCards from '../components/AwardCards.vue'
 import DaySkeleton from '../components/DaySkeleton.vue'
 import { getGames, getBoxscores, getAverages, getAwards } from '../api/index.js'
 import { announce } from '../composables/useAnnounce.js'
@@ -134,6 +135,8 @@ function dayPill(step) {
       </template>
 
       <LeadersRow v-if="isResults && players.length" class="block" :players="players" label="Leaders of the night" />
+
+      <AwardCards v-if="isResults && awards?.night" class="block" :night="awards.night" />
 
       <template v-if="isResults && awards?.night">
         <SpotlightDud

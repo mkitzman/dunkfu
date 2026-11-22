@@ -3,6 +3,7 @@
 // (server/awards.js); `to` links the name to the player's game.
 import { computed } from 'vue'
 import BrandLockup from './BrandLockup.vue'
+import ShareButton from './ShareButton.vue'
 import JerseyMark from './JerseyMark.vue'
 import PlayerButton from './PlayerButton.vue'
 import StatTrio from './StatTrio.vue'
@@ -61,7 +62,7 @@ const { prep, frame, status, share: onShare, prime } = useShareImage(
         <span class="rule" aria-hidden="true"></span>
         <h2 class="label">{{ label }}</h2>
       </div>
-      <button v-if="!capture" type="button" class="share" @click="onShare"><span aria-hidden="true">↗</span>{{ status || 'Share' }}</button>
+      <ShareButton v-if="!capture" tone="team" :label="`Share ${label}`" :status="status" @click="onShare" />
       <span v-else class="site">dunkfu.com</span>
     </header>
 
@@ -155,23 +156,6 @@ const { prep, frame, status, share: onShare, prime } = useShareImage(
   font: 500 12px/1 var(--mono);
   letter-spacing: .08em;
   color: rgba(255, 255, 255, .85);
-}
-.share {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  flex: none;
-  padding: 5px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, .3);
-  background: rgba(255, 255, 255, .08);
-  color: #fff;
-  font: 600 10px var(--sans);
-  cursor: pointer;
-
-  & span { font-size: 11px; }
-  &:hover { background: rgba(255, 255, 255, .18); }
-  &:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 }
 
 .body {
