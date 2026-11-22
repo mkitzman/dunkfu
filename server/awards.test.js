@@ -40,6 +40,12 @@ test('10+ rebounds is never a dud, however poor the shooting', () => {
   assert.equal(dudAfter(3, SOLID, { ...AWFUL, min: 39, pts: 12, fgm: 4, fga: 19, ftm: 2, fta: 4, reb: 10, dreb: 10, ast: 3, pf: 5 }), null)
 })
 
+test('Player of the Night is the highest Game Score, whoever usually plays better', () => {
+  const days = [1, 2, 3].map(i => ({ date: `2026-11-0${i}`, lines: [line(1, { ...SOLID, pts: 40, fgm: 15, fga: 25 }), line(2, { ...SOLID, pts: 6, fgm: 2, fga: 8 })] }))
+  days.push({ date: '2026-11-09', lines: [line(1, { ...SOLID, pts: 32, fgm: 12, fga: 20 }), line(2, { ...SOLID, pts: 30, fgm: 11, fga: 20 })] })
+  assert.equal(computeAwards(days)['2026-11-09'].night.performer.id, 1)
+})
+
 test('fewer than 3 earlier games: never a dud', () => {
   assert.equal(dudAfter(2, SOLID, AWFUL), null)
 })

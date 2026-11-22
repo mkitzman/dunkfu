@@ -1,10 +1,9 @@
 // High Performer and Dud, per game and per night, built on John Hollinger's
 // Game Score (one number for a whole stat line: ~10 is average, 20+ very good).
 //
-// High Performer: highest Game Score, nudged up a little (10% of the surplus)
-//   for beating the player's own average. Only a tiebreaker: overturning a
-//   2-point Game Score gap takes a night 20 points above his usual, so stars'
-//   big nights win (25% overturned 5 of 30 nights, e.g. Luka 32.0 > SGA 30.2).
+// High Performer: the highest Game Score. No bonus for beating his own
+//   average: it let Herro's 50/11/7 (47.5) beat Wembanyama's 50/19 with
+//   5 blocks (48.2). Surprise nights are meant for their own award.
 // Dud: biggest shortfall against expectation, where expectation is the
 //   player's Game Score per minute this season times tonight's minutes. Only
 //   real contributors qualify: tonight's starters, or anyone averaging a Game
@@ -19,12 +18,11 @@
 //
 // Bump VERSION whenever the formulas change so stored awards are recomputed.
 
-export const VERSION = 6
+export const VERSION = 7
 
 const MIN_MINUTES = 20
 const MIN_PRIOR_GAMES = 3
 const MIN_AVG_GAME_SCORE = 10 // ...unless they started
-const BEAT_AVG_WEIGHT = 0.1
 const DUD_MAX_GAME_SCORE = 15 // a 15+ Game Score is a good night, never a dud
 const DUD_MIN_SHORTFALL = 5 // Game Score points below expectation...
 const DUD_MIN_SHORTFALL_PCT = 0.25 // ...or this fraction below it
@@ -50,7 +48,6 @@ export function computeAwards(days) {
       return {
         p, gs, exp,
         avg: known ? h.gs / h.n : null,
-        perf: gs + (exp != null ? BEAT_AVG_WEIGHT * Math.max(0, gs - exp) : 0),
       }
     })
 
@@ -71,7 +68,7 @@ export function computeAwards(days) {
 }
 
 function performer(rows) {
-  const best = rows.reduce((a, b) => (!a || b.perf > a.perf ? b : a), null)
+  const best = rows.reduce((a, b) => (!a || b.gs > a.gs ? b : a), null)
   return best && entry(best, 'season')
 }
 
