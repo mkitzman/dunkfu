@@ -85,7 +85,7 @@ h2 {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.site { flex: none; font: 500 10px/1 var(--mono); letter-spacing: .06em; color: var(--mu); }
+.site { flex: none; font: 800 13px/1 var(--sans); letter-spacing: -.035em; color: var(--mu); } /* wordmark face */
 ol { list-style: none; margin: 0; padding: 0; }
 li {
   display: grid;

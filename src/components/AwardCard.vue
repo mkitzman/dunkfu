@@ -101,7 +101,7 @@ const { prep, frame, status, share: onShare, prime, shareFromCard } = useShareIm
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.site { flex: none; font: 500 10px/1 var(--mono); letter-spacing: .06em; color: var(--mu); }
+.site { flex: none; font: 800 13px/1 var(--sans); letter-spacing: -.035em; color: var(--mu); } /* wordmark face */
 .name {
   font: 800 17px/1.15 var(--sans);
   letter-spacing: -.02em;

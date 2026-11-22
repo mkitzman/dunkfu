@@ -156,8 +156,8 @@ const { prep, frame, status, share: onShare, prime, shareFromCard } = useShareIm
 }
 .site {
   flex: none;
-  font: 500 12px/1 var(--mono);
-  letter-spacing: .08em;
+  font: 800 15px/1 var(--sans); /* wordmark face */
+  letter-spacing: -.035em;
   color: rgba(255, 255, 255, .85);
 }
 
