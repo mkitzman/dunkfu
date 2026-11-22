@@ -54,6 +54,7 @@ test('Breakout is the biggest jump over his usual, never the Player of the Night
   const night = computeAwards(days)['2026-11-09'].night
   assert.equal(night.performer.id, 1)
   assert.equal(night.breakout.id, 2)
+  assert.equal(night.breakout.ppg, 6) // his average before tonight
 })
 
 test('Bricklayer counts field goal and free throw misses; ties go to the worse shooter', () => {

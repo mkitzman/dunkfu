@@ -26,7 +26,7 @@
 //
 // Bump VERSION whenever the formulas change so stored awards are recomputed.
 
-export const VERSION = 9
+export const VERSION = 10
 
 const MIN_MINUTES = 20
 const MIN_PRIOR_GAMES = 3
@@ -58,6 +58,7 @@ export function computeAwards(days) {
       return {
         p, gs, exp,
         avg: known ? h.gs / h.n : null,
+        ppg: known ? h.pts / h.n : null,
       }
     })
 
@@ -77,8 +78,8 @@ export function computeAwards(days) {
     }
 
     for (const { p, gs } of rows) {
-      const h = (hist[p.id] ??= { n: 0, gs: 0, min: 0 })
-      h.n++; h.gs += gs; h.min += p.min
+      const h = (hist[p.id] ??= { n: 0, gs: 0, min: 0, pts: 0 })
+      h.n++; h.gs += gs; h.min += p.min; h.pts += p.pts
     }
   }
   return out
@@ -108,7 +109,9 @@ const best = (rows, score) => {
 }
 
 function breakout(rows, performer) {
-  return best(rows.filter(r => r.avg != null && String(r.p.id) !== String(performer?.id)), r => r.gs - r.avg)
+  const r = rows.filter(r => r.avg != null && String(r.p.id) !== String(performer?.id))
+    .reduce((a, b) => (!a || b.gs - b.avg > a.gs - a.avg ? b : a), null)
+  return r && { ...entry(r, null), ppg: r1(r.ppg) } // his scoring average before tonight
 }
 
 const misses = p => p.fga - p.fgm + p.fta - p.ftm

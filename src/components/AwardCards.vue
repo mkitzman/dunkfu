@@ -11,10 +11,13 @@ const cards = computed(() => {
   const n = props.night
   const b = n.bricklayer
   return [
-    n.breakout && { award: 'breakout', player: n.breakout, value: n.breakout.pts, unit: 'PTS' },
+    n.breakout && {
+      award: 'breakout', player: n.breakout, value: n.breakout.pts, unit: 'PTS',
+      detail: n.breakout.ppg != null ? `${n.breakout.ppg.toFixed(1)} PPG AVERAGE` : '',
+    },
     b && {
-      award: 'bricklayer', player: b, value: b.missed, unit: 'MISSED',
-      aside: b.ts != null ? { value: `${b.ts.toFixed(1)}%`, label: 'TS', title: 'True Shooting percentage: field goals, threes and free throws combined' } : null,
+      award: 'bricklayer', player: b, value: `${b.ts.toFixed(1)}%`, unit: 'TRUE SHOOTING',
+      unitTitle: 'True Shooting: field goals, threes and free throws combined. Under 50% is bad, 65%+ is elite.',
       detail: `${b.fgm}/${b.fga} FG · ${b.tpm}/${b.tpa} 3PT · ${b.ftm}/${b.fta} FT`,
     },
     n.ballHawk && { award: 'stl', player: n.ballHawk, value: n.ballHawk.stl, unit: 'STL' },
