@@ -147,6 +147,9 @@ const { prep, frame, status, share: onShare, prime } = useShareImage(
   letter-spacing: .16em;
   text-transform: uppercase;
   color: var(--sec-text);
+  /* Optical alignment: sit the capitals on the wordmark's baseline, not the
+     centre of its ascenders (d, k, f), which reads as too high. */
+  transform: translateY(1.5px);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

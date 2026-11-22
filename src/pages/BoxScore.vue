@@ -212,7 +212,7 @@ const allPlayers = computed(() => hasBox.value
 
         <LeadersRow class="block" :players="allPlayers" label="Game leaders" />
 
-        <SpotlightDud v-if="gameAwards?.dud" class="block-gap" :player="gameAwards.dud" label="Dud" />
+        <SpotlightDud v-if="gameAwards?.dud" class="block-gap" :player="gameAwards.dud" label="Dud of the Game" />
 
         <section class="block box" aria-label="Box score">
           <div class="pair">

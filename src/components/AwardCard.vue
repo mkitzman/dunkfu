@@ -126,7 +126,9 @@ const { prep, frame, status, share: onShare, prime } = useShareImage(
   color: var(--fg);
 }
 .l {
-  margin-top: 6px;
+  /* Room above and below so the 16px ? circle isn't clipped by overflow. */
+  margin-top: 3px;
+  padding: 3px 0;
   font: 500 9px var(--mono);
   letter-spacing: .12em;
   color: var(--mu);
@@ -134,8 +136,8 @@ const { prep, frame, status, share: onShare, prime } = useShareImage(
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.uq { margin: -4px 2px -4px 6px; }
-.uq :deep(.q) { width: 16px; height: 16px; font-size: 9.5px; letter-spacing: 0; }
+.uq { margin: -4px 2px -4px 6px; vertical-align: middle; }
+.uq :deep(.q) { width: 16px; height: 16px; box-sizing: border-box; padding-top: 1px; font-size: 9.5px; letter-spacing: 0; }
 .uq :deep(.panel) { font: 400 12px/1.45 var(--sans); letter-spacing: 0; color: var(--fg); white-space: normal; max-width: 260px; }
 /* Narrow card: drop the unit word before the shooting line would wrap. */
 @container acard (max-width: 230px) {
