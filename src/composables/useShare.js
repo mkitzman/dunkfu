@@ -3,6 +3,7 @@ import { announce } from './useAnnounce.js'
 
 const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
 const touch = matchMedia('(pointer: coarse)').matches
+const hoverable = matchMedia('(hover: hover)').matches
 
 // Share a spotlight card as an image.
 //
@@ -98,5 +99,16 @@ export function useShareImage(key, meta, enabled = true) {
     } catch { /* nothing more to try */ }
   }
 
-  return { prep, frame, status, share, prime }
+  // Mouse users can click anywhere on the card to share it (the share button
+  // stays for keyboard and touch). Clicks on the card's own controls (player
+  // name, ? popups, award stacks, the share button) keep their action, and so
+  // does selecting text. Touch screens skip this so a tap can't share by accident.
+  function shareFromCard(e) {
+    if (!enabled || !hoverable) return
+    if (e.target.closest('a, button, input, select, textarea, label, summary, [popover]')) return
+    if (getSelection()?.toString()) return
+    share()
+  }
+
+  return { prep, frame, status, share, prime, shareFromCard }
 }

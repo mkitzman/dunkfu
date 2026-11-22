@@ -25,7 +25,7 @@ const title = computed(() => AWARD[props.award].label)
 const color = computed(() => team(props.player.abbr)?.color ?? '#646a72')
 
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-const { prep, frame, status, share: onShare, prime } = useShareImage(
+const { prep, frame, status, share: onShare, prime, shareFromCard } = useShareImage(
   () => `${props.award}|${props.player.id}|${props.player.gameId}`,
   () => ({
     title: `${title.value}: ${props.player.name}`,
@@ -37,7 +37,7 @@ const { prep, frame, status, share: onShare, prime } = useShareImage(
 </script>
 
 <template>
-  <section class="card-c share-host" :aria-label="title" @pointerenter="prime" @focusin="prime" @touchstart.passive="prime">
+  <section class="card-c share-host" :aria-label="title" @click="shareFromCard" @pointerenter="prime" @focusin="prime" @touchstart.passive="prime">
     <div class="acard">
       <header class="head">
         <AwardBadge :award="award" size="H" decorative />

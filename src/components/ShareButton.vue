@@ -41,12 +41,18 @@ button {
   &:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
 }
 @media (hover: hover) {
+  /* The whole card shares on click (useShareImage.shareFromCard). */
+  :global(.share-host) { cursor: pointer; transition: scale .2s ease; }
+  :global(.share-host:hover) { scale: 1.01; }
   .share { opacity: 0; transition: opacity .15s; }
   .share-host:hover .share,
   .share-host:focus-within .share,
   .share.busy { opacity: 1; }
 }
-@media (prefers-reduced-motion: reduce) { .share { transition: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .share { transition: none; }
+  :global(.share-host), :global(.share-host:hover) { transition: none; scale: none; }
+}
 .t-page .st { color: var(--mu); }
 .t-team .st { color: rgba(255, 255, 255, .85); }
 .t-team button {

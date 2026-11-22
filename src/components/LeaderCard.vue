@@ -15,7 +15,7 @@ const props = defineProps({
 })
 
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-const { prep, frame, status, share: onShare, prime } = useShareImage(
+const { prep, frame, status, share: onShare, prime, shareFromCard } = useShareImage(
   () => `${props.label}|${props.leaders.map(p => p.key).join(',')}`,
   () => ({
     title: `${props.label} leaders`,
@@ -27,7 +27,7 @@ const { prep, frame, status, share: onShare, prime } = useShareImage(
 </script>
 
 <template>
-  <div class="leader-card share-host" @pointerenter="prime" @focusin="prime" @touchstart.passive="prime">
+  <div class="leader-card share-host" @click="shareFromCard" @pointerenter="prime" @focusin="prime" @touchstart.passive="prime">
     <header class="head">
       <AwardBadge :award="award" size="H" decorative />
       <h2>{{ label }}</h2>
