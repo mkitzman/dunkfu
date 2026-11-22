@@ -58,13 +58,14 @@ test('Breakout is the biggest jump over his usual, never the Player of the Night
 
 test('Bricklayer counts field goal and free throw misses; ties go to the worse shooter', () => {
   const lines = [
-    line(1, { ...SOLID, fgm: 5, fga: 15, ftm: 0, fta: 2 }), // 12 misses, 5/17
-    line(2, { ...SOLID, fgm: 8, fga: 18, ftm: 3, fta: 5 }), // 12 misses, 11/23
+    line(1, { ...SOLID, pts: 11, fgm: 5, fga: 15, ftm: 0, fta: 2 }), // 12 misses, TS 34.6%
+    line(2, { ...SOLID, pts: 20, fgm: 8, fga: 18, ftm: 3, fta: 5 }), // 12 misses, TS 49.5%
     line(3, { ...SOLID, fgm: 2, fga: 12, ftm: 4, fta: 4 }), // 10 misses
   ]
   const b = computeAwards([{ date: '2026-11-09', lines }])['2026-11-09'].night.bricklayer
   assert.equal(b.id, 1)
   assert.equal(b.missed, 12)
+  assert.equal(b.ts, 34.6) // 11 / (2 × (15 + 0.44 × 2))
 })
 
 test('Ball Hawk needs 5+ steals; nobody qualifying means no card', () => {

@@ -16,6 +16,7 @@ const props = defineProps({
   value: { type: [Number, String], required: true },
   unit: { type: String, required: true }, // PTS, MISSED, STL, BLK
   detail: { type: String, default: '' }, // after the unit, same line
+  aside: { type: Object, default: null }, // { value, label, title } beside the number
   capture: Boolean,
 })
 
@@ -51,14 +52,17 @@ const { prep, frame, status, share: onShare, prime } = useShareImage(
         <div class="meta"><span class="team-chip" :style="chipStyle(color)">{{ player.abbr }}</span>#{{ player.num }} · {{ player.min }} MIN</div>
       </div>
       <div class="stat">
-        <div class="v">{{ value }}</div>
+        <div class="vrow">
+          <span class="v">{{ value }}</span>
+          <span v-if="aside" class="aside">{{ aside.value }} <abbr :title="aside.title">{{ aside.label }}</abbr></span>
+        </div>
         <div class="l"><span class="u">{{ unit }}</span><template v-if="detail"><span class="u-sep"> · </span>{{ detail }}</template></div>
       </div>
     </div>
 
     <Teleport v-if="prep" to="body">
       <div ref="frame" class="shot" aria-hidden="true" inert>
-        <AwardCard capture :award="award" :player="player" :value="value" :unit="unit" :detail="detail" />
+        <AwardCard capture :award="award" :player="player" :value="value" :unit="unit" :detail="detail" :aside="aside" />
       </div>
     </Teleport>
   </section>
@@ -117,6 +121,16 @@ const { prep, frame, status, share: onShare, prime } = useShareImage(
   & .team-chip { margin-left: 0; margin-right: 6px; font-size: 11px; }
 }
 .stat { margin-top: auto; }
+.vrow { display: flex; align-items: baseline; gap: 10px; }
+.aside {
+  font: 700 15px/1 var(--sans);
+  letter-spacing: -.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+  white-space: nowrap;
+
+  & abbr { font: 500 10px var(--mono); letter-spacing: .12em; color: var(--mu); text-decoration: none; cursor: help; }
+}
 .v {
   font: 800 40px/1 var(--sans);
   letter-spacing: -.04em;

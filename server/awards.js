@@ -20,13 +20,13 @@
 // Breakout: biggest jump in Game Score over his own season average per game
 //   (3+ prior games), skipping the Player of the Night so it's someone else.
 // Bricklayer: most missed shots, (FGA - FGM) + (FTA - FTM) (threes are inside
-//   FGA); ties go to the lower combined shooting percentage.
+//   FGA); ties go to the lower True Shooting percentage (TS%, shown on the card).
 // Ball Hawk / Rim Protector: most steals / blocks, if 5+ (about once every
 //   night or two league-wide); ties go to the higher Game Score.
 //
 // Bump VERSION whenever the formulas change so stored awards are recomputed.
 
-export const VERSION = 8
+export const VERSION = 9
 
 const MIN_MINUTES = 20
 const MIN_PRIOR_GAMES = 3
@@ -112,14 +112,15 @@ function breakout(rows, performer) {
 }
 
 const misses = p => p.fga - p.fgm + p.fta - p.ftm
-const shotPct = p => (p.fgm + p.ftm) / (p.fga + p.fta || 1)
+// True Shooting: points per two shot attempts, a free throw ~0.44 of an attempt.
+export const trueShooting = p => p.pts / (2 * (p.fga + 0.44 * p.fta) || 1)
 function bricklayer(rows) {
   const top = rows.filter(r => misses(r.p) > 0).reduce((a, b) => {
     if (!a) return b
     const d = misses(b.p) - misses(a.p)
-    return d > 0 || (d === 0 && shotPct(b.p) < shotPct(a.p)) ? b : a
+    return d > 0 || (d === 0 && trueShooting(b.p) < trueShooting(a.p)) ? b : a
   }, null)
-  return top && { ...entry(top, null), missed: misses(top.p) }
+  return top && { ...entry(top, null), missed: misses(top.p), ts: r1(100 * trueShooting(top.p)) }
 }
 
 function most(rows, k, min) {

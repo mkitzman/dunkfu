@@ -14,6 +14,7 @@ const cards = computed(() => {
     n.breakout && { award: 'breakout', player: n.breakout, value: n.breakout.pts, unit: 'PTS' },
     b && {
       award: 'bricklayer', player: b, value: b.missed, unit: 'MISSED',
+      aside: b.ts != null ? { value: `${b.ts.toFixed(1)}%`, label: 'TS', title: 'True Shooting percentage: field goals, threes and free throws combined' } : null,
       detail: `${b.fgm}/${b.fga} FG · ${b.tpm}/${b.tpa} 3PT · ${b.ftm}/${b.fta} FT`,
     },
     n.ballHawk && { award: 'stl', player: n.ballHawk, value: n.ballHawk.stl, unit: 'STL' },
