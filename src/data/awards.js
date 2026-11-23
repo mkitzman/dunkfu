@@ -26,6 +26,8 @@ export const AWARD_TYPES = [
     glyph: '<path fill-rule="evenodd" d="M2 6.5h20v11H2zM2 11.3h20v1.4H2zM8.3 6.5h1.4v4.8H8.3zM14.3 12.7h1.4v4.8h-1.4z"/>' }, // bricks
   { key: 'dud', label: 'Dud of the Night', rule: 'Furthest below his usual, starters / 20+ MIN', bg: '#e5484d', fg: '#ffffff',
     glyph: '<path d="M3 4.4l5.2 5.2 3.8-3.8 7.4 7.4" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 16.6h7.4V9.2z"/><rect x="2.5" y="19.6" width="19" height="2.2" rx="1.1"/>' }, // falling chart
+  { key: 'dudg', label: 'Dud of the Game', rule: 'Furthest below his usual in his game, starters / 20+ MIN', bg: '#F4A3A6', fg: '#4a0d10',
+    glyph: '<path d="M3 4.4l5.2 5.2 3.8-3.8 7.4 7.4" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 16.6h7.4V9.2z"/><rect x="2.5" y="19.6" width="19" height="2.2" rx="1.1"/>' }, // falling chart, light (as potg is to potn)
   { key: 'dnp', label: 'Did not play', rule: 'On the box score, no minutes', tone: 'absent',
     glyph: '<rect x="4" y="4" width="16" height="4.5" rx="1.2"/><rect x="2.5" y="11" width="19" height="4" rx="1.2"/><path d="M6 15v6M18 15v6M6 8.5V11M18 8.5V11" stroke-width="2.4" stroke-linecap="round"/>' },
   { key: 'inj', label: 'Injured', rule: 'Missed the game (not on the box score)', bg: '#8c3550', fg: '#ffd6df',

@@ -169,7 +169,7 @@ const allPlayers = computed(() => hasBox.value
           <div class="strip-l">
             <span class="final">{{ status }}</span>
             <span class="rule" aria-hidden="true"></span>
-            <span class="when">{{ dateLong(game.date) }}<template v-if="gameOf"> · {{ gameOf }}</template></span>
+            <span class="when">{{ dateLong(game.date) }}</span>
           </div>
           <div v-if="arena" class="venue">{{ arena.name }} · {{ arena.city }}</div>
         </header>

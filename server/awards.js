@@ -26,7 +26,7 @@
 //
 // Bump VERSION whenever the formulas change so stored awards are recomputed.
 
-export const VERSION = 11
+export const VERSION = 12 // 12: dudg (Dud of the Game) per player; Ball Hawk / Rim Protector ties
 
 const MIN_MINUTES = 20
 const MIN_PRIOR_GAMES = 3
@@ -126,8 +126,14 @@ function bricklayer(rows) {
   return top && { ...entry(top, null), missed: misses(top.p), ts: r1(100 * trueShooting(top.p)) }
 }
 
+// The leader (ties: higher Game Score first), plus `tied`: everyone else with
+// the same count, best Game Score first, so the card can show co-winners.
 function most(rows, k, min) {
-  return best(rows.filter(r => r.p[k] >= min), r => r.p[k] * 1000 + r.gs)
+  const top = best(rows.filter(r => r.p[k] >= min), r => r.p[k] * 1000 + r.gs)
+  if (!top) return null
+  const tied = rows.filter(r => r.p[k] === top[k] && String(r.p.id) !== String(top.id))
+    .sort((a, b) => b.gs - a.gs).map(r => entry(r, null))
+  return { ...top, tied }
 }
 
 function entry({ p, gs, exp }, basis) {

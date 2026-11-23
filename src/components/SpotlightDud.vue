@@ -46,13 +46,13 @@ const { prep, frame, status, share: onShare, prime, shareFromCard } = useShareIm
         <div class="brand">
           <BrandLockup mini />
           <span class="rule" aria-hidden="true"></span>
+          <AwardBadge class="badge" :award="/game/i.test(label) ? 'dudg' : 'dud'" size="S" decorative />
           <h2 class="label">{{ label }}</h2>
         </div>
         <ShareButton v-if="!capture" :label="`Share ${label}`" :status="status" @click="onShare" />
         <span v-else class="site">dunkfu.com</span>
       </header>
       <div class="body">
-        <AwardBadge award="dud" size="XL" decorative />
         <div class="who">
           <div class="name">
             <span v-if="capture" class="nm">{{ player.name }}</span><PlayerButton v-else class="nm" :id="player.id" :abbr="player.abbr" :name="player.name" :num="player.num" :pos="player.pos" /><span
@@ -102,6 +102,7 @@ const { prep, frame, status, share: onShare, prime, shareFromCard } = useShareIm
 /* The mini lockup is drawn for dark team colours; here it sits on the page surface. */
 .brand :deep(.word) { color: var(--fg); }
 .rule { width: 1px; height: 16px; background: var(--ln); flex: none; }
+.badge { flex: none; margin-right: -2px; }
 .label {
   margin: 0;
   font: 600 11px/1 var(--mono);
@@ -118,7 +119,7 @@ const { prep, frame, status, share: onShare, prime, shareFromCard } = useShareIm
 .site { flex: none; font: 800 15px/1 var(--sans); letter-spacing: -.035em; color: var(--mu); } /* wordmark face */
 .body {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: 1fr auto;
   gap: 18px;
   align-items: center;
   padding: 16px 22px;
@@ -138,7 +139,7 @@ a.nm:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; border-r
 
 @container dud (max-width: 760px) {
   .head { padding: 10px 16px; }
-  .body { grid-template-columns: auto 1fr; gap: 12px 14px; padding: 14px 16px; }
+  .body { grid-template-columns: 1fr; gap: 12px 14px; padding: 14px 16px; }
   .trio { grid-column: 1 / -1; justify-self: start; }
   .name { font-size: 18px; }
   .line { font-size: 11px; }

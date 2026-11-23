@@ -14,6 +14,7 @@
 //         about once every night or two league-wide)
 //   bricklayer  most missed shots   awards[date].night.bricklayer
 //   dud   Dud of the Night          awards[date].night.dud
+//   dudg  Dud of the Game           awards[date].games[gameId].dud
 //   dnp   on the box score but didn't play (the API gives no reason)
 //   inj   missed one of his team's games entirely while on the team; the API
 //         doesn't say why, so this also covers suspensions and personal leave
@@ -22,7 +23,7 @@ const STATS = ['min', 'pts', 'reb', 'oreb', 'dreb', 'ast', 'stl', 'blk', 'to', '
 const MAX_TRAILING_MISSED = 15
 import { BALL_HAWK_STL, RIM_PROTECTOR_BLK } from './awards.js'
 
-export const AWARD_ORDER = ['potn', 'potg', 'breakout', 'pts', 'reb', 'ast', 'stl', 'blk', 'bricklayer', 'dud', 'dnp', 'inj']
+export const AWARD_ORDER = ['potn', 'potg', 'breakout', 'pts', 'reb', 'ast', 'stl', 'blk', 'bricklayer', 'dud', 'dudg', 'dnp', 'inj']
 
 // dayLines: { [date]: line[] }  awards: { [date]: { night, games } }
 // games: [{ id, date, status, tipUtc, tip, away: { abbr, score }, home: { abbr, score } }]
@@ -114,6 +115,7 @@ function lineAwards(p, aw, high) {
   if (p.blk >= RIM_PROTECTOR_BLK) keys.push('blk')
   if (is(aw?.night?.bricklayer)) keys.push('bricklayer')
   if (is(aw?.night?.dud)) keys.push('dud')
+  if (is(aw?.games?.[p.gameId]?.dud)) keys.push('dudg')
   return AWARD_ORDER.filter(k => keys.includes(k))
 }
 

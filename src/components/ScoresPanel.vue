@@ -1,6 +1,6 @@
 <script setup>
 // Navy panel holding the night's game cards (slot), with a header strip:
-// FINAL SCORES / SCHEDULE · date · count | ALL TIMES ET.
+// FINAL SCORES / SCHEDULE · date · count | ALL TIMES ET (schedule only).
 import { dateLong } from '../utils.js'
 
 defineProps({
@@ -18,7 +18,7 @@ defineProps({
         <span class="rule" aria-hidden="true"></span>
         <span class="meta">{{ dateLong(date) }} · {{ count }} {{ count === 1 ? 'game' : 'games' }}</span>
       </div>
-      <span class="meta tz">All times ET</span>
+      <span v-if="!final" class="meta tz">All times ET</span><!-- tip times only show on schedule days -->
     </header>
     <div class="grid">
       <slot />

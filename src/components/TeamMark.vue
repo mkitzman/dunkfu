@@ -65,6 +65,8 @@ const style = computed(() => {
   letter-spacing: .02em;
   line-height: 1;
   text-shadow: var(--tm-shadow);
+  /* Faint edge so dark primaries (NOP, BKN) still read as a tile on dark surfaces. */
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .2);
   user-select: none;
 }
 </style>

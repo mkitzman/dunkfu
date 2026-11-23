@@ -55,7 +55,7 @@ const ariaSort = key => (sort.value.key === key ? (sort.value.dir < 0 ? 'descend
       </thead>
       <tbody>
         <tr v-for="r in sorted" :key="r.key" :class="{ fav: isFav(r.abbr) }" :style="isFav(r.abbr) ? favStyle(r.abbr) : null">
-          <th scope="row" class="player">
+          <th scope="row" class="player"><span class="cell">
             <span class="bar" :style="{ background: r.color }"></span>
             <span class="who">
               <span class="name"><PlayerButton v-if="r.id" :id="r.id" :abbr="r.abbr" :name="r.name" :num="r.num" :pos="r.pos"><span class="full">{{ r.name }}</span><span class="abbrv">{{ r.short }}</span></PlayerButton><template v-else><span class="full">{{ r.name }}</span><span class="abbrv">{{ r.short }}</span></template><span v-if="isFav(r.abbr)" class="fav-star" aria-label="Your team">★</span></span>
@@ -64,7 +64,7 @@ const ariaSort = key => (sort.value.key === key ? (sort.value.dir < 0 ? 'descend
             </span>
             <!-- Desktop: after the name, as tall as name + team line. Phones: own line under the team (above). -->
             <AwardStack v-if="awards?.[r.id]" class="aw" :awards="awards[r.id]" size="L" />
-          </th>
+          </span></th>
           <td
             v-for="c in cols"
             :key="c.key"
@@ -97,9 +97,9 @@ table.stats tbody tr.fav > *,
 table.stats tbody tr.fav th.player { background: color-mix(in oklch, var(--tc) var(--fav-mix), var(--sf)); }
 table.stats tbody tr.fav > td.sorted { background: linear-gradient(var(--hi), var(--hi)), color-mix(in oklch, var(--tc) var(--fav-mix), var(--sf)); }
 .player { white-space: nowrap; }
-.player > * { vertical-align: middle; }
+.cell { display: flex; align-items: center; }
 .bar {
-  display: inline-block;
+  flex: none;
   width: 3px;
   height: 26px;
   border-radius: 2px;
@@ -125,7 +125,7 @@ thead th:first-child { padding: 11px 14px; font-size: 11px; letter-spacing: .08e
   .player-table { border-left: 0; border-right: 0; border-radius: 0; }
   table.stats tbody tr:hover th.player { background: linear-gradient(var(--ln2), var(--ln2)), var(--bg); }
   table.stats tbody th.player { background: var(--bg); padding: 7px 10px 7px var(--gutter); max-width: 150px; overflow: hidden; text-overflow: ellipsis; }
-  .bar { height: 24px; margin-right: 8px; }
+  .bar { align-self: stretch; height: auto; margin-right: 8px; } /* full height of name + team + awards */
   .who { min-width: 0; max-width: 110px; }
   .name { font-size: 12px; overflow: hidden; text-overflow: ellipsis; }
   .full { display: none; }

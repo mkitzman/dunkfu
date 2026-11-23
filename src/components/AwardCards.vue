@@ -20,8 +20,8 @@ const cards = computed(() => {
       unitTitle: 'True Shooting: field goals, threes and free throws combined. Under 50% is bad, 65%+ is elite.',
       detail: `${b.fgm}/${b.fga} FG · ${b.tpm}/${b.tpa} 3PT · ${b.ftm}/${b.fta} FT`,
     },
-    n.ballHawk && { award: 'stl', player: n.ballHawk, value: n.ballHawk.stl, unit: 'STL' },
-    n.rimProtector && { award: 'blk', player: n.rimProtector, value: n.rimProtector.blk, unit: 'BLK' },
+    n.ballHawk && { award: 'stl', player: n.ballHawk, tied: n.ballHawk.tied, value: n.ballHawk.stl, unit: 'STL' },
+    n.rimProtector && { award: 'blk', player: n.rimProtector, tied: n.rimProtector.tied, value: n.rimProtector.blk, unit: 'BLK' },
   ].filter(Boolean)
 })
 </script>
@@ -37,6 +37,7 @@ const cards = computed(() => {
   display: grid;
   grid-template-columns: repeat(var(--n), minmax(0, 1fr));
   gap: 14px;
+  grid-auto-rows: 1fr; /* every card as tall as the tallest (e.g. a tie listing several players) */
 }
 @media (max-width: 1040px) {
   .cards { grid-template-columns: repeat(min(var(--n), 2), minmax(0, 1fr)); }

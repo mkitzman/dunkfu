@@ -14,6 +14,7 @@ import { useShareImage } from '../composables/useShare.js'
 const props = defineProps({
   award: { type: String, required: true }, // key in src/data/awards.js
   player: { type: Object, required: true },
+  tied: { type: Array, default: () => [] }, // co-winners (Ball Hawk / Rim Protector ties), best first
   value: { type: [Number, String], required: true },
   unit: { type: String, required: true }, // PTS, TRUE SHOOTING, STL, BLK
   detail: { type: String, default: '' }, // after the unit, same line
@@ -22,14 +23,19 @@ const props = defineProps({
 })
 
 const title = computed(() => AWARD[props.award].label)
-const color = computed(() => team(props.player.abbr)?.color ?? '#646a72')
+// Ties: 2 players in full; 3 as one line each; 4+ as the first two and "+N more".
+const all = computed(() => [props.player, ...props.tied])
+const shown = computed(() => all.value.length > 3 ? all.value.slice(0, 2) : all.value)
+const extra = computed(() => all.value.slice(shown.value.length))
+const names = computed(() => all.value.map(p => p.name).join(' & '))
+const colorOf = p => team(p.abbr)?.color ?? '#646a72'
 
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 const { prep, frame, status, share: onShare, prime, shareFromCard } = useShareImage(
   () => `${props.award}|${props.player.id}|${props.player.gameId}`,
   () => ({
-    title: `${title.value}: ${props.player.name}`,
-    text: `${title.value}: ${props.player.name}, ${props.value} ${props.unit}${props.detail ? ` · ${props.detail}` : ''} · dunkfu`,
+    title: `${title.value}: ${names.value}`,
+    text: `${title.value}: ${names.value}, ${props.value} ${props.unit}${props.detail ? ` · ${props.detail}` : ''} · dunkfu`,
     filename: `dunkfu-${slug(title.value)}-${slug(props.player.name)}.png`,
   }),
   !props.capture,
@@ -45,13 +51,31 @@ const { prep, frame, status, share: onShare, prime, shareFromCard } = useShareIm
         <ShareButton v-if="!capture" :label="`Share ${title}`" :status="status" @click="onShare" />
         <span v-else class="site">dunkfu.com</span>
       </header>
-      <div>
-        <div class="name">
-          <span v-if="capture">{{ player.name }}</span>
-          <PlayerButton v-else :id="player.id" :abbr="player.abbr" :name="player.name" :num="player.num" :pos="player.pos" />
+      <div v-if="all.length <= 2" class="who" :class="{ pair: all.length === 2 }">
+        <div v-for="p in all" :key="p.id">
+          <div class="name">
+            <span v-if="capture">{{ p.name }}</span>
+            <PlayerButton v-else :id="p.id" :abbr="p.abbr" :name="p.name" :num="p.num" :pos="p.pos" />
+          </div>
+          <div class="meta"><span class="team-chip" :style="chipStyle(colorOf(p))">{{ p.abbr }}</span>#{{ p.num }} · {{ p.min }} MIN</div>
         </div>
-        <div class="meta"><span class="team-chip" :style="chipStyle(color)">{{ player.abbr }}</span>#{{ player.num }} · {{ player.min }} MIN</div>
       </div>
+      <ul v-else class="who many">
+        <li v-for="p in shown" :key="p.id">
+          <span v-if="capture" class="nm">{{ p.name }}</span>
+          <PlayerButton v-else class="nm" :id="p.id" :abbr="p.abbr" :name="p.name" :num="p.num" :pos="p.pos" />
+          <span class="team-chip" :style="chipStyle(colorOf(p))">{{ p.abbr }}</span>
+        </li>
+        <li v-if="extra.length" class="more">
+          <span v-if="capture">+{{ extra.length }} more</span>
+          <HelpPopover v-else :label="`All ${all.length} tied for ${title}`">
+            <template #trigger>+{{ extra.length }} more</template>
+            <ul class="tie-list">
+              <li v-for="p in all" :key="p.id"><PlayerButton :id="p.id" :abbr="p.abbr" :name="p.name" :num="p.num" :pos="p.pos" /><span class="team-chip" :style="chipStyle(colorOf(p))">{{ p.abbr }}</span></li>
+            </ul>
+          </HelpPopover>
+        </li>
+      </ul>
       <div class="stat">
         <div class="v">{{ value }}</div>
         <div class="l"><span class="u">{{ unit }}</span><HelpPopover v-if="unitTitle && !capture" :label="`What is ${unit.toLowerCase()}?`" class="uq">{{ unitTitle }}</HelpPopover><template v-if="detail"><span class="u-sep"> · </span>{{ detail }}</template></div>
@@ -60,7 +84,7 @@ const { prep, frame, status, share: onShare, prime, shareFromCard } = useShareIm
 
     <Teleport v-if="prep" to="body">
       <div ref="frame" class="shot" aria-hidden="true" inert>
-        <AwardCard capture :award="award" :player="player" :value="value" :unit="unit" :detail="detail" :unit-title="unitTitle" />
+        <AwardCard capture :award="award" :player="player" :tied="tied" :value="value" :unit="unit" :detail="detail" :unit-title="unitTitle" />
       </div>
     </Teleport>
   </section>
@@ -111,6 +135,17 @@ const { prep, frame, status, share: onShare, prime, shareFromCard } = useShareIm
 
   & a:hover { text-decoration: underline; text-underline-offset: 3px; }
 }
+.pair { display: grid; gap: 10px; }
+.many { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.many li { display: flex; align-items: baseline; min-width: 0; font: 700 14px/1.2 var(--sans); letter-spacing: -.01em; }
+.many .nm { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.many a.nm:hover { text-decoration: underline; text-underline-offset: 3px; }
+.many .team-chip { flex: none; font-size: 10px; }
+.many li.more { font: 500 11px var(--mono); color: var(--mu); }
+.more :deep(.trig) { font: 500 11px var(--mono); color: var(--mu); text-decoration: underline dotted; text-underline-offset: 3px; }
+.more :deep(.trig:hover) { color: var(--fg); }
+.tie-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font: 600 13px var(--sans); }
+.tie-list .team-chip { font-size: 10px; }
 .meta {
   margin-top: 4px;
   font: 500 11px var(--mono);

@@ -1,19 +1,22 @@
 <script setup>
-// Every award type in order with his count; 0s muted but still listed
-// (a 0 Dud or 0 DNP is information). Each rule is shown under its name, so
+// Award types he has won, in order with his count. DNP and Injured always
+// show (a 0 there is information); other 0s are hidden. Each rule is shown under its name, so
 // it reads on phones and with a keyboard (no hover tooltips).
+import { computed } from 'vue'
 import AwardBadge from './AwardBadge.vue'
 import { shortDate } from './playerCard.js'
-defineProps({
+const props = defineProps({
   awards: { type: Array, required: true }, // from summarize(): [{ key, label, count, dates }]
   surface: { type: String, default: 'neutral' }, // 'team' on the team column
   dates: Boolean, // show the dates earned (mobile Awards tab)
 })
+const ALWAYS = new Set(['dnp', 'inj'])
+const shown = computed(() => props.awards.filter(a => a.count || ALWAYS.has(a.key)))
 </script>
 
 <template>
   <ul class="awards" :class="{ withDates: dates }">
-    <li v-for="a in awards" :key="a.key" class="row" :class="{ zero: !a.count }">
+    <li v-for="a in shown" :key="a.key" class="row" :class="{ zero: !a.count }">
       <AwardBadge :award="a.key" size="L" :surface="surface" decorative />
       <span class="what">
         <span class="label">{{ a.label }}</span>

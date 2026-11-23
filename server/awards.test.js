@@ -95,3 +95,18 @@ test('a released player stops being marked out after 15 missed games', () => {
   const out = logs.AAA.players[1].games.filter(g => g.awards.includes('inj'))
   assert.equal(out.length, 15)
 })
+
+test('the day table marks the Dud of the Game as well as the Dud of the Night', () => {
+  const days = [1, 2, 3].map(i => ({ date: `2026-11-0${i}`, lines: [line(1, SOLID), line(2, SOLID)] }))
+  const tonight = [line(1, AWFUL), line(2, SOLID)]
+  days.push({ date: '2026-11-09', lines: tonight })
+  const aw = computeAwards(days)['2026-11-09']
+  assert.deepEqual(nightPlayerAwards(tonight, aw)[1].filter(k => k.startsWith('dud')), ['dud', 'dudg'])
+})
+
+test('Ball Hawk ties: the leader on Game Score, the rest listed as tied', () => {
+  const lines = [line(1, { ...SOLID, stl: 5 }), line(2, { ...SOLID, pts: 30, fgm: 12, stl: 5 }), line(3, { ...SOLID, stl: 5, pts: 10, fgm: 3 }), line(4, { ...SOLID, stl: 4 })]
+  const hawk = computeAwards([{ date: '2026-11-09', lines }])['2026-11-09'].night.ballHawk
+  assert.equal(hawk.id, 2)
+  assert.deepEqual(hawk.tied.map(t => t.id), [1, 3])
+})
