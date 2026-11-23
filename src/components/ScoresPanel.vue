@@ -43,22 +43,6 @@ defineProps({
     radial-gradient(70% 90% at 100% 0%, rgba(255, 255, 255, .07), transparent 60%),
     repeating-linear-gradient(135deg, rgba(255, 255, 255, .03) 0 1px, transparent 1px 14px),
     #0e2440;
-
-  /* Thin-line ball watermark, brand orange */
-  &::before {
-    content: '';
-    position: absolute;
-    z-index: -1;
-    right: -120px;
-    bottom: -160px;
-    width: 460px;
-    height: 460px;
-    transform: rotate(18deg);
-    background: rgb(242 107 33 / .09);
-    -webkit-mask: url('../assets/brand/ball-lines-thin.png') center / contain no-repeat;
-    mask: url('../assets/brand/ball-lines-thin.png') center / contain no-repeat;
-    pointer-events: none;
-  }
 }
 .strip {
   display: flex;
