@@ -288,7 +288,6 @@ table.stats {
     height: 0;
     border-bottom: 1px dashed var(--ac);
   }
-  & tr.cut:hover { background: none; }
 }
 
 @media (max-width: 720px) {

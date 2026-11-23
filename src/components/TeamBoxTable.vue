@@ -119,10 +119,6 @@ table.stats {
     background: linear-gradient(var(--ln2), var(--ln2)), var(--sf);
   }
   & tr.pct td { color: var(--fg); font-weight: 500; border-bottom: 0; }
-  & tr.pad:hover { background: none; }
-  & tr.pad:hover > :first-child { background: var(--sf); }
-  & tr.total:hover, & tr.pct:hover, & tr.sec:hover { background: none; }
-  & tr.total:hover td { background: var(--ln2); }
 }
 
 @media (max-width: 720px) {

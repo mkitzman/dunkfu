@@ -166,9 +166,6 @@ table.stats {
     background: var(--sf);
   }
 
-  & tbody tr:hover { background: var(--ln2); }
-  /* The sticky first cell is opaque; layer the hover tint over it too. */
-  & tbody tr:hover > :first-child { background: linear-gradient(var(--ln2), var(--ln2)), var(--sf); }
 
   & th.sortable {
     cursor: pointer;
@@ -197,7 +194,6 @@ table.stats {
   /* Edge-to-edge tables on mobile sit on --bg */
   table.stats.edge {
     & td:first-child { background: var(--bg); padding-left: var(--gutter); }
-    & tbody tr:hover > :first-child { background: linear-gradient(var(--ln2), var(--ln2)), var(--bg); }
     & th:first-child { background: var(--bg); padding-left: var(--gutter); }
     & th.sortable button { padding-top: 15px; padding-bottom: 15px; }
   }
@@ -230,3 +226,11 @@ table.stats {
 
 /* Elements focused by script (page headings, <main>) don't need a ring. */
 [tabindex="-1"]:focus { outline: none; }
+
+/* Row + column hover on every table. The column is marked by the listener in
+   main.js (.col-hl). An inset shadow paints over any cell background (sticky
+   first column, sorted column, heat cells), and stacks where row and column
+   cross. Spacer rows (pad, cut, section and stint headers) never light up. */
+tbody tr:not(.pad, .cut, .sec, .stint):hover > *,
+tr:not(.pad, .cut, .sec, .stint) > .col-hl { box-shadow: inset 0 0 0 100vmax var(--ln2); }
+tbody tr:not(.pad, .cut, .sec, .stint):hover > .col-hl { box-shadow: inset 0 0 0 100vmax var(--ln2), inset 0 0 0 100vmax var(--ln2); }
