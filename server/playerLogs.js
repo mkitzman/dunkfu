@@ -8,22 +8,22 @@
 // Awards per game line (keys in display order, see src/data/awards.js):
 //   potn  Player of the Night       awards[date].night.performer
 //   potg  Player of the Game        awards[date].games[gameId].performer
-//   breakout  Breakout              awards[date].night.breakout
 //   pts / reb / ast                 nightly league high (ties all count)
-//   stl   Ball Hawk, 5+ steals   blk  Rim Protector, 5+ blocks (thresholds in awards.js; each happens
-//         about once every night or two league-wide)
+//   stl blk cmp ddb sun yng rain tril cardio   thresholds, earned() in awards.js
+//   breakout  Lightning in a Bottle awards[date].night.breakout
 //   bricklayer  most missed shots   awards[date].night.bricklayer
 //   dud   Dud of the Night          awards[date].night.dud
 //   dudg  Dud of the Game           awards[date].games[gameId].dud
+//   hog   Ball Hog                  awards[date].night.ballHog
 //   dnp   on the box score but didn't play (the API gives no reason)
 //   inj   missed one of his team's games entirely while on the team; the API
 //         doesn't say why, so this also covers suspensions and personal leave
 
 const STATS = ['min', 'pts', 'reb', 'oreb', 'dreb', 'ast', 'stl', 'blk', 'to', 'pf', 'pm', 'fgm', 'fga', 'tpm', 'tpa', 'ftm', 'fta']
 const MAX_TRAILING_MISSED = 15
-import { BALL_HAWK_STL, RIM_PROTECTOR_BLK } from './awards.js'
+import { earned } from './awards.js'
 
-export const AWARD_ORDER = ['potn', 'potg', 'breakout', 'pts', 'reb', 'ast', 'stl', 'blk', 'bricklayer', 'dud', 'dudg', 'dnp', 'inj']
+export const AWARD_ORDER = ['potn', 'potg', 'pts', 'reb', 'ast', 'stl', 'blk', 'breakout', 'cmp', 'ddb', 'sun', 'yng', 'rain', 'bricklayer', 'dud', 'dudg', 'hog', 'tril', 'cardio', 'dnp', 'inj']
 
 // dayLines: { [date]: line[] }  awards: { [date]: { night, games } }
 // games: [{ id, date, status, tipUtc, tip, away: { abbr, score }, home: { abbr, score } }]
@@ -104,16 +104,16 @@ function nightHighs(lines) {
 }
 
 // Award keys (display order) one played line earned that night.
-function lineAwards(p, aw, high) {
+function lineAwards(p, aw, high, date = p.date) {
   const is = x => x && String(x.id) === String(p.id)
   const keys = []
   if (is(aw?.night?.performer)) keys.push('potn')
   if (is(aw?.games?.[p.gameId]?.performer)) keys.push('potg')
   if (is(aw?.night?.breakout)) keys.push('breakout')
   for (const k of ['pts', 'reb', 'ast']) if (high && p.min > 0 && p[k] > 0 && p[k] === high[k]) keys.push(k)
-  if (p.stl >= BALL_HAWK_STL) keys.push('stl')
-  if (p.blk >= RIM_PROTECTOR_BLK) keys.push('blk')
+  if (p.min > 0) keys.push(...earned(p, aw?.games?.[p.gameId]?.len, date))
   if (is(aw?.night?.bricklayer)) keys.push('bricklayer')
+  if (is(aw?.night?.ballHog)) keys.push('hog')
   if (is(aw?.night?.dud)) keys.push('dud')
   if (is(aw?.games?.[p.gameId]?.dud)) keys.push('dudg')
   return AWARD_ORDER.filter(k => keys.includes(k))
@@ -121,12 +121,12 @@ function lineAwards(p, aw, high) {
 
 // { [playerId]: award keys } for one night's played lines that earned any
 // (the day page's player table shows them next to the name).
-export function nightPlayerAwards(lines, aw) {
+export function nightPlayerAwards(lines, aw, date) {
   const high = nightHighs(lines)
   const out = {}
   for (const p of lines ?? []) {
     if (p.dnp || !(p.min > 0)) continue
-    const keys = lineAwards(p, aw, high)
+    const keys = lineAwards(p, aw, high, date)
     if (keys.length) out[p.id] = keys
   }
   return out

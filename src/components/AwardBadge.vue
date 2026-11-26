@@ -60,7 +60,7 @@ const style = computed(() => (a.value.bg ? { '--b': a.value.bg, '--f': a.value.f
 /* NBA leaders: light tile on dark surfaces, dark tile on paper. */
 .tone-lead { --b: #f4f1ea; --f: #15171a; }
 :global([data-theme="light"]) .tone-lead:not(.on-team) { --b: #15171a; --f: #f4f1ea; }
-/* Did not play: grey, flips with the theme. */
-.tone-absent { --b: #4a5058; --f: #c9ced6; }
-:global([data-theme="light"]) .tone-absent:not(.on-team) { --b: #c9c2b6; --f: #4a5058; }
+/* DNP: grey, a lighter tile on paper. */
+.tone-absent { --b: #4a5058; --f: #ffffff; }
+:global([data-theme="light"]) .tone-absent:not(.on-team) { --b: #8a8f96; }
 </style>

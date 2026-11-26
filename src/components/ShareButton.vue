@@ -5,7 +5,7 @@
 // or has keyboard focus inside; touch screens can't hover, so it always shows.
 //   tone: 'page' on --sf surfaces, 'team' on a team-colour hero
 defineProps({
-  label: { type: String, required: true }, // "Share Breakout"
+  label: { type: String, required: true }, // "Share Bricklayer"
   status: { type: String, default: '' },
   tone: { type: String, default: 'page' },
 })

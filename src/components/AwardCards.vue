@@ -1,34 +1,51 @@
 <script setup>
-// The night's award cards (night overview only), in the fixed order
-// Breakout, Bricklayer, Ball Hawk, Rim Protector. Cards whose award nobody
-// won (Ball Hawk / Rim Protector need 5+) are left out and the row reflows.
+// Featured award cards (night page and game page): up to three, one per slot,
+// picked on the server (server/awards.js, featured()). Empty slots are left
+// out and the row reflows; with none, nothing renders.
 import { computed } from 'vue'
 import AwardCard from './AwardCard.vue'
 
-const props = defineProps({ night: { type: Object, required: true } })
+const props = defineProps({ cards: { type: Array, default: () => [] } })
 
-const cards = computed(() => {
-  const n = props.night
-  const b = n.bricklayer
-  return [
-    n.breakout && {
-      award: 'breakout', player: n.breakout, value: n.breakout.pts, unit: 'PTS',
-      detail: n.breakout.ppg != null ? `${n.breakout.ppg.toFixed(1)} PPG AVERAGE` : '',
-    },
-    b && {
-      award: 'bricklayer', player: b, value: `${b.ts.toFixed(1)}%`, unit: 'TRUE SHOOTING',
-      unitTitle: 'True Shooting: field goals, threes and free throws combined. Under 50% is bad, 65%+ is elite.',
-      detail: `${b.fgm}/${b.fga} FG · ${b.tpm}/${b.tpa} 3PT · ${b.ftm}/${b.fta} FT`,
-    },
-    n.ballHawk && { award: 'stl', player: n.ballHawk, tied: n.ballHawk.tied, value: n.ballHawk.stl, unit: 'STL' },
-    n.rimProtector && { award: 'blk', player: n.rimProtector, tied: n.rimProtector.tied, value: n.rimProtector.blk, unit: 'BLK' },
-  ].filter(Boolean)
-})
+const LABEL = { pts: 'PTS', reb: 'REB', ast: 'AST', stl: 'STL', blk: 'BLK' }
+const tens = p => Object.keys(LABEL).filter(k => p[k] >= 10)
+// Good Day / Double Double: the double-figure stats as one number, the rest of PTS / REB / AST after.
+function doubles(p) {
+  const k = tens(p)
+  return {
+    value: k.map(x => p[x]).join('/'), unit: k.map(x => LABEL[x]).join(' / '),
+    detail: ['pts', 'reb', 'ast'].filter(x => !k.includes(x)).map(x => `${p[x]} ${LABEL[x]}`).join(' · '),
+  }
+}
+const ot = len => (len > 48 ? ` · ${len === 53 ? '' : (len - 48) / 5}OT` : '')
+
+const CONTENT = {
+  rain: p => ({ value: p.tpm, unit: '3PM', detail: `${p.tpm}/${p.tpa} 3PT` }),
+  sun: doubles,
+  ddb: doubles,
+  blk: p => ({ value: p.blk, unit: 'BLK' }),
+  stl: p => ({ value: p.stl, unit: 'STL' }),
+  yng: p => ({ value: `${p.pts}/${p.reb}/${p.ast}`, unit: 'PTS / REB / AST', detail: `AGE ${p.age}` }),
+  cmp: p => ({ value: p.min, unit: 'MIN', detail: `EVERY MINUTE${ot(p.len)}` }),
+  breakout: p => ({ value: p.pts, unit: 'PTS', detail: p.ppg != null ? `${p.ppg.toFixed(1)} PPG AVERAGE` : '' }),
+  bricklayer: p => ({
+    value: `${p.ts.toFixed(1)}%`, unit: 'TRUE SHOOTING',
+    unitTitle: 'True Shooting: field goals, threes and free throws combined. Under 50% is bad, 65%+ is elite.',
+    detail: `${p.fgm}/${p.fga} FG · ${p.tpm}/${p.tpa} 3PT · ${p.ftm}/${p.fta} FT`,
+  }),
+  cardio: p => ({ value: p.min, unit: 'MIN', detail: 'NOTHING ELSE' }),
+  hog: p => ({ value: p.fga, unit: 'FGA', detail: `${p.ast} AST` }),
+  tril: () => ({ value: 1, unit: 'MIN', detail: '1,000,000,000,000' }),
+}
+
+const shown = computed(() => props.cards
+  .filter(c => CONTENT[c.award])
+  .map(c => ({ award: c.award, player: c, tied: c.tied ?? [], ...CONTENT[c.award](c) })))
 </script>
 
 <template>
-  <div v-if="cards.length" class="cards" :style="{ '--n': cards.length }">
-    <AwardCard v-for="c in cards" :key="c.award" v-bind="c" />
+  <div v-if="shown.length" class="cards" :style="{ '--n': shown.length }">
+    <AwardCard v-for="c in shown" :key="c.award" v-bind="c" />
   </div>
 </template>
 

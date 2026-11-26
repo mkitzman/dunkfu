@@ -1,7 +1,6 @@
 <script setup>
-// One nightly award card (rev 6): badge + award name + share, the player,
-// then one big number with its label. Shared by Breakout, Bricklayer, Ball
-// Hawk and Rim Protector (see AwardCards.vue).
+// One featured award card (rev 6 template): badge + award name + share, the
+// player, then one big number with its label. Contents per award in AwardCards.vue.
 import { computed } from 'vue'
 import AwardBadge from './AwardBadge.vue'
 import PlayerButton from './PlayerButton.vue'
@@ -16,7 +15,7 @@ const props = defineProps({
   player: { type: Object, required: true },
   tied: { type: Array, default: () => [] }, // co-winners (Ball Hawk / Rim Protector ties), best first
   value: { type: [Number, String], required: true },
-  unit: { type: String, required: true }, // PTS, TRUE SHOOTING, STL, BLK
+  unit: { type: String, required: true }, // PTS, TRUE SHOOTING, STL, MIN…
   detail: { type: String, default: '' }, // after the unit, same line
   unitTitle: { type: String, default: '' }, // explains the unit, in a ? popup
   capture: Boolean,

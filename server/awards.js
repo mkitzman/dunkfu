@@ -16,18 +16,30 @@
 //   e.g. Naz Reid's 12/10/3 on 4-19 shooting).
 //   If nobody qualifies there is no dud.
 //
-// Nightly cards (night only, all games):
-// Breakout: biggest jump in Game Score over his own season average per game
+// One a night (night only, all games):
+// Lightning in a Bottle (key breakout): biggest jump in Game Score over his own season average per game
 //   (3+ prior games), skipping the Player of the Night so it's someone else.
 // Bricklayer: most missed shots, (FGA - FGM) + (FTA - FTM) (threes are inside
 //   FGA), among players under 50% True Shooting (TS%, shown on the card), so a
 //   star scoring efficiently on high volume never wins; ties go to the lower TS%.
-// Ball Hawk / Rim Protector: most steals / blocks, if 5+ (about once every
-//   night or two league-wide); ties go to the higher Game Score.
+// Ball Hog: most shots among players with 15+ FGA and at most 1 assist.
+//
+// Threshold awards (everyone who qualifies earns the badge, see earned()):
+// Ball Hawk 5+ STL, Rim Protector 5+ BLK, Rainmaker 9+ 3PM, Good Day a
+// triple-double, Double Double exactly two 10+ categories, Completionist every
+// minute of the game, Trillionaire exactly 1 MIN and nothing else (fouls
+// included), Cardio Day 5+ MIN and nothing else, Young Gun a Game Score of
+// 22+ at 20 or under (birthdates in youngGuns.js).
+//
+// Featured cards (handoff rev 7): three slots, each the first award in its
+// list with a winner, rarest first. The Player and Dud of the Night (of the
+// Game, on a game page) are never featured again, and nobody twice. See SLOTS.
 //
 // Bump VERSION whenever the formulas change so stored awards are recomputed.
 
-export const VERSION = 13 // 13: Bricklayer needs TS% under 50
+import { ageOn } from './youngGuns.js'
+
+export const VERSION = 15 // 15: Young Gun
 
 const MIN_MINUTES = 20
 const MIN_PRIOR_GAMES = 3
@@ -38,6 +50,12 @@ const DUD_MIN_SHORTFALL_PCT = 0.25 // ...or this fraction below it
 const DUD_SAFE_REB_AST = 10 // 10+ rebounds or assists is never a dud
 export const BALL_HAWK_STL = 5
 export const RIM_PROTECTOR_BLK = 5
+const RAINMAKER_3PM = 9
+const BALL_HOG_FGA = 15
+const BALL_HOG_MAX_AST = 1
+const CARDIO_MIN = 5
+const YOUNG_GUN_MAX_AGE = 20
+const YOUNG_GUN_GS = 22 // top ~5% of all lines; 15/2/2 is ~10
 
 const r1 = n => Math.round(n * 10) / 10
 
@@ -63,19 +81,27 @@ export function computeAwards(days) {
       }
     })
 
-    const pick = list => ({ performer: performer(list), dud: dud(list) })
     const byGame = {}
     for (const r of rows) (byGame[r.p.gameId] ??= []).push(r)
-    const night = pick(rows)
+    const len = Object.fromEntries(Object.entries(byGame).map(([id, list]) => [id, gameLength(list)]))
+    for (const r of rows) r.keys = earned(r.p, len[r.p.gameId], date)
+
+    const night = { performer: performer(rows), dud: dud(rows) }
+    night.breakout = breakout(rows, night.performer)
+    night.bricklayer = bricklayer(rows)
+    night.ballHog = ballHog(rows)
+    const relative = { breakout: night.breakout, bricklayer: night.bricklayer, hog: night.ballHog }
+    night.cards = featured(rows, len, relative, [night.performer, night.dud], false, date)
+
     out[date] = {
-      night: {
-        ...night,
-        breakout: breakout(rows, night.performer),
-        bricklayer: bricklayer(rows),
-        ballHawk: most(rows, 'stl', BALL_HAWK_STL),
-        rimProtector: most(rows, 'blk', RIM_PROTECTOR_BLK),
-      },
-      games: Object.fromEntries(Object.entries(byGame).map(([id, list]) => [id, pick(list)])),
+      night,
+      games: Object.fromEntries(Object.entries(byGame).map(([id, list]) => {
+        const g = { performer: performer(list), dud: dud(list), len: len[id] }
+        // One-a-night awards count here only if the night's winner played here.
+        const here = Object.fromEntries(Object.entries(relative).map(([k, e]) => [k, e?.gameId === id ? e : null]))
+        g.cards = featured(list, len, here, [g.performer, g.dud], true, date)
+        return [id, g]
+      })),
     }
 
     for (const { p, gs } of rows) {
@@ -104,11 +130,6 @@ function dud(rows) {
   return worst ? entry(worst, 'expected') : null
 }
 
-const best = (rows, score) => {
-  const top = rows.reduce((a, b) => (!a || score(b) > score(a) ? b : a), null)
-  return top && entry(top, null)
-}
-
 function breakout(rows, performer) {
   const r = rows.filter(r => r.avg != null && String(r.p.id) !== String(performer?.id))
     .reduce((a, b) => (!a || b.gs - b.avg > a.gs - a.avg ? b : a), null)
@@ -128,14 +149,86 @@ function bricklayer(rows) {
   return top && { ...entry(top, null), missed: misses(top.p), ts: r1(100 * trueShooting(top.p)) }
 }
 
-// The leader (ties: higher Game Score first), plus `tied`: everyone else with
-// the same count, best Game Score first, so the card can show co-winners.
-function most(rows, k, min) {
-  const top = best(rows.filter(r => r.p[k] >= min), r => r.p[k] * 1000 + r.gs)
-  if (!top) return null
-  const tied = rows.filter(r => r.p[k] === top[k] && String(r.p.id) !== String(top.id))
-    .sort((a, b) => b.gs - a.gs).map(r => entry(r, null))
-  return { ...top, tied }
+function ballHog(rows) {
+  const r = rows.filter(r => r.p.fga >= BALL_HOG_FGA && r.p.ast <= BALL_HOG_MAX_AST)
+    .reduce((a, b) => (!a || b.p.fga * 100 + misses(b.p) > a.p.fga * 100 + misses(a.p) ? b : a), null)
+  return r && entry(r, null)
+}
+
+// Game length in minutes from one team's minutes (5 on the floor): 48, plus 5
+// per overtime. Box score minutes are rounded, so a team's total is 240 ± 3.
+function gameLength(list) {
+  const byTeam = {}
+  for (const r of list) byTeam[r.p.abbr] = (byTeam[r.p.abbr] ?? 0) + r.p.min
+  const most = Math.max(240, ...Object.values(byTeam))
+  return 48 + 5 * Math.max(0, Math.round((most - 240) / 25))
+}
+
+const TEN = ['pts', 'reb', 'ast', 'stl', 'blk']
+export const tens = p => TEN.filter(k => p[k] >= 10) // categories in double figures
+const blank = p => ['pts', 'fga', 'fta', 'reb', 'ast', 'stl', 'blk', 'to', 'pf'].every(k => !p[k])
+
+// Threshold award keys one played line earns (len: his game's length in
+// minutes, date: the game's date).
+export function earned(p, len, date) {
+  const t = tens(p).length, k = []
+  if (p.stl >= BALL_HAWK_STL) k.push('stl')
+  if (p.blk >= RIM_PROTECTOR_BLK) k.push('blk')
+  if (len && p.min >= len) k.push('cmp')
+  if (t === 2) k.push('ddb')
+  if (t >= 3) k.push('sun')
+  const age = ageOn(p.name, date)
+  if (age != null && age <= YOUNG_GUN_MAX_AGE && gameScore(p) >= YOUNG_GUN_GS) k.push('yng')
+  if (p.tpm >= RAINMAKER_3PM) k.push('rain')
+  if (p.min === 1 && blank(p)) k.push('tril')
+  if (p.min >= CARDIO_MIN && blank(p)) k.push('cardio')
+  return k
+}
+
+// Featured award cards: slots of awards, rarest first; a slot shows the first
+// award with an eligible winner. Double Double is a game-page fallback only.
+const SLOTS = [
+  ['rain', 'sun', 'blk', 'stl'],
+  ['cmp', 'yng', 'breakout'],
+  ['bricklayer', 'cardio', 'hog', 'tril'],
+]
+// Among several qualifiers, the bigger number wins (then Game Score).
+const RANK = {
+  rain: r => r.p.tpm, sun: r => r.gs, yng: r => r.gs, blk: r => r.p.blk, stl: r => r.p.stl, ddb: r => r.gs,
+  cmp: r => r.p.min, cardio: r => r.p.min, tril: r => r.gs,
+}
+const TIES = new Set(['rain', 'blk', 'stl']) // co-winners listed on the card
+
+// rows: the pool (night or one game). relative: { breakout, bricklayer, hog }
+// winners for this pool (null if none). skip: entries never featured again.
+function featured(rows, len, relative, skip, game, date) {
+  const used = new Set(skip.filter(Boolean).map(e => String(e.id)))
+  const free = r => !used.has(String(r.p.id))
+  const cards = []
+  for (const [i, slot] of SLOTS.entries()) {
+    for (const award of game && i === 0 ? [...slot, 'ddb'] : slot) {
+      let card = null
+      if (award in relative) {
+        const e = relative[award]
+        if (e && !used.has(String(e.id))) card = { award, ...e }
+      } else {
+        const score = RANK[award]
+        const list = rows.filter(r => r.keys.includes(award) && free(r))
+          .sort((a, b) => score(b) - score(a) || b.gs - a.gs)
+        if (list.length) {
+          card = { award, ...entry(list[0], null) }
+          if (award === 'cmp') card.len = len[list[0].p.gameId]
+          if (award === 'yng') card.age = ageOn(list[0].p.name, date)
+          if (TIES.has(award)) card.tied = list.slice(1).filter(r => score(r) === score(list[0])).map(r => entry(r, null))
+        }
+      }
+      if (!card) continue
+      cards.push(card)
+      for (const e of [card, ...(card.tied ?? [])]) used.add(String(e.id))
+      break
+    }
+  }
+  return cards
 }
 
 function entry({ p, gs, exp }, basis) {

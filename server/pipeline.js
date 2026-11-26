@@ -297,7 +297,7 @@ export async function refresh({ store, key, deadline = Infinity, log = console.l
   if (linesChanged || idsChanged || awardsStale || awardsMissing || !(await store.get('data/averages.json'))) {
     // Don't save an empty day (lines not readable yet); the next run sees it as missing.
     const filled = Object.entries(awards).filter(([, a]) => a.night.performer)
-    await pool(filled, 10, ([d, a]) => store.set(`data/awards/${d}.json`, { ...a, players: nightPlayerAwards(dayLines[d], a) }))
+    await pool(filled, 10, ([d, a]) => store.set(`data/awards/${d}.json`, { ...a, players: nightPlayerAwards(dayLines[d], a, d) }))
     await store.set('cache/awards-version.json', { v: AWARDS_VERSION })
 
     const acc = {}

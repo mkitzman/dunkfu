@@ -136,7 +136,7 @@ function dayPill(step) {
 
       <LeadersRow v-if="isResults && players.length" class="block" :players="players" label="Leaders of the night" />
 
-      <AwardCards v-if="isResults && awards?.night" class="block" :night="awards.night" />
+      <AwardCards v-if="isResults && awards?.night?.cards" class="block" :cards="awards.night.cards" />
 
       <template v-if="isResults && awards?.night">
         <SpotlightDud

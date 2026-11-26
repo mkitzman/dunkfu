@@ -2,6 +2,7 @@
 import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import TeamMark from '../components/TeamMark.vue'
+import AwardCards from '../components/AwardCards.vue'
 import LeadersRow from '../components/LeadersRow.vue'
 import TeamBoxTable from '../components/TeamBoxTable.vue'
 import SpotlightHero from '../components/SpotlightHero.vue'
@@ -211,6 +212,8 @@ const allPlayers = computed(() => hasBox.value
         <SpotlightHero v-if="gameAwards?.performer" class="block-gap" :player="gameAwards.performer" label="Player of the Game" />
 
         <LeadersRow class="block" :players="allPlayers" label="Game leaders" />
+
+        <AwardCards v-if="gameAwards?.cards" class="block" :cards="gameAwards.cards" />
 
         <SpotlightDud v-if="gameAwards?.dud" class="block-gap" :player="gameAwards.dud" label="Dud of the Game" />
 
