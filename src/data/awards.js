@@ -22,7 +22,7 @@ export const AWARD_TYPES = [
     glyph: '<path d="M12 5.2c-1 0-1.7.8-1.8 1.7l-.5 3.4C7.1 8.4 4.3 7.4 1.2 7.7c2 1.5 3.6 3.2 4.6 5.2l-2.2.7c2.3.5 4.3.4 6-.3l.8 4.3-1.8 3.2h6.8l-1.8-3.2.8-4.3c1.7.7 3.7.8 6 .3l-2.2-.7c1-2 2.6-3.7 4.6-5.2-3.1-.3-5.9.7-8.5 2.6l-.5-3.4c-.1-.9-.8-1.7-1.8-1.7z"/>' }, // hawk
   { key: 'blk', label: 'Rim Protector', rule: '5+ blocks in a game', bg: '#4C7DFF', fg: '#ffffff',
     glyph: '<path fill-rule="evenodd" d="M3.4 2.6Q12 5 20.6 2.6V10.4C20.6 16.2 16.9 20 12 22.6 7.1 20 3.4 16.2 3.4 10.4ZM6.4 11.6a5.6 5.6 0 1 0 11.2 0 5.6 5.6 0 1 0-11.2 0zM8.1 11.6a3.9 3.9 0 1 0 7.8 0 3.9 3.9 0 1 0-7.8 0zM9.95 8.42L15.18 13.65 14.05 14.78 8.82 9.55z"/>' }, // shield
-  { key: 'bricklayer', label: 'Bricklayer', rule: 'Most missed shots of the night (FG + FT)', bg: '#8A6240', fg: '#ffffff',
+  { key: 'bricklayer', label: 'Bricklayer', rule: 'Most missed shots of the night (FG + FT), under 50% true shooting', bg: '#8A6240', fg: '#ffffff',
     glyph: '<path fill-rule="evenodd" d="M2 6.5h20v11H2zM2 11.3h20v1.4H2zM8.3 6.5h1.4v4.8H8.3zM14.3 12.7h1.4v4.8h-1.4z"/>' }, // bricks
   { key: 'dud', label: 'Dud of the Night', rule: 'Furthest below his usual, starters / 20+ MIN', bg: '#e5484d', fg: '#ffffff',
     glyph: '<path d="M3 4.4l5.2 5.2 3.8-3.8 7.4 7.4" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 16.6h7.4V9.2z"/><rect x="2.5" y="19.6" width="19" height="2.2" rx="1.1"/>' }, // falling chart

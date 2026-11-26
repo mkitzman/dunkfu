@@ -78,7 +78,7 @@ test('Ball Hawk needs 5+ steals; nobody qualifying means no card', () => {
 test('the day table gets each player\'s awards, same rules as the game log', () => {
   const lines = [line(1, { ...SOLID, pts: 40, fgm: 15, fga: 25, blk: 5 }), line(2, { ...SOLID, reb: 14 }), line(3, SOLID)]
   const aw = computeAwards([{ date: '2026-11-09', lines }])['2026-11-09']
-  assert.deepEqual(nightPlayerAwards(lines, aw), { 1: ['potn', 'potg', 'pts', 'ast', 'blk', 'bricklayer'], 2: ['reb', 'ast'], 3: ['ast'] })
+  assert.deepEqual(nightPlayerAwards(lines, aw), { 1: ['potn', 'potg', 'pts', 'ast', 'blk'], 2: ['reb', 'ast'], 3: ['ast'] })
 })
 
 test('fewer than 3 earlier games: never a dud', () => {
@@ -109,4 +109,12 @@ test('Ball Hawk ties: the leader on Game Score, the rest listed as tied', () => 
   const hawk = computeAwards([{ date: '2026-11-09', lines }])['2026-11-09'].night.ballHawk
   assert.equal(hawk.id, 2)
   assert.deepEqual(hawk.tied.map(t => t.id), [1, 3])
+})
+
+test('Bricklayer skips efficient volume: 41 points on 65.8% TS loses to 5-19', () => {
+  const lines = [
+    line(1, { ...SOLID, pts: 41, fgm: 13, fga: 25, tpm: 6, tpa: 15, ftm: 9, fta: 14 }), // Tatum, 17 misses
+    line(2, { ...SOLID, pts: 11, fgm: 5, fga: 19, ftm: 0, fta: 0 }), // Irving, 14 misses
+  ]
+  assert.equal(computeAwards([{ date: '2026-11-24', lines }])['2026-11-24'].night.bricklayer.id, 2)
 })
