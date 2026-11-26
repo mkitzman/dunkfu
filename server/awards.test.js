@@ -190,3 +190,11 @@ test('Young Gun: a big game (Game Score 22+) at 20 or under; 15/2/2 is not enoug
   assert.ok(on('2026-12-24').includes('yng'))
   assert.ok(!on('2026-12-25').includes('yng'))
 })
+
+test('game page: the Player of the Game still gets his Good Day card', () => {
+  const td = { ...SOLID, pts: 25, fgm: 9, fga: 15, dreb: 9, oreb: 1, reb: 10, ast: 12 } // LeBron, Nov 25
+  const lines = [line(1, { ...SOLID, pts: 44, fgm: 17 }, 'x'), { ...line(2, td), gameId: 'y' }, { ...line(3, SOLID), gameId: 'y' }]
+  const aw = computeAwards([{ date: '2026-11-25', lines }])['2026-11-25']
+  assert.equal(aw.games.y.performer.id, 2)
+  assert.deepEqual(aw.games.y.cards.map(c => [c.award, c.id]), [['sun', 2]])
+})

@@ -32,14 +32,15 @@
 // 22+ at 20 or under (birthdates in youngGuns.js).
 //
 // Featured cards (handoff rev 7): three slots, each the first award in its
-// list with a winner, rarest first. The Player and Dud of the Night (of the
-// Game, on a game page) are never featured again, and nobody twice. See SLOTS.
+// list with a winner, rarest first. The Player and Dud of the Night are never
+// featured again (on a game page only the Dud of the Game), and nobody twice.
+// See SLOTS.
 //
 // Bump VERSION whenever the formulas change so stored awards are recomputed.
 
 import { ageOn } from './youngGuns.js'
 
-export const VERSION = 15 // 15: Young Gun
+export const VERSION = 16 // 16: game page features the Player of the Game's awards
 
 const MIN_MINUTES = 20
 const MIN_PRIOR_GAMES = 3
@@ -99,7 +100,9 @@ export function computeAwards(days) {
         const g = { performer: performer(list), dud: dud(list), len: len[id] }
         // One-a-night awards count here only if the night's winner played here.
         const here = Object.fromEntries(Object.entries(relative).map(([k, e]) => [k, e?.gameId === id ? e : null]))
-        g.cards = featured(list, len, here, [g.performer, g.dud], true, date)
+        // The Player of the Game can still be featured (LeBron's 25/10/12 is his
+        // game's Good Day); only the Dud of the Game is skipped.
+        g.cards = featured(list, len, here, [g.dud], true, date)
         return [id, g]
       })),
     }
