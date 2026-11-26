@@ -44,7 +44,13 @@ const CONTENT = {
 
 const shown = computed(() => props.cards
   .filter(c => CONTENT[c.award])
-  .map(c => ({ award: c.award, player: c, tied: c.tied ?? [], ...CONTENT[c.award](c) })))
+  .map(c => {
+    const tied = c.tied ?? []
+    const own = [c, ...tied].map(p => { const x = CONTENT[c.award](p); return { value: x.value, unit: x.unit } })
+    // Exact ties share one big number; winners with different numbers each get their own.
+    const same = own.every(o => o.value === own[0].value && o.unit === own[0].unit)
+    return { award: c.award, player: c, tied, ...CONTENT[c.award](c), ...(!same && { own }) }
+  }))
 </script>
 
 <template>
@@ -65,6 +71,6 @@ const shown = computed(() => props.cards
 }
 /* Phones: one per row, so names and the Bricklayer shooting line fit. */
 @media (max-width: 560px) {
-  .cards { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .cards { grid-template-columns: minmax(0, 1fr); gap: 12px; grid-auto-rows: auto; } /* stacked: each its own height */
 }
 </style>

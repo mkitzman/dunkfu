@@ -219,3 +219,10 @@ test('game page: the two hardest awards, then the Dud of the Game, always last',
   const g = computeAwards(days)['2026-11-09'].games.g
   assert.deepEqual(g.cards.map(c => [c.award, c.id]), [['rain', 4], ['stl', 3], ['dudg', 1]])
 })
+
+test('game page: every player in the game who earned an award is on its card', () => {
+  const g = (id, s) => ({ ...line(id, s), gameId: 'y' })
+  const lines = [g(1, { ...SOLID, pts: 40, fgm: 15 }), g(2, { ...SOLID, pts: 11, fgm: 4, fga: 8, ftm: 3, reb: 14 }), g(3, { ...SOLID, pts: 12, fgm: 4, fga: 8, reb: 11 })]
+  const ddb = computeAwards([{ date: '2026-11-25', lines }])['2026-11-25'].games.y.cards.find(c => c.award === 'ddb')
+  assert.deepEqual([ddb.id, ...ddb.tied.map(t => t.id)].sort(), [2, 3])
+})

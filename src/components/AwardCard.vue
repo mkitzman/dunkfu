@@ -18,6 +18,7 @@ const props = defineProps({
   unit: { type: String, required: true }, // PTS, TRUE SHOOTING, STL, MIN…
   detail: { type: String, default: '' }, // after the unit, same line
   unitTitle: { type: String, default: '' }, // explains the unit, in a ? popup
+  own: { type: Array, default: null }, // [{ value, unit }] per winner (player, ...tied) when their numbers differ
   capture: Boolean,
 })
 
@@ -28,6 +29,7 @@ const shown = computed(() => all.value.length > 3 ? all.value.slice(0, 2) : all.
 const extra = computed(() => all.value.slice(shown.value.length))
 const names = computed(() => all.value.map(p => p.name).join(' & '))
 const colorOf = p => team(p.abbr)?.color ?? '#646a72'
+const ownOf = p => props.own?.[all.value.indexOf(p)]
 
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 const { prep, frame, status, share: onShare, prime, shareFromCard } = useShareImage(
@@ -50,7 +52,28 @@ const { prep, frame, status, share: onShare, prime, shareFromCard } = useShareIm
         <ShareButton v-if="!capture" :label="`Share ${title}`" :status="status" @click="onShare" />
         <span v-else class="site">dunkfu.com</span>
       </header>
-      <div v-if="all.length <= 2" class="who" :class="{ pair: all.length === 2 }">
+      <ul v-if="own" class="who ranked">
+        <li v-for="p in shown" :key="p.id">
+          <div class="rk-who">
+            <div class="name">
+              <span v-if="capture">{{ p.name }}</span>
+              <PlayerButton v-else :id="p.id" :abbr="p.abbr" :name="p.name" :num="p.num" :pos="p.pos" />
+            </div>
+            <div class="meta"><span class="team-chip" :style="chipStyle(colorOf(p))">{{ p.abbr }}</span>#{{ p.num }} · {{ p.min }} MIN</div>
+          </div>
+          <div class="rk-v"><span class="v2">{{ ownOf(p).value }}</span><span class="u2">{{ ownOf(p).unit }}</span></div>
+        </li>
+        <li v-if="extra.length" class="more">
+          <span v-if="capture">+{{ extra.length }} more</span>
+          <HelpPopover v-else :label="`All ${all.length} winners of ${title}`">
+            <template #trigger>+{{ extra.length }} more</template>
+            <ul class="tie-list">
+              <li v-for="p in all" :key="p.id"><PlayerButton :id="p.id" :abbr="p.abbr" :name="p.name" :num="p.num" :pos="p.pos" /><span class="team-chip" :style="chipStyle(colorOf(p))">{{ p.abbr }}</span><span class="tl-v">{{ ownOf(p).value }} {{ ownOf(p).unit }}</span></li>
+            </ul>
+          </HelpPopover>
+        </li>
+      </ul>
+      <div v-else-if="all.length <= 2" class="who" :class="{ pair: all.length === 2 }">
         <div v-for="p in all" :key="p.id">
           <div class="name">
             <span v-if="capture">{{ p.name }}</span>
@@ -75,7 +98,7 @@ const { prep, frame, status, share: onShare, prime, shareFromCard } = useShareIm
           </HelpPopover>
         </li>
       </ul>
-      <div class="stat">
+      <div v-if="!own" class="stat">
         <div class="v">{{ value }}</div>
         <div class="l"><span class="u">{{ unit }}</span><HelpPopover v-if="unitTitle && !capture" :label="`What is ${unit.toLowerCase()}?`" class="uq">{{ unitTitle }}</HelpPopover><template v-if="detail"><span class="u-sep"> · </span>{{ detail }}</template></div>
       </div>
@@ -83,7 +106,7 @@ const { prep, frame, status, share: onShare, prime, shareFromCard } = useShareIm
 
     <Teleport v-if="prep" to="body">
       <div ref="frame" class="shot" aria-hidden="true" inert>
-        <AwardCard capture :award="award" :player="player" :tied="tied" :value="value" :unit="unit" :detail="detail" :unit-title="unitTitle" />
+        <AwardCard capture :award="award" :player="player" :tied="tied" :value="value" :unit="unit" :detail="detail" :unit-title="unitTitle" :own="own" />
       </div>
     </Teleport>
   </section>
@@ -145,6 +168,15 @@ const { prep, frame, status, share: onShare, prime, shareFromCard } = useShareIm
 .more :deep(.trig:hover) { color: var(--fg); }
 .tie-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font: 600 13px var(--sans); }
 .tie-list .team-chip { font-size: 10px; }
+.tl-v { margin-left: 10px; font: 500 11px var(--mono); color: var(--mu); white-space: nowrap; }
+/* Several winners with their own numbers: one row each, number on the right. */
+.ranked { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.ranked > li:not(.more) { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; }
+.rk-who { min-width: 0; }
+.rk-v { flex: none; display: grid; justify-items: end; gap: 3px; }
+.v2 { font: 800 26px/1 var(--sans); letter-spacing: -.03em; font-variant-numeric: tabular-nums; color: var(--fg); }
+.u2 { font: 500 9px var(--mono); letter-spacing: .12em; color: var(--mu); white-space: nowrap; }
+.ranked li.more { font: 500 11px var(--mono); color: var(--mu); }
 .meta {
   margin-top: 4px;
   font: 500 11px var(--mono);

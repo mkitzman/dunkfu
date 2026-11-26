@@ -40,7 +40,7 @@
 
 import { ageOn } from './youngGuns.js'
 
-export const VERSION = 18 // 18: game page: hardest two awards + Dud of the Game card
+export const VERSION = 19 // 19: game page cards list every winner in the game
 
 const MIN_MINUTES = 20
 const MIN_PRIOR_GAMES = 3
@@ -201,7 +201,7 @@ const RANK = {
   rain: r => r.p.tpm, sun: r => r.gs, yng: r => r.gs, blk: r => r.p.blk, stl: r => r.p.stl, ddb: r => r.gs,
   cmp: r => r.p.min, cardio: r => r.p.min, tril: r => r.gs,
 }
-const TIES = new Set(['rain', 'blk', 'stl']) // co-winners listed on the card
+const TIES = new Set(['rain', 'blk', 'stl']) // night page: exact ties listed on the card
 
 // Game page: awards won in the game, hardest first (by how often each was
 // won in the 2026-27 season's first 36 nights: Completionist 0 times,
@@ -227,7 +227,10 @@ function featured(rows, len, relative, skip, game, date, max = 3) {
     const card = { award, ...entry(list[0], null) }
     if (award === 'cmp') card.len = len[list[0].p.gameId]
     if (award === 'yng') card.age = ageOn(list[0].p.name, date)
-    if (TIES.has(award)) card.tied = list.slice(1).filter(r => score(r) === score(list[0])).map(r => entry(r, null))
+    // Co-winners: night page, exact ties on the count; game page, everyone
+    // here who earned it (each card lists its own numbers).
+    const rest = game ? list.slice(1) : TIES.has(award) ? list.slice(1).filter(r => score(r) === score(list[0])) : []
+    if (rest.length) card.tied = rest.map(r => ({ ...entry(r, null), ...(award === 'yng' && { age: ageOn(r.p.name, date) }) }))
     return card
   }
   const cards = []
