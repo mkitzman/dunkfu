@@ -6,7 +6,6 @@ import AwardCards from '../components/AwardCards.vue'
 import LeadersRow from '../components/LeadersRow.vue'
 import TeamBoxTable from '../components/TeamBoxTable.vue'
 import SpotlightHero from '../components/SpotlightHero.vue'
-import SpotlightDud from '../components/SpotlightDud.vue'
 import PageNav from '../components/PageNav.vue'
 import { getGame, getGames, getAwards } from '../api/index.js'
 import { announce } from '../composables/useAnnounce.js'
@@ -214,8 +213,6 @@ const allPlayers = computed(() => hasBox.value
         <LeadersRow class="block" :players="allPlayers" label="Game leaders" />
 
         <AwardCards v-if="gameAwards?.cards" class="block" :cards="gameAwards.cards" />
-
-        <SpotlightDud v-if="gameAwards?.dud" class="block-gap" :player="gameAwards.dud" label="Dud of the Game" />
 
         <section class="block box" aria-label="Box score">
           <div class="pair">

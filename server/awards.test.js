@@ -207,7 +207,15 @@ test('game page: up to three cards, every award won in the game (LeBron Good Day
     g(3, { ...SOLID, reb: 11 }), g(4, { ...SOLID, stl: 5 }), g(5, { ...SOLID, blk: 6 }),
   ]
   const aw = computeAwards([{ date: '2026-11-25', lines }])['2026-11-25']
-  assert.deepEqual(aw.games.y.cards.map(c => [c.award, c.id]), [['sun', 1], ['blk', 5], ['stl', 4]])
+  assert.deepEqual(aw.games.y.cards.map(c => [c.award, c.id]), [['blk', 5], ['stl', 4], ['sun', 1]])
   const two = computeAwards([{ date: '2026-11-25', lines: lines.slice(0, 3) }])['2026-11-25']
   assert.deepEqual(two.games.y.cards.map(c => [c.award, c.id]), [['sun', 1], ['ddb', 2]])
+})
+
+test('game page: the two hardest awards, then the Dud of the Game, always last', () => {
+  const days = [1, 2, 3].map(i => ({ date: `2026-11-0${i}`, lines: [line(1, SOLID), line(2, SOLID), line(3, SOLID), line(4, SOLID)] }))
+  const tonight = [line(1, AWFUL), line(2, { ...SOLID, reb: 11 }), line(3, { ...SOLID, stl: 5 }), line(4, { ...SOLID, pts: 33, fgm: 11, fga: 20, tpm: 9, tpa: 14 })]
+  days.push({ date: '2026-11-09', lines: tonight })
+  const g = computeAwards(days)['2026-11-09'].games.g
+  assert.deepEqual(g.cards.map(c => [c.award, c.id]), [['rain', 4], ['stl', 3], ['dudg', 1]])
 })

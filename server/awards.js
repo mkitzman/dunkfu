@@ -40,7 +40,7 @@
 
 import { ageOn } from './youngGuns.js'
 
-export const VERSION = 17 // 17: game page shows up to three of every award won in the game
+export const VERSION = 18 // 18: game page: hardest two awards + Dud of the Game card
 
 const MIN_MINUTES = 20
 const MIN_PRIOR_GAMES = 3
@@ -100,9 +100,10 @@ export function computeAwards(days) {
         const g = { performer: performer(list), dud: dud(list), len: len[id] }
         // One-a-night awards count here only if the night's winner played here.
         const here = Object.fromEntries(Object.entries(relative).map(([k, e]) => [k, e?.gameId === id ? e : null]))
-        // The Player of the Game can still be featured (LeBron's 25/10/12 is his
-        // game's Good Day); only the Dud of the Game is skipped.
-        g.cards = featured(list, len, here, [g.dud], true, date)
+        // Up to three cards: the hardest awards won here (the Player of the
+        // Game included), then the Dud of the Game, always last.
+        g.cards = featured(list, len, here, [g.dud], true, date, g.dud ? 2 : 3)
+        if (g.dud) g.cards.push({ award: 'dudg', ...g.dud })
         return [id, g]
       })),
     }
@@ -202,14 +203,16 @@ const RANK = {
 }
 const TIES = new Set(['rain', 'blk', 'stl']) // co-winners listed on the card
 
-// Game page: every award won in the game, rarest first, up to three (one
-// card per award and per player). Double Double, the most common, comes last.
-const GAME_ORDER = [...SLOTS.flat(), 'ddb']
+// Game page: awards won in the game, hardest first (by how often each was
+// won in the 2026-27 season's first 36 nights: Completionist 0 times,
+// Rainmaker 5, Cardio Day 5 … Trillionaire 60, Double Double 388), one card
+// per award and per player. The Dud of the Game always takes the last card.
+const GAME_ORDER = ['cmp', 'rain', 'cardio', 'blk', 'stl', 'sun', 'yng', 'breakout', 'hog', 'bricklayer', 'tril', 'ddb']
 
 // rows: the pool (night or one game). relative: { breakout, bricklayer, hog }
 // winners for this pool (null if none). skip: entries never featured again.
-// Night: one card per slot. Game: the first three awards of GAME_ORDER.
-function featured(rows, len, relative, skip, game, date) {
+// Night: one card per slot. Game: the first `max` awards of GAME_ORDER.
+function featured(rows, len, relative, skip, game, date, max = 3) {
   const used = new Set(skip.filter(Boolean).map(e => String(e.id)))
   const free = r => !used.has(String(r.p.id))
   const pick = award => {
@@ -229,7 +232,7 @@ function featured(rows, len, relative, skip, game, date) {
   }
   const cards = []
   for (const group of game ? GAME_ORDER.map(a => [a]) : SLOTS) {
-    if (cards.length === 3) break
+    if (cards.length === max) break
     for (const award of group) {
       const card = pick(award)
       if (!card) continue

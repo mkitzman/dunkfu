@@ -1,6 +1,6 @@
 <script setup>
-// Featured award cards (night page and game page): up to three, one per slot,
-// picked on the server (server/awards.js, featured()). Empty slots are left
+// Featured award cards (night page and game page): up to three, picked on the
+// server (server/awards.js, featured()); on the game page the last is the Dud of the Game. Empty slots are left
 // out and the row reflows; with none, nothing renders.
 import { computed } from 'vue'
 import AwardCard from './AwardCard.vue'
@@ -36,6 +36,10 @@ const CONTENT = {
   cardio: p => ({ value: p.min, unit: 'MIN', detail: 'NOTHING ELSE' }),
   hog: p => ({ value: p.fga, unit: 'FGA', detail: `${p.ast} AST` }),
   tril: () => ({ value: 1, unit: 'MIN', detail: '1,000,000,000,000' }),
+  dudg: p => ({
+    value: `${p.pts}/${p.reb}/${p.ast}`, unit: 'PTS / REB / AST',
+    detail: p.exp != null ? `GAME SCORE ${p.gs.toFixed(1)}, USUAL ${p.exp.toFixed(1)}` : `GAME SCORE ${p.gs.toFixed(1)}`,
+  }),
 }
 
 const shown = computed(() => props.cards
