@@ -288,7 +288,8 @@
     "division": "Pacific",
     "seedColor": "#5A2D81",
     "secondary": "#63727A",
-    "note": "verify primary/secondary at nbacolors.com"
+    "jersey": { "body": "#0B0B0D", "trim": "#7B5CC9", "text": "#FFFFFF" },
+    "note": "purple brand colour; the jersey is black with purple trim and white lettering"
   },
   {
     "abbr": "UTA",
