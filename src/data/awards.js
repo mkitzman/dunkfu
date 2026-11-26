@@ -25,7 +25,7 @@ export const AWARD_TYPES = [
     glyph: '<path d="M14 1.8L4.6 13.4h6.2L9.6 22.2 19.4 10h-6.4z"/>' }, // bolt
   { key: 'cmp', label: 'Completionist', rule: 'Played every minute of the game', bg: '#3B4BA8', fg: '#ffffff',
     glyph: '<rect x="10" y="1.5" width="4" height="2.4" rx=".8"/><path fill-rule="evenodd" d="M12 4.6a9 9 0 1 1 0 18 9 9 0 1 1 0-18zM12 6.9a6.7 6.7 0 1 0 0 13.4 6.7 6.7 0 1 0 0-13.4z"/><path d="M8.6 13.8l2.3 2.3 4.6-4.8" fill="none" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>' }, // stopwatch
-  { key: 'ddb', label: 'Double Double', rule: '10+ in two stat categories', bg: '#B3141F', fg: '#FFCB2B',
+  { key: 'ddb', label: 'Double Double', rule: '10+ in two stat categories', bg: '#E8202A', fg: '#FFD100',
     glyph: '<path d="M3 8.6C3 5.2 7 3 12 3s9 2.2 9 5.6z"/><rect x="2.5" y="9.8" width="19" height="2.8" rx="1.4"/><path d="M5.5 12.4h5.6l-2.8 2.6z"/><rect x="2.5" y="13.8" width="19" height="2.8" rx="1.4"/><path d="M13 16.4h5.6l-2.8 2.6z"/><rect x="3.5" y="17.8" width="17" height="3.2" rx="1.6"/>' }, // double-patty burger
   { key: 'sun', label: 'Good Day', rule: 'Messed around and got a triple double', bg: '#FFDD33', fg: '#D9480F',
     glyph: '<circle cx="12" cy="12" r="4.6"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" fill="none" stroke-width="2.2" stroke-linecap="round"/>' }, // sun
