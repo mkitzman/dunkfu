@@ -198,3 +198,16 @@ test('game page: the Player of the Game still gets his Good Day card', () => {
   assert.equal(aw.games.y.performer.id, 2)
   assert.deepEqual(aw.games.y.cards.map(c => [c.award, c.id]), [['sun', 2]])
 })
+
+test('game page: up to three cards, every award won in the game (LeBron Good Day + Giannis Double Double)', () => {
+  const g = (id, s) => ({ ...line(id, s), gameId: 'y' })
+  const lines = [
+    g(1, { ...SOLID, pts: 25, fgm: 9, fga: 15, dreb: 9, oreb: 1, reb: 10, ast: 12 }), // LeBron
+    g(2, { ...SOLID, pts: 32, fgm: 11, fga: 18, ftm: 10, fta: 13, dreb: 13, oreb: 1, reb: 14, ast: 4 }), // Giannis
+    g(3, { ...SOLID, reb: 11 }), g(4, { ...SOLID, stl: 5 }), g(5, { ...SOLID, blk: 6 }),
+  ]
+  const aw = computeAwards([{ date: '2026-11-25', lines }])['2026-11-25']
+  assert.deepEqual(aw.games.y.cards.map(c => [c.award, c.id]), [['sun', 1], ['blk', 5], ['stl', 4]])
+  const two = computeAwards([{ date: '2026-11-25', lines: lines.slice(0, 3) }])['2026-11-25']
+  assert.deepEqual(two.games.y.cards.map(c => [c.award, c.id]), [['sun', 1], ['ddb', 2]])
+})

@@ -33,14 +33,14 @@
 //
 // Featured cards (handoff rev 7): three slots, each the first award in its
 // list with a winner, rarest first. The Player and Dud of the Night are never
-// featured again (on a game page only the Dud of the Game), and nobody twice.
-// See SLOTS.
+// featured again, and nobody twice. See SLOTS. The game page shows up to
+// three of every award won in the game instead (GAME_ORDER).
 //
 // Bump VERSION whenever the formulas change so stored awards are recomputed.
 
 import { ageOn } from './youngGuns.js'
 
-export const VERSION = 16 // 16: game page features the Player of the Game's awards
+export const VERSION = 17 // 17: game page shows up to three of every award won in the game
 
 const MIN_MINUTES = 20
 const MIN_PRIOR_GAMES = 3
@@ -189,7 +189,7 @@ export function earned(p, len, date) {
 }
 
 // Featured award cards: slots of awards, rarest first; a slot shows the first
-// award with an eligible winner. Double Double is a game-page fallback only.
+// award with an eligible winner. Double Double is never featured on the night page.
 const SLOTS = [
   ['rain', 'sun', 'blk', 'stl'],
   ['cmp', 'yng', 'breakout'],
@@ -202,29 +202,36 @@ const RANK = {
 }
 const TIES = new Set(['rain', 'blk', 'stl']) // co-winners listed on the card
 
+// Game page: every award won in the game, rarest first, up to three (one
+// card per award and per player). Double Double, the most common, comes last.
+const GAME_ORDER = [...SLOTS.flat(), 'ddb']
+
 // rows: the pool (night or one game). relative: { breakout, bricklayer, hog }
 // winners for this pool (null if none). skip: entries never featured again.
+// Night: one card per slot. Game: the first three awards of GAME_ORDER.
 function featured(rows, len, relative, skip, game, date) {
   const used = new Set(skip.filter(Boolean).map(e => String(e.id)))
   const free = r => !used.has(String(r.p.id))
+  const pick = award => {
+    if (award in relative) {
+      const e = relative[award]
+      return e && !used.has(String(e.id)) ? { award, ...e } : null
+    }
+    const score = RANK[award]
+    const list = rows.filter(r => r.keys.includes(award) && free(r))
+      .sort((a, b) => score(b) - score(a) || b.gs - a.gs)
+    if (!list.length) return null
+    const card = { award, ...entry(list[0], null) }
+    if (award === 'cmp') card.len = len[list[0].p.gameId]
+    if (award === 'yng') card.age = ageOn(list[0].p.name, date)
+    if (TIES.has(award)) card.tied = list.slice(1).filter(r => score(r) === score(list[0])).map(r => entry(r, null))
+    return card
+  }
   const cards = []
-  for (const [i, slot] of SLOTS.entries()) {
-    for (const award of game && i === 0 ? [...slot, 'ddb'] : slot) {
-      let card = null
-      if (award in relative) {
-        const e = relative[award]
-        if (e && !used.has(String(e.id))) card = { award, ...e }
-      } else {
-        const score = RANK[award]
-        const list = rows.filter(r => r.keys.includes(award) && free(r))
-          .sort((a, b) => score(b) - score(a) || b.gs - a.gs)
-        if (list.length) {
-          card = { award, ...entry(list[0], null) }
-          if (award === 'cmp') card.len = len[list[0].p.gameId]
-          if (award === 'yng') card.age = ageOn(list[0].p.name, date)
-          if (TIES.has(award)) card.tied = list.slice(1).filter(r => score(r) === score(list[0])).map(r => entry(r, null))
-        }
-      }
+  for (const group of game ? GAME_ORDER.map(a => [a]) : SLOTS) {
+    if (cards.length === 3) break
+    for (const award of group) {
+      const card = pick(award)
       if (!card) continue
       cards.push(card)
       for (const e of [card, ...(card.tied ?? [])]) used.add(String(e.id))
