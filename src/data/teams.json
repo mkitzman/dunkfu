@@ -151,9 +151,10 @@
     "nickname": "Nets",
     "conference": "E",
     "division": "Atlantic",
-    "seedColor": "#4a4a4a",
+    "seedColor": "#000000",
     "secondary": "#FFFFFF",
-    "note": "verify primary/secondary at nbacolors.com"
+    "jersey": { "text": "#FFFFFF" },
+    "note": "black and white (official); grey is the New Jersey throwback"
   },
   {
     "abbr": "OKC",
